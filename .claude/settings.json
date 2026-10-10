@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run build)",
+      "Bash(npm run lint)",
+      "Bash(npm run test)",
+      "Bash(npm run test:e2e)",
+      "Bash(npx skills find:*)",
+      "Bash(npx skills list:*)"
+    ],
+    "ask": [
+      "Bash(npx skills add:*)",
+      "Bash(npx skills remove:*)",
+      "Bash(npm install:*)",
+      "Bash(git push:*)"
+    ],
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.*)"
+    ]
+  }
+}
