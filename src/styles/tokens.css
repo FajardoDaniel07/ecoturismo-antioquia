@@ -1,0 +1,192 @@
+/*
+ * Design tokens de Ecoturismo Antioquia.
+ * Dirección visual: "Pisos térmicos". Fuente de verdad: docs/design/direccion-visual.md
+ * Este archivo refleja ese documento; si uno cambia, el otro cambia en el mismo commit.
+ *
+ * Formato: Tailwind CSS v4 (bloque @theme). Para que surta efecto debe importarse
+ * desde src/styles/global.css, después de la línea que importa "tailwindcss":
+ *
+ *   @import "tailwindcss";
+ *   @import "./tokens.css";
+ *
+ * "static" hace que todas las variables se emitan en :root aunque ninguna clase
+ * utilitaria las use, para poder leerlas con var() desde los estilos de componentes.
+ *
+ * Los espacios de nombres color, font, text, radius y shadow se vacían primero
+ * ("initial") para que la paleta y las escalas por defecto de Tailwind no estén
+ * disponibles: una clase como bg-blue-500 o rounded-xl deja de existir. Así se cumple
+ * "sin estilos fuera de los tokens" (Definition of Done).
+ *
+ * Contrastes: ver la sección 4.3 y el anexo A del documento de dirección visual.
+ */
+
+@theme static {
+  /* ------------------------------------------------------------------ */
+  /* Color                                                               */
+  /* ------------------------------------------------------------------ */
+  --color-*: initial;
+
+  /* Base */
+  --color-bg: #f5f6f0; /* papel de lámina: fondo de página */
+  --color-surface: #e9ece1; /* superficie: fichas, formulario, panel del mapa */
+  --color-ink: #1d2b26; /* tinta: texto principal y superficies oscuras */
+  --color-ink-muted: #4c5a53; /* texto secundario; borde de controles de formulario */
+  --color-line: #c9cfc2; /* líneas decorativas y curvas de nivel; nunca única señal */
+  --color-white: #ffffff; /* texto sobre colores de piso y sobre primario */
+
+  /* Marca y acción */
+  --color-primary: #2f5d43; /* cafetal: enlaces, botón secundario, éxito */
+  --color-accent: #e0a526; /* guayacán: SOLO relleno, con tinta encima y borde tinta */
+  --color-danger: #a3271c; /* errores de formulario y de carga */
+
+  /* Pisos térmicos: color fuerte (texto, líneas de ruta, insignias) */
+  --color-zone-warm: #7a4e0e; /* piso cálido: tierra de cañón */
+  --color-zone-temperate: #2f5d43; /* piso templado: cafetal */
+  --color-zone-cold: #33626f; /* piso frío: bosque de niebla */
+  --color-zone-paramo: #5f4f70; /* páramo: frailejón al atardecer */
+
+  /* Pisos térmicos: tinte claro (fondo de bloque y de lámina sin fotografía) */
+  --color-zone-warm-tint: #f6ebcf;
+  --color-zone-temperate-tint: #e1ebdd;
+  --color-zone-cold-tint: #dde9ea;
+  --color-zone-paramo-tint: #e8e3ec;
+
+  /* Sobre superficie oscura (tinta): visor de la galería y pie de página */
+  --color-on-ink: #f5f6f0; /* texto principal sobre tinta */
+  --color-on-ink-muted: #c9cfc2; /* texto secundario sobre tinta */
+
+  /* Foco */
+  --color-focus: #1d2b26; /* anillo de foco sobre fondos claros */
+  --color-focus-on-ink: #e0a526; /* anillo de foco sobre tinta */
+
+  /* ------------------------------------------------------------------ */
+  /* Tipografía: dos familias                                            */
+  /* ------------------------------------------------------------------ */
+  --font-*: initial;
+
+  /* Besley: titulares y cifras de altitud. */
+  --font-display: "Besley", "Rockwell", "Georgia", serif;
+  /* Instrument Sans: cuerpo e interfaz. Se llama "sans" para que la base de
+     Tailwind (Preflight) la tome como fuente por defecto del documento. */
+  --font-sans:
+    "Instrument Sans", system-ui, "Segoe UI", "Roboto", "Helvetica Neue", "Arial",
+    sans-serif;
+
+  --font-weight-*: initial;
+  --font-weight-normal: 400; /* cuerpo */
+  --font-weight-medium: 500; /* etiquetas de ficha, navegación */
+  --font-weight-semibold: 600; /* botones, énfasis en cuerpo */
+  --font-weight-bold: 700; /* titulares en Besley */
+
+  /* Escala 1.25 sobre 17 px. Cada tamaño trae su interlineado. */
+  --text-*: initial;
+  --text-sm: 0.875rem; /* 14 px: créditos de foto, notas. Mínimo del sitio */
+  --text-sm--line-height: 1.45;
+  --text-base: 1.0625rem; /* 17 px: cuerpo */
+  --text-base--line-height: 1.55;
+  --text-lg: 1.3125rem; /* 21 px: entradilla, cifras de ficha */
+  --text-lg--line-height: 1.45;
+  --text-xl: 1.6875rem; /* 27 px: título de tarjeta menor */
+  --text-xl--line-height: 1.25;
+  --text-2xl: 2.0625rem; /* 33 px: título de destino */
+  --text-2xl--line-height: 1.2;
+  --text-3xl: 2.625rem; /* 42 px: título de sección */
+  --text-3xl--line-height: 1.12;
+  --text-4xl: 3.25rem; /* 52 px: cifra de altitud destacada */
+  --text-4xl--line-height: 1.08;
+  --text-5xl: 4.5rem; /* 72 px: tope del titular del hero */
+  --text-5xl--line-height: 1.05;
+  /* Titular del hero: fluido de 36 px (360 px de ancho) a 72 px */
+  --text-hero: clamp(2.25rem, 7vw, 4.5rem);
+  --text-hero--line-height: 1.05;
+
+  --leading-*: initial;
+  --leading-tight: 1.05; /* titulares grandes */
+  --leading-snug: 1.2; /* titulares medianos */
+  --leading-normal: 1.55; /* cuerpo */
+
+  --tracking-*: initial;
+  --tracking-display: -0.01em; /* titulares en Besley de 42 px o más */
+  --tracking-normal: 0;
+
+  /* Longitud de línea y ancho de página */
+  --container-prose: 70ch; /* texto corrido: máximo 70 caracteres */
+  --container-page: 75rem; /* ancho máximo del contenido: 1200 px */
+
+  /* ------------------------------------------------------------------ */
+  /* Espaciado: base de 4 px, igual a la escala numérica de Tailwind     */
+  /* (--space-4 = 1rem = p-4). Solo estos pasos están permitidos.        */
+  /* ------------------------------------------------------------------ */
+  --spacing: 0.25rem;
+  --space-1: 0.25rem; /* 4 px */
+  --space-2: 0.5rem; /* 8 px */
+  --space-3: 0.75rem; /* 12 px */
+  --space-4: 1rem; /* 16 px: canal de la grilla en móvil */
+  --space-5: 1.25rem; /* 20 px: margen lateral en móvil */
+  --space-6: 1.5rem; /* 24 px: canal de la grilla desde 768 px */
+  --space-8: 2rem; /* 32 px */
+  --space-12: 3rem; /* 48 px */
+  --space-16: 4rem; /* 64 px: separación entre secciones en móvil */
+  --space-24: 6rem; /* 96 px: separación entre secciones en escritorio */
+  --space-32: 8rem; /* 128 px */
+
+  /* Medidas con nombre */
+  --size-touch-target: 2.75rem; /* 44 px: mínimo de todo objetivo táctil */
+  --size-zone-rail: 0.375rem; /* 6 px: franja de piso térmico en móvil */
+  --size-photo-small: 30rem; /* 480 px: ancho máximo de una foto en "tamaño menor" */
+
+  /* ------------------------------------------------------------------ */
+  /* Mapa: tratamiento de las teselas. Valores de partida; se ajustan    */
+  /* al medir el contraste sobre el mapa construido.                     */
+  /* ------------------------------------------------------------------ */
+  --map-tiles-filter: grayscale(1) contrast(0.92) brightness(1.04);
+  --map-tiles-opacity: 0.9; /* sobre el color papel */
+
+  /* ------------------------------------------------------------------ */
+  /* Radios                                                              */
+  /* ------------------------------------------------------------------ */
+  --radius-*: initial;
+  --radius-none: 0;
+  --radius-sm: 0.125rem; /* 2 px: fotografías y láminas */
+  --radius-md: 0.25rem; /* 4 px: botones, campos, panel del mapa */
+  --radius-full: 9999px; /* marcas de dificultad, marcadores del mapa */
+
+  /* ------------------------------------------------------------------ */
+  /* Sombras: solo para lo que flota sobre otro contenido                */
+  /* ------------------------------------------------------------------ */
+  --shadow-*: initial;
+  --shadow-none: 0 0 #0000;
+  /* Ventana emergente del mapa y controles del visor: sombra teñida de tinta */
+  --shadow-overlay: 0 8px 24px -8px rgb(29 43 38 / 0.35);
+
+  /* ------------------------------------------------------------------ */
+  /* Movimiento                                                          */
+  /* ------------------------------------------------------------------ */
+  --duration-fast: 150ms; /* cambio de color en hover, foco y activo */
+  --duration-base: 250ms; /* abrir y cerrar el visor, desplegar un panel */
+  --duration-draw: 900ms; /* aparición del perfil altitudinal (cubierta que se retira), una vez al cargar */
+
+  --ease-*: initial;
+  --ease-out: cubic-bezier(0.2, 0, 0, 1); /* todo lo que entra o responde */
+  --ease-linear: linear; /* aparición del perfil */
+
+  /* ------------------------------------------------------------------ */
+  /* Foco visible                                                        */
+  /* ------------------------------------------------------------------ */
+  --focus-ring-width: 3px;
+  --focus-ring-offset: 2px;
+}
+
+/*
+ * Movimiento reducido: las duraciones pasan a cero. Toda animación y transición
+ * del sitio debe tomar su duración de estos tokens para que esta regla la alcance.
+ * El perfil altitudinal, además, debe mostrarse ya dibujado (ver sección 5.4 del
+ * documento de dirección visual).
+ */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 0ms;
+    --duration-base: 0ms;
+    --duration-draw: 0ms;
+  }
+}
