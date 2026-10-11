@@ -10,6 +10,7 @@
  * - `warning`: informa.
  */
 import { zoneOf, type ZoneId } from '../altitude/zones';
+import { compareByAltitude, resolveFeatured } from '../altitude/sort';
 import { isPlaceholder } from './placeholders';
 import type { DestinoData, LegalData, Operator, PhotoData, RutaData, Territory } from './schemas';
 
@@ -165,10 +166,6 @@ function croppedSize(
   return actual > target
     ? { width: Math.round(height * target), height, changed: true }
     : { width, height: Math.round(width / target), changed: true };
-}
-
-function compareDestinos(a: { name: string; altitude: { meters: number } }, b: typeof a): number {
-  return a.altitude.meters - b.altitude.meters || collator.compare(a.name, b.name);
 }
 
 /** `true` si el problema detiene la construcción en ese modo. */
@@ -403,16 +400,18 @@ export function validateSite(raw: RawSite, mode: BuildMode): ValidationResult {
     if (!excluded) candidates.push({ entry, zone: zoneOf(meters, territory.thresholds) });
   }
 
-  candidates.sort((a, b) => compareDestinos(a.entry.data, b.entry.data));
+  candidates.sort((a, b) => compareByAltitude(a.entry.data, b.entry.data));
 
   // Destino principal por piso (CA-15)
   const featuredIds = new Set<string>();
   const byZone = new Map<ZoneId, typeof candidates>();
   for (const c of candidates) byZone.set(c.zone, [...(byZone.get(c.zone) ?? []), c]);
   for (const [zone, list] of byZone) {
-    const marked = list.filter((c) => c.entry.data.featured);
-    const first = list[0];
-    if (marked.length > 1) {
+    const { featuredIndex, issue } = resolveFeatured(list.map((c) => c.entry.data));
+    const chosen = list[featuredIndex];
+    if (chosen) featuredIds.add(chosen.entry.id);
+    if (issue === 'two-featured') {
+      const marked = list.filter((c) => c.entry.data.featured);
       add(
         'error',
         marked.map((c) => c.entry.file).join(', '),
@@ -421,17 +420,14 @@ export function validateSite(raw: RawSite, mode: BuildMode): ValidationResult {
         'Un piso solo puede tener un destino principal',
         `Hay ${marked.length} destinos principales en el piso ${zone}: ${marked.map((c) => c.entry.id).join(', ')}.`,
       );
-    }
-    const chosen = marked[0] ?? first;
-    if (chosen) featuredIds.add(chosen.entry.id);
-    if (marked.length === 0 && first) {
+    } else if (issue === 'none-featured' && chosen) {
       add(
         'warning',
-        first.entry.file,
+        chosen.entry.file,
         'featured',
         'CA-15',
         'Un piso debería tener un destino principal marcado',
-        `Ningún destino del piso ${zone} está marcado como principal; se usa "${first.entry.data.name}", el de menor altitud.`,
+        `Ningún destino del piso ${zone} está marcado como principal; se usa "${chosen.entry.data.name}", el de menor altitud.`,
       );
     }
   }

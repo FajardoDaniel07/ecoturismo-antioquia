@@ -1,4 +1,3 @@
-import { existsSync } from 'node:fs';
 import path from 'node:path';
 
 export type BuildMode = 'preview' | 'release';
@@ -14,19 +13,22 @@ const root = process.cwd();
 /**
  * Escenarios de prueba (plan, "Escenarios de prueba"). Cada uno se construye en su propia carpeta y se
  * sirve en su propio puerto. `completo` es el que usan los proyectos de Playwright por defecto.
- * Los demás se añaden aquí cuando existan sus fixtures de contenido en `tests/fixtures/contenido/<nombre>/`.
- * Hoy solo hay la página de plantilla, así que `completo` usa `src/content`.
+ * Su contenido sale de `tests/fixtures/content/<nombre>/`, que genera `scripts/make-fixtures.mjs`.
+ * Los `invalido-*` (T-027) se añaden aquí cuando existan.
  */
-export const scenarios: Scenario[] = [{ name: 'completo', mode: 'preview', port: 4401 }];
+export const scenarios: Scenario[] = [
+  { name: 'completo', mode: 'release', port: 4401 },
+  { name: 'minimo', mode: 'preview', port: 4402 },
+  { name: 'sin-fotos', mode: 'preview', port: 4403 },
+];
 
 export function outDirOf(scenario: Scenario): string {
   return path.join(root, '.tmp', 'e2e', scenario.name);
 }
 
-/** Carpeta de contenido del escenario, o `undefined` si aún no existe (se usa `src/content`). */
-export function contentRootOf(scenario: Scenario): string | undefined {
-  const dir = path.join(root, 'tests', 'fixtures', 'contenido', scenario.name);
-  return existsSync(dir) ? dir : undefined;
+/** Raíz del contenido del escenario para `CONTENT_ROOT`: relativa al proyecto y con barras normales. */
+export function contentRootOf(scenario: Scenario): string {
+  return `tests/fixtures/content/${scenario.name}`;
 }
 
 export function urlOf(scenario: Scenario): string {

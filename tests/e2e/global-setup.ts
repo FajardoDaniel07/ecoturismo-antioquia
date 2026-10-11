@@ -11,8 +11,7 @@ function envFor(scenario: Scenario): NodeJS.ProcessEnv {
     OUT_DIR: outDirOf(scenario),
     SITE_URL: urlOf(scenario),
   };
-  const contentRoot = contentRootOf(scenario);
-  if (contentRoot) env.CONTENT_ROOT = contentRoot;
+  env.CONTENT_ROOT = contentRootOf(scenario);
   return env;
 }
 

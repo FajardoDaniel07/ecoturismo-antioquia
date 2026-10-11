@@ -8,6 +8,27 @@ instalación de las cinco dependencias (`leaflet`, `@types/leaflet`, `typescript
 documento sigue el formato pedido en la definición del agente (tarea atómica, verificación "hecho
 cuando…", agente).
 
+## Estado al pausar (2026-10-10)
+
+El humano pausó el desarrollo. `npm run lint`, `npm run build` y `npm run test` (165 pruebas)
+estaban en verde. Para retomar:
+
+- **Siguiente tarea:** T-043 y T-044 (geometría y etiquetas del perfil), sin empezar. Después,
+  T-046 en adelante.
+- **Orden cambiado:** T-040 a T-045 se adelantaron a T-027, porque T-027 necesita una página que
+  llame a `loadSite()` y esa llega en T-051. T-027 va después de T-051.
+- **T-022 sin cerrar:** los tres escenarios existen (`scripts/make-fixtures.mjs`) y pasan
+  `astro sync`. Falta probarlos con `validateSite()` en ambos modos y aclarar, con un sync limpio,
+  los avisos de entradas duplicadas del escenario `minimo`.
+- **Dependencia aprobada sin instalar:** `yaml` como devDependency (la usa
+  `tests/unit/content-guide.test.ts`); requiere ADR corto antes de declararla.
+- **Contenido real bloqueado (T-029):** el humano aceptó las recomendaciones de
+  `contenido-propuesto.md` (sección 7), pero falta que diga qué salidas ofrece de verdad.
+- **Por confirmar con el humano:** el texto "Apta desde 1 año" (CA-28) y los identificadores de
+  sección de la navegación (`destinos`, `galeria`, `mapa-de-rutas`, `contacto`).
+- **Riesgo anotado para T-043/T-044:** en la variante compacta del perfil, la separación entre
+  puntos queda justo en 44 px con cinco destinos, sin margen.
+
 ## Cómo leerlo
 
 - Cada tarea cabe en una hora aproximada y la ejecuta un solo agente.
@@ -290,19 +311,19 @@ avisos de contenido.
 
 ## H4 — Base, hero, perfil, láminas y punto de control CA-124
 
-- [ ] **T-040** · `astro-developer` — Formatos de cifras: altitud, rango, clima, duración,
+- [x] **T-040** · `astro-developer` — Formatos de cifras: altitud, rango, clima, duración,
   distancia y desnivel, edad, dificultad, fecha larga.
   - Archivos: `src/lib/format/units.ts`, `tests/unit/units.test.ts`.
   - CA: CA-2, CA-22 a CA-28, CA-103. Depende de: T-027.
   - Hecho cuando: las pruebas cubren los ejemplos literales de la spec ("2500 m", "8,5 km, 400 m de
     subida", "1 hora", "Apta para todas las edades").
-- [ ] **T-041** · `astro-developer` [P] — Orden y bloques por piso: `compareByAltitude`,
+- [x] **T-041** · `astro-developer` [P] — Orden y bloques por piso: `compareByAltitude`,
   `groupByZone`, `resolveFeatured`.
   - Archivos: `src/lib/altitude/sort.ts`, `tests/unit/sort.test.ts`.
   - CA: CA-12 a CA-15. Depende de: T-027.
   - Hecho cuando: las pruebas cubren empate de altitud, piso vacío, piso con un destino y piso sin
     principal marcado.
-- [ ] **T-042** · `astro-developer` [P] — Utilidades pequeñas: título de documento, enlaces de
+- [x] **T-042** · `astro-developer` [P] — Utilidades pequeñas: título de documento, enlaces de
   navegación según secciones publicadas, enlace y mensaje de WhatsApp, formato del número.
   - Archivos: `src/lib/seo/meta.ts`, `src/lib/nav.ts`, `src/lib/contact/whatsapp.ts`, y sus pruebas.
   - CA: CA-33, CA-36, CA-83, CA-93. Depende de: T-027.
@@ -320,7 +341,7 @@ avisos de contenido.
   - CA: CA-5, CA-6. Depende de: T-043.
   - Hecho cuando: con el escenario `completo` ninguna etiqueta se solapa con otra ni con un obstáculo
     en las tres variantes, y un caso forzado produce aviso con el nombre del destino.
-- [ ] **T-045** · `astro-developer` [P] — Curvas de nivel de las cuatro láminas.
+- [x] **T-045** · `astro-developer` [P] — Curvas de nivel de las cuatro láminas.
   - Archivos: `src/lib/altitude/contours.ts`, `tests/unit/contours.test.ts`.
   - CA: CA-39. Depende de: T-027.
   - Hecho cuando: dos llamadas dan el mismo resultado, los cuatro pisos dan dibujos distintos y cada

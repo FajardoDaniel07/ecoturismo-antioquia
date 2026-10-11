@@ -1,0 +1,38 @@
+{
+  "type": "Feature",
+  "geometry": {
+    "type": "LineString",
+    "coordinates": [
+      [
+        -75.3,
+        6.4,
+        3100
+      ],
+      [
+        -75.296,
+        6.404,
+        3200
+      ],
+      [
+        -75.292,
+        6.409,
+        3320
+      ],
+      [
+        -75.288,
+        6.412,
+        3390
+      ]
+    ]
+  },
+  "properties": {
+    "name": "Ascenso a la Laguna",
+    "destino": "laguna-espejo-gris",
+    "elevation": {
+      "minM": 3100,
+      "maxM": 3390
+    },
+    "distanceKm": 14,
+    "difficulty": "demanding"
+  }
+}

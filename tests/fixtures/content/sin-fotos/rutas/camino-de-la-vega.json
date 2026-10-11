@@ -1,0 +1,33 @@
+{
+  "type": "Feature",
+  "geometry": {
+    "type": "LineString",
+    "coordinates": [
+      [
+        -75.6,
+        6.1,
+        300
+      ],
+      [
+        -75.597,
+        6.104,
+        340
+      ],
+      [
+        -75.594,
+        6.108,
+        380
+      ]
+    ]
+  },
+  "properties": {
+    "name": "Camino de la Vega",
+    "destino": "vega-del-rio-manso",
+    "elevation": {
+      "minM": 300,
+      "maxM": 380
+    },
+    "distanceKm": 4,
+    "difficulty": "easy"
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "type": "Feature",
+  "geometry": {
+    "type": "LineString",
+    "coordinates": [
+      [
+        -75.4,
+        6.3,
+        1500
+      ],
+      [
+        -75.396,
+        6.304,
+        1580
+      ],
+      [
+        -75.392,
+        6.309,
+        1690
+      ],
+      [
+        -75.388,
+        6.312,
+        1760
+      ]
+    ]
+  },
+  "properties": {
+    "name": "Camino del Cafetal",
+    "destino": "cafetal-de-la-loma-alta",
+    "elevation": {
+      "minM": 1500,
+      "maxM": 1760
+    },
+    "distanceKm": 9,
+    "difficulty": "moderate"
+  }
+}
