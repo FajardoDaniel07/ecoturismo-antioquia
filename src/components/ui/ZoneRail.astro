@@ -13,12 +13,12 @@ interface Props {
   zones: ZoneId[];
   range?: { fromM: number; toM: number };
   heading?: string;
-  headingLevel?: 2 | 3;
+  headingLevel?: 2 | 3 | 'none';
   id?: string;
 }
 
 const { zones, range, heading, headingLevel = 3, id } = Astro.props;
-const Heading = `h${headingLevel}` as 'h2' | 'h3';
+const Heading = (headingLevel === 'none' ? 'p' : `h${headingLevel}`) as 'h2' | 'h3' | 'p';
 
 const SWATCH: Record<ZoneId, string> = {
   warm: 'bg-zone-warm',

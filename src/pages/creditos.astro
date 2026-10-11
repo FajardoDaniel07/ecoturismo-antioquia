@@ -1,0 +1,64 @@
+---
+/**
+ * Créditos de las fotos (S12, CA-44, CA-45, CA-50): sale de las fotos publicadas, sin contenido
+ * propio que mantener. El pie siempre la enlaza; sin fotos, lo dice.
+ */
+import Photo from '../components/ui/Photo.astro';
+import PhotoCredit from '../components/ui/PhotoCredit.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { loadSite } from '../lib/content/load';
+import { documentTitle } from '../lib/seo/meta';
+
+const site = await loadSite();
+const withPhotos = site.destinos.filter((d) => d.photos.length > 0);
+---
+
+<BaseLayout
+  title={documentTitle('Créditos de las fotos')}
+  description="Autor, licencia y fuente de cada foto de este sitio."
+>
+  <article class="mx-auto w-full max-w-page px-5 pt-8 pb-16 md:px-8 md:pt-12 lg:px-12 lg:pb-24">
+    <h1 class="font-display text-2xl font-bold text-ink md:text-3xl">Créditos de las fotos</h1>
+    {withPhotos.length === 0 ? (
+      <p class="mt-4 max-w-prose text-lg text-ink">Por ahora el sitio no tiene fotos publicadas.</p>
+    ) : (
+      <>
+        <p class="mt-4 max-w-prose text-lg text-ink">
+          Todas las fotos de este sitio tienen licencia libre. Gracias a quienes las tomaron y las
+          compartieron.
+        </p>
+        <div class="mt-8 space-y-12">
+          {withPhotos.map((d) => (
+            <section aria-labelledby={`creditos-${d.id}`}>
+              <h2 id={`creditos-${d.id}`} class="font-display text-xl font-bold text-ink">
+                <a
+                  href={d.href}
+                  class="underline decoration-1 underline-offset-4 hover:decoration-2"
+                >
+                  {d.name}
+                </a>
+              </h2>
+              <ul class="m-0 mt-4 grid list-none grid-cols-1 gap-6 p-0 md:grid-cols-2">
+                {d.photos.map((photo) => (
+                  <li class="flex gap-4">
+                    <Photo
+                      photo={photo}
+                      slot="credit"
+                      sizes="96px"
+                      loading="lazy"
+                      class="w-24 shrink-0"
+                    />
+                    <div>
+                      <p class="m-0 text-ink">{photo.alt}</p>
+                      <PhotoCredit photo={photo} />
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ))}
+        </div>
+      </>
+    )}
+  </article>
+</BaseLayout>

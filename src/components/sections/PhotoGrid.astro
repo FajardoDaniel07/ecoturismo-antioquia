@@ -1,0 +1,41 @@
+---
+/**
+ * Cuadrícula de fotos (S8.1, CA-41, CA-53, CA-65): dos columnas en móvil, cuatro en tableta y cinco
+ * en escritorio. Una foto 3:2 ocupa dos columnas y una 4:5 o 1:1 ocupa una; las filas se alinean
+ * arriba. Sin JavaScript las miniaturas son imágenes, no enlaces ni botones; la isla del visor las
+ * envolverá más adelante. Cada foto lleva su pie: destino y piso (si `showDestino`) y el crédito.
+ */
+import Photo from '../ui/Photo.astro';
+import PhotoCredit from '../ui/PhotoCredit.astro';
+import ZoneTag from '../ui/ZoneTag.astro';
+import type { Photo as PhotoModel } from '../../lib/content/validate';
+
+interface Props {
+  photos: PhotoModel[];
+  showDestino: boolean;
+}
+
+const { photos, showDestino } = Astro.props;
+const SIZES = '(min-width: 1024px) 220px, (min-width: 768px) 25vw, 50vw';
+const WIDE_SIZES = '(min-width: 1024px) 440px, (min-width: 768px) 50vw, 100vw';
+---
+
+<ul class="m-0 grid list-none grid-cols-2 items-start gap-4 p-0 md:grid-cols-4 md:gap-6 lg:grid-cols-5">
+  {photos.map((photo) => {
+    const wide = photo.ratio === '3:2';
+    return (
+      <li class:list={[wide ? 'col-span-2' : 'col-span-1']} data-photo-item>
+        <Photo photo={photo} slot="grid" sizes={wide ? WIDE_SIZES : SIZES} loading="lazy" />
+        <div class="mt-2">
+          {showDestino && (
+            <p class="m-0 font-medium text-ink">
+              {photo.destinoName}
+              <ZoneTag zone={photo.zone} class="ml-2 text-ink-muted" />
+            </p>
+          )}
+          <PhotoCredit photo={photo} />
+        </div>
+      </li>
+    );
+  })}
+</ul>

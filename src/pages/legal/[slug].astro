@@ -1,0 +1,54 @@
+---
+/**
+ * Páginas legales (S11, S14.3; CA-118, CA-119, CA-121, CA-134): una por texto. El cuerpo es el
+ * Markdown del contenido. Modo académico: rótulo de texto de muestra, sin fecha ni identificador.
+ * Modo de operador real: banda de borrador (en vista previa) o fecha de última revisión, y el
+ * identificador oficial en la política de datos, solo si fue entregado.
+ */
+import DraftBanner from '../../components/ui/DraftBanner.astro';
+import SampleLabel from '../../components/ui/SampleLabel.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { loadSite, renderBody } from '../../lib/content/load';
+import { formatLongDate } from '../../lib/format/units';
+import { documentTitle } from '../../lib/seo/meta';
+
+export async function getStaticPaths() {
+  const site = await loadSite();
+  return site.legal.map((l) => ({ params: { slug: l.slug } }));
+}
+
+const { slug } = Astro.params;
+const site = await loadSite();
+const doc = site.legal.find((l) => l.slug === slug);
+if (!doc) throw new Error(`No hay texto legal con el slug "${slug}".`);
+const Body = await renderBody('legal', doc.id);
+
+const academic = site.siteKind === 'academic';
+const draft = !academic && doc.status === 'draft';
+const showIdentifiers = !academic && doc.kind === 'privacy' && site.operator.identifiers.length > 0;
+---
+
+<BaseLayout title={documentTitle(doc.title)} description={doc.summary}>
+  {draft && <DraftBanner />}
+  <article class="mx-auto w-full max-w-page px-5 pt-8 pb-16 md:px-8 md:pt-12 lg:grid lg:grid-cols-12 lg:gap-x-6 lg:px-12 lg:pb-24">
+    <div class="lg:col-span-8 lg:col-start-3">
+      <h1 class="font-display text-2xl font-bold text-ink md:text-3xl">{doc.title}</h1>
+      {academic && <SampleLabel />}
+      {!academic && doc.status === 'reviewed' && doc.reviewedOn && (
+        <p class="mt-2 text-sm text-ink-muted">Última revisión: {formatLongDate(doc.reviewedOn)}</p>
+      )}
+      {showIdentifiers && (
+        <ul class="mt-4 text-sm text-ink-muted">
+          {site.operator.identifiers.map((i) => (
+            <li>
+              {i.label.charAt(0).toUpperCase() + i.label.slice(1)}: {i.value}
+            </li>
+          ))}
+        </ul>
+      )}
+      <div class="richtext mt-6">
+        <Body />
+      </div>
+    </div>
+  </article>
+</BaseLayout>

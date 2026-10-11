@@ -1,0 +1,58 @@
+---
+/**
+ * Perfil de elevación de una ruta (S9.4, CA-76): línea de 2 px del color fuerte del piso con el
+ * área inferior en su tinte. Rótulos de elevación mínima y máxima, y en la base "0 km" y la
+ * distancia total. La alternativa en texto va visible debajo. Sin animación. El gráfico es
+ * decorativo para el lector de pantalla: la alternativa en texto lo cuenta.
+ */
+import type { ZoneId } from '../../lib/altitude/zones';
+import { formatDistanceAscent } from '../../lib/format/units';
+import type { ElevationProfileModel } from '../../lib/routes/elevation-profile';
+
+interface Props {
+  model: ElevationProfileModel;
+  zone: ZoneId;
+}
+
+const { model, zone } = Astro.props;
+
+const LINE: Record<ZoneId, string> = {
+  warm: 'stroke-zone-warm',
+  temperate: 'stroke-zone-temperate',
+  cold: 'stroke-zone-cold',
+  paramo: 'stroke-zone-paramo',
+};
+const TINT: Record<ZoneId, string> = {
+  warm: 'fill-zone-warm-tint',
+  temperate: 'fill-zone-temperate-tint',
+  cold: 'fill-zone-cold-tint',
+  paramo: 'fill-zone-paramo-tint',
+};
+const total = formatDistanceAscent(model.totalKm, undefined)?.value ?? `${model.totalKm} km`;
+---
+
+<figure class="m-0">
+  <div class="relative" style={`height:${model.height}px`} aria-hidden="true">
+    <svg
+      class="absolute inset-0 h-full w-full"
+      viewBox={`0 0 ${model.width} ${model.height}`}
+      preserveAspectRatio="none"
+      focusable="false"
+    >
+      <path d={model.areaPath} class={TINT[zone]}></path>
+      <path
+        d={model.linePath}
+        fill="none"
+        stroke-linejoin="round"
+        class={`${LINE[zone]} stroke-2 [vector-effect:non-scaling-stroke]`}
+      ></path>
+    </svg>
+    <span class="absolute top-0 left-1 text-sm leading-5 text-ink-muted">{model.maxM} m</span>
+    <span class="absolute bottom-0 left-1 text-sm leading-5 text-ink-muted">{model.minM} m</span>
+  </div>
+  <div aria-hidden="true" class="mt-1 flex justify-between text-sm leading-5 text-ink-muted">
+    <span>0 km</span>
+    <span>{total}</span>
+  </div>
+  <figcaption class="mt-2 text-ink">{model.altText}</figcaption>
+</figure>

@@ -96,3 +96,8 @@ export function formatLongDate(d: Date): string {
 export function formatAltitudeSpan(fromM: number, toM: number): string {
   return `De ${num(fromM)} a ${num(toM)} m`;
 }
+
+/** "Elevación: de 1500 a 1620 m": elevación mínima y máxima de una ruta (S5, CA-21). */
+export function formatElevationRange(minM: number, maxM: number): string {
+  return `Elevación: de ${num(minM)} a ${num(maxM)} m`;
+}

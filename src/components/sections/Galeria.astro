@@ -1,0 +1,51 @@
+---
+/**
+ * Galería del inicio (S8.1, CA-51, CA-52): fotos agrupadas por piso, con la regla de altitud de
+ * cada grupo. Si no hay ninguna foto, la página no la incluye (no hay encabezado ni contenedor).
+ */
+import PhotoGrid from './PhotoGrid.astro';
+import ZoneRail from '../ui/ZoneRail.astro';
+import type { Territory } from '../../lib/content/schemas';
+import type { GalleryGroup } from '../../lib/gallery/group';
+import { zoneRange } from '../../lib/altitude/zones';
+import { SECTION_IDS } from '../../lib/nav';
+
+interface Props {
+  groups: GalleryGroup[];
+  territory: Territory;
+}
+
+const { groups, territory } = Astro.props;
+---
+
+<section id={SECTION_IDS.galeria} aria-labelledby="galeria-titulo" class="pb-16 lg:pb-24">
+  <div class="mx-auto w-full max-w-page px-5 md:px-8 lg:px-12">
+    <h2
+      id="galeria-titulo"
+      tabindex="-1"
+      class="font-display text-2xl font-bold text-ink focus:outline-none md:text-3xl"
+    >
+      Galería
+    </h2>
+    <p class="mt-2 text-ink-muted">Fotos de los destinos, del valle al páramo.</p>
+
+    <div class="mt-8 space-y-12 lg:space-y-16">
+      {groups.map((group) => {
+        const first = group.zones[0];
+        const last = group.zones[group.zones.length - 1];
+        const range =
+          first && last
+            ? {
+                fromM: zoneRange(first, territory).fromM,
+                toM: zoneRange(last, territory).toM,
+              }
+            : undefined;
+        return (
+          <ZoneRail zones={group.zones} range={range} heading={group.heading} headingLevel={3}>
+            <PhotoGrid photos={group.photos} showDestino />
+          </ZoneRail>
+        );
+      })}
+    </div>
+  </div>
+</section>

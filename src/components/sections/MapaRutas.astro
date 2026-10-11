@@ -1,0 +1,38 @@
+---
+/**
+ * Mapa de rutas, forma estática (S9, CA-67, CA-68, CA-80): título, línea y lista de rutas a todo el
+ * ancho, con la letra clave de cada una. La caja del mapa y el panel los añade la isla del mapa
+ * (H6), solo con JavaScript. Si no hay rutas publicadas, la página no incluye la sección.
+ */
+import RoutePanelTemplates from './RoutePanelTemplates.astro';
+import RouteList from './RouteList.astro';
+import type { Ruta } from '../../lib/content/validate';
+import { SECTION_IDS } from '../../lib/nav';
+import { styleRoutes } from '../../lib/routes/style';
+
+interface Props {
+  rutas: Ruta[];
+}
+
+const { rutas } = Astro.props;
+const styled = styleRoutes(rutas);
+---
+
+<section id={SECTION_IDS.mapa} aria-labelledby="mapa-titulo" class="pb-16 lg:pb-24">
+  <div class="mx-auto w-full max-w-page px-5 md:px-8 lg:px-12">
+    <h2
+      id="mapa-titulo"
+      tabindex="-1"
+      class="font-display text-2xl font-bold text-ink focus:outline-none md:text-3xl"
+    >
+      Mapa de rutas
+    </h2>
+    <p class="mt-2 max-w-prose text-ink-muted">
+      Cada ruta parte de un destino. Aquí ves cuánto dura y cuánto sube cada una.
+    </p>
+    <div class="mt-8">
+      <RouteList rutas={styled} />
+    </div>
+  </div>
+  <RoutePanelTemplates rutas={styled} />
+</section>

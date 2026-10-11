@@ -1,0 +1,33 @@
+---
+/**
+ * Página de detalle de un destino (CA-31 a CA-36): una por cada destino publicado.
+ */
+import DestinoDetalle from '../../components/sections/DestinoDetalle.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { loadSite, renderBody } from '../../lib/content/load';
+import { documentTitle } from '../../lib/seo/meta';
+
+export async function getStaticPaths() {
+  const site = await loadSite();
+  return site.destinos.map((d) => ({ params: { slug: d.id } }));
+}
+
+const { slug } = Astro.params;
+const site = await loadSite();
+const destino = site.destinos.find((d) => d.id === slug);
+if (!destino) throw new Error(`No hay destino publicado con el slug "${slug}".`);
+const rutas = site.rutas.filter((r) => r.destino.id === destino.id);
+const Body = await renderBody('destinos', destino.id);
+---
+
+<BaseLayout title={documentTitle(destino.name)} description={destino.summary}>
+  <DestinoDetalle
+    destino={destino}
+    rutas={rutas}
+    territory={site.territory}
+    operator={site.operator}
+    siteKind={site.siteKind}
+  >
+    <Body />
+  </DestinoDetalle>
+</BaseLayout>

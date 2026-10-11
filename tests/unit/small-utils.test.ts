@@ -1,7 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import { buildWhatsAppUrl, formatPhone, whatsAppMessage } from '../../src/lib/contact/whatsapp';
 import { navLinks } from '../../src/lib/nav';
-import { DESCRIPTION_MAX, TITLE_MAX, documentTitle } from '../../src/lib/seo/meta';
+import {
+  DESCRIPTION_MAX,
+  TITLE_MAX,
+  buildRobotsTxt,
+  buildSitemapXml,
+  documentTitle,
+} from '../../src/lib/seo/meta';
 
 describe('documentTitle (CA-33)', () => {
   it('añade el nombre del sitio', () => {
@@ -79,5 +85,28 @@ describe('navLinks (CA-93)', () => {
 
   it('los enlaces llevan a la página de inicio', () => {
     for (const l of navLinks({ galeria: true, mapa: true })) expect(l.href).toMatch(/^\/#[a-z-]+$/);
+  });
+});
+
+describe('mapa del sitio y robots.txt (CA-97, CA-133)', () => {
+  it('el mapa lista cada dirección y escapa los caracteres especiales', () => {
+    const xml = buildSitemapXml(['https://x.co/', 'https://x.co/destinos/a-b/?q=1&r=2']);
+    expect(xml).toContain('<loc>https://x.co/</loc>');
+    expect(xml).toContain('<loc>https://x.co/destinos/a-b/?q=1&amp;r=2</loc>');
+    expect(xml.startsWith('<?xml')).toBe(true);
+  });
+
+  it('sitio indexable: permite el rastreo y referencia el mapa', () => {
+    const txt = buildRobotsTxt(true, 'https://x.co/sitemap.xml');
+    expect(txt).toContain('Allow: /');
+    expect(txt).toContain('Sitemap: https://x.co/sitemap.xml');
+  });
+
+  it('sitio no indexable: no bloquea el rastreo ni anuncia mapa, y lo explica', () => {
+    const txt = buildRobotsTxt(false, 'https://x.co/sitemap.xml');
+    expect(txt).toMatch(/^Disallow:$/m);
+    expect(txt).not.toMatch(/Disallow: \//);
+    expect(txt).not.toContain('Sitemap');
+    expect(txt).toContain('no debe indexarse');
   });
 });

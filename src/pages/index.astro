@@ -2,11 +2,15 @@
 /**
  * Inicio: hero y listado de destinos. Galería, mapa y contacto se añaden después.
  */
+import Contacto from '../components/sections/Contacto.astro';
 import Destinos from '../components/sections/Destinos.astro';
+import Galeria from '../components/sections/Galeria.astro';
+import MapaRutas from '../components/sections/MapaRutas.astro';
 import Hero from '../components/sections/Hero.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { groupByZone } from '../lib/altitude/sort';
 import { loadSite } from '../lib/content/load';
+import { groupGalleryPhotos } from '../lib/gallery/group';
 import { documentTitle } from '../lib/seo/meta';
 
 const site = await loadSite();
@@ -18,4 +22,9 @@ const site = await loadSite();
 >
   <Hero territory={site.territory} destinos={site.destinos} />
   <Destinos blocks={groupByZone(site.destinos, site.territory)} />
+  {site.sections.galeria && (
+    <Galeria groups={groupGalleryPhotos(site.photos)} territory={site.territory} />
+  )}
+  {site.sections.mapa && <MapaRutas rutas={site.rutas} />}
+  <Contacto operator={site.operator} siteKind={site.siteKind} variant="section" />
 </BaseLayout>

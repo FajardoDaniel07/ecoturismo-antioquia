@@ -66,3 +66,52 @@
     transform: translateX(101%);
   }
 }
+
+/* Texto largo en Markdown (descripción de un destino, páginas legales): el reinicio de estilos
+   quita los de los elementos; aquí se devuelven con los tokens. Columna de 70 caracteres. */
+@layer components {
+  .richtext {
+    max-width: var(--container-prose);
+    color: var(--color-ink);
+  }
+  .richtext > * + * {
+    margin-top: var(--space-4);
+  }
+  .richtext h2 {
+    margin-top: var(--space-8);
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    line-height: var(--text-xl--line-height);
+    font-weight: var(--font-weight-bold);
+  }
+  .richtext h3 {
+    margin-top: var(--space-6);
+    font-size: var(--text-lg);
+    line-height: var(--text-lg--line-height);
+    font-weight: var(--font-weight-semibold);
+  }
+  .richtext ul,
+  .richtext ol {
+    padding-left: var(--space-6);
+  }
+  .richtext ul {
+    list-style: disc;
+  }
+  .richtext ol {
+    list-style: decimal;
+  }
+  .richtext li + li {
+    margin-top: var(--space-2);
+  }
+  .richtext a {
+    color: var(--color-primary);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+  .richtext a:hover {
+    color: var(--color-ink);
+  }
+  .richtext strong {
+    font-weight: var(--font-weight-semibold);
+  }
+}
