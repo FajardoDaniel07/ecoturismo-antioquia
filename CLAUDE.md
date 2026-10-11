@@ -122,7 +122,8 @@ tests/
    Fuera de las islas solo se admiten tres ayudas mínimas (1.5 KB gzip en total): la clase `js` en
    `<html>`, el cierre del menú móvil con Esc o al elegir enlace, y el propio cargador.
 2. **Una sola fuente de verdad para el contenido.** Ningún componente tiene datos de destinos
-   "quemados"; todo sale de `getCollection()`.
+   "quemados". Las páginas y `BaseLayout` obtienen los datos de `loadSite()` y los pasan por props;
+   ningún componente llama a `getCollection()` directamente.
 3. **Lógica fuera de los componentes.** Filtros, cálculos de distancia, ordenamiento, etc. van en
    `src/lib/` como funciones puras con pruebas unitarias.
 4. **Mejora progresiva.** Sin JS, la galería muestra las imágenes en una cuadrícula y el mapa muestra
@@ -149,6 +150,10 @@ Cada feature pasa por estas fases, en orden, dentro de `specs/NNN-nombre-feature
 | 6. Implementar | `astro-developer` | `frontend-design` | código | `npm run build` y `npm run lint` en verde |
 | 7. Probar | `qa-engineer` | — | `tests/**` | Cada criterio de aceptación tiene al menos una prueba |
 | 8. Revisar | `quality-reviewer` | `frontend-design` | informe | Sin hallazgos bloqueantes |
+
+El esquema de contenido (`src/lib/content/schemas.ts` y `content.config.ts`) se construye al
+principio de la fase 6, antes de la fase 5: `content-curator` lo necesita para validar lo que
+escribe. Después, contenido e implementación avanzan en paralelo.
 
 **El humano aprueba al final de las fases 0, 1, 2, 3 y 8.** No se escribe código antes de que `plan.md`
 esté aprobado. Si durante la implementación se descubre que la spec está mal, se actualiza la spec

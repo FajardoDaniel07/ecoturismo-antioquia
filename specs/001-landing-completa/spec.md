@@ -492,8 +492,10 @@ respaldo; no hay formulario en esta feature.
   hacerlas todas sin ayuda. **[manual]**
 - **CA-110** — Dado un ancho de 360 px, cuando recorro cada página, entonces no hay desplazamiento
   horizontal, ningún texto o control queda cortado, y todo control táctil mide al menos 44 × 44 px.
-  La única excepción son los enlaces en línea del crédito de las fotos (CA-44); ningún otro control
-  ni enlace queda exceptuado. **[e2e]**
+  Las únicas excepciones son los enlaces en línea del crédito de las fotos (CA-44) y las líneas de
+  ruta dibujadas sobre el mapa, cuya zona activa puede medir menos de 44 px porque cada ruta se
+  puede seleccionar también con su marcador y con su botón en la lista, que sí miden al menos
+  44 × 44 px. Ningún otro control ni enlace queda exceptuado. **[e2e]**
 - **CA-111** — Dado un zoom del navegador al 200 % y un ancho equivalente a 320 px (reflujo a 400 %),
   cuando recorro cada página, entonces el contenido sigue legible, sin pérdida de información ni de
   funciones y sin desplazamiento horizontal. **[manual]**
@@ -685,5 +687,8 @@ Estado: APROBADA (2026-10-10, aprobada por el humano)
 Nota de revisión (2026-10-10, tras la fase 2): se incorporaron los supuestos de diseño aceptados por
 el humano. Criterios cambiados: CA-2, CA-5, CA-7, CA-21, CA-22, CA-23, CA-41, CA-42, CA-44, CA-52,
 CA-68, CA-69, CA-70, CA-103 y CA-110. Criterios añadidos: CA-122, CA-123 y CA-124. Sin renumerar.
+
+Nota de revisión (2026-10-10, tras la fase 3): CA-110 exceptúa también las líneas de ruta del mapa
+del mínimo de 44 px, por decisión del humano.
 
 Diseño de la fase 2 aprobado (2026-10-10). Lista para continuar con `software-architect` (fase 3).

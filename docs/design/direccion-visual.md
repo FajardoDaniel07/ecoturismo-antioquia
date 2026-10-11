@@ -132,11 +132,14 @@ Dos familias, ambas con licencia SIL Open Font License y disponibles en Google F
 ### 3.3 Carga
 
 - Fuentes autoalojadas, con `font-display: swap` y subconjunto latino (cubre el español).
-- Dos archivos variables: Besley romana e Instrument Sans romana. No se carga cursiva de ninguna.
+- Dos archivos: **Besley estática de peso 700** e **Instrument Sans variable** (pesos 400 a 600).
+  No se carga cursiva de ninguna.
+- Todo texto en Besley va en peso 700: titulares, cifras de altitud y nombre del sitio. No hay
+  Besley en otro peso; si un diseño futuro lo necesita, es un archivo más y se decide aquí.
 - Solo se precarga Besley, porque dibuja el titular del hero.
 - Las pilas de respaldo están en los tokens (`--font-display`, `--font-sans`). Son respaldo de
   carga, no una opción de diseño.
-- El mecanismo de carga lo decide `software-architect` en el plan (sección 9).
+- El mecanismo de carga está decidido en el ADR 0007 (fuentes autoalojadas sin dependencia).
 
 ---
 
@@ -149,9 +152,9 @@ La paleta sale del territorio y cada piso térmico tiene su color.
 | Nombre | Hex | Token | Uso |
 |---|---|---|---|
 | Papel | `#F5F6F0` | `--color-bg` | Fondo de página. Frío, sin tono crema |
-| Superficie | `#E9ECE1` | `--color-surface` | Fichas, panel del mapa |
+| Superficie | `#E9ECE1` | `--color-surface` | Fichas, panel del mapa, sección de contacto |
 | Tinta | `#1D2B26` | `--color-ink` | Texto principal; fondo del visor y del pie |
-| Tinta suave | `#4C5A53` | `--color-ink-muted` | Texto secundario; borde de campos |
+| Tinta suave | `#4C5A53` | `--color-ink-muted` | Texto secundario; borde de la caja del mapa |
 | Línea | `#C9CFC2` | `--color-line` | Líneas decorativas y curvas de nivel |
 | Blanco | `#FFFFFF` | `--color-white` | Texto sobre colores de piso |
 | Cafetal | `#2F5D43` | `--color-primary` | Enlaces, botón secundario, mensajes de éxito |
@@ -278,8 +281,9 @@ El humano pidió un tono menos frío. La paleta lo resuelve con cuatro decisione
 - La única textura son las **curvas de nivel**: líneas finas en color de línea, dibujadas en SVG.
 - Aparecen en el hero y en la lámina sin fotografía (sección 6.5). En ningún otro lugar.
 - Los fondos son planos. Los radios son mínimos: 2 px en fotografías, 4 px en controles.
-- Solo proyectan sombra los elementos que flotan sobre otro contenido: la ventana emergente del
-  mapa y los controles del visor.
+- Solo proyectan sombra los controles que flotan sobre el mapa (acercar, alejar y "Ver todas las
+  rutas"), con `--shadow-overlay`. El mapa no tiene ventana emergente y el visor no lleva sombra:
+  sus controles van sobre tinta opaca.
 
 ### 5.4 Movimiento
 
@@ -365,7 +369,7 @@ asesoría legal.
 - Cada foto muestra su crédito **visible**, junto a la imagen o en el pie del visor: autor,
   licencia con enlace y enlace a la fuente. Tamaño 14 px, tinta suave.
 - El crédito es una sola línea de texto ("Foto: autor. Licencia. Fuente."), con interlineado de
-  24 px. Si no cabe, sigue en la línea siguiente como cualquier texto.
+  24 px (`--space-6`). Si no cabe, sigue en la línea siguiente como cualquier texto.
 - Sus dos enlaces no miden 44 px: tienen un área activa de al menos 24 × 24 px y 8 px o más de
   separación entre sí (excepción de la sección 5.6).
 - Si la foto fue recortada, el crédito lo dice ("recortada").

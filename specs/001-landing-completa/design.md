@@ -542,9 +542,9 @@ humano.
 | Qué | Medida |
 |---|---|
 | En qué se apoya | La excepción "en línea" del criterio 2.5.8 de WCAG 2.2 (tamaño del objetivo, nivel AA): el objetivo está dentro de una frase y su tamaño lo limita el interlineado del texto |
-| Interlineado del crédito | 24 px |
-| Área activa de cada enlace | Al menos 24 px de alto, con 4 px de relleno arriba y abajo que no mueven el texto, y al menos 24 px de ancho |
-| Separación entre los dos enlaces | Al menos 8 px: el punto, el espacio y un margen |
+| Interlineado del crédito | 24 px, del token `--space-6`. Sustituye, solo en el crédito, al interlineado propio de `--text-sm` |
+| Área activa de cada enlace | Al menos 24 px de alto, con 4 px (`--space-1`) de relleno arriba y abajo que no mueven el texto, y al menos 24 px de ancho |
+| Separación entre los dos enlaces | Al menos 8 px (`--space-2`): el punto, el espacio y un margen |
 | Foco | El anillo de S1, alrededor del texto del enlace |
 
 Con esas medidas, los enlaces cumplen por tamaño los 24 × 24 px del criterio 2.5.8 aunque no se
@@ -782,16 +782,19 @@ Siempre visible, con o sin JavaScript. Es el contenido base de la sección.
   "Ir a {nombre del destino}".
 - Cada ruta lleva a la izquierda una franja de 6 px del color fuerte del piso de su destino.
 
-Cuando el mapa está activo, cada ruta gana tres cosas:
+- **Letra clave** (CA-68). Cada ruta lleva siempre, junto a su nombre, una letra (A, B, C…) en un
+  disco de 28 px del color fuerte del piso, con letra blanca. Se ve con y sin JavaScript, y
+  también si el mapa falla. Es la misma letra de su marcador en el mapa.
+- Las letras siguen el orden de la lista. No son numeración decorativa: son la clave que une cada
+  elemento de la lista con su marcador. Para el lector de pantalla, la letra forma parte del
+  nombre de la ruta ("Ruta A, {nombre}").
+
+Solo cuando el mapa está activo, cada ruta gana dos cosas más:
 
 | Añadido | Forma |
 |---|---|
-| Clave | Una letra (A, B, C…) en un disco de 28 px del color fuerte del piso, con letra blanca. Es la misma letra de su marcador en el mapa |
 | Muestra de trazo | Un segmento de 48 px con el patrón de su línea en el mapa |
 | Botón | "Ver en el mapa", botón secundario |
-
-Las letras siguen el orden de la lista. No son numeración decorativa: son la clave que une cada
-elemento de la lista con su marcador.
 
 #### S9.2 Layout
 
@@ -934,8 +937,9 @@ tesela.
   del color de error a la izquierda: "El mapa no está disponible en este momento. Todas las rutas
   siguen en la lista." Debajo, el botón secundario "Volver a cargar el mapa".
 - El mensaje se anuncia al lector de pantalla.
-- Desaparecen el panel de ruta seleccionada y, en la lista, las letras, las muestras de trazo y
-  los botones "Ver en el mapa". La lista queda completa y operativa, como sin JavaScript.
+- Desaparecen el panel de ruta seleccionada y, en la lista, las muestras de trazo y los botones
+  "Ver en el mapa". Las letras clave se quedan. La lista queda completa y operativa, como sin
+  JavaScript.
 - Si alguna tesela ya había cargado y otras fallan después, el mapa sigue: los huecos se ven en
   color superficie y las rutas siguen dibujadas.
 
@@ -1046,7 +1050,7 @@ condiciones", "Política de cancelación".
 | Mapa | Sección y enlace omitidos (CA-67) | Caja reservada con "Cargando el mapa…" | S9.6 | No hay caja de mapa (CA-80) | Anillo en el mapa, controles y marcadores |
 | Ruta seleccionada | Invitación a elegir | — | Se retira si el mapa falla | No existe | Recibe foco al elegir desde la lista |
 | Perfil de elevación | Sin datos por punto: no se dibuja (CA-76) | — | — | No existe | — |
-| Lista de rutas | Sección omitida | — | Completa aunque el mapa falle | Completa, sin letras ni botones | Botón "Ver en el mapa" con estado pulsado |
+| Lista de rutas | Sección omitida | — | Completa aunque el mapa falle, con sus letras clave; sin muestras de trazo ni botones | Completa, con sus letras clave (CA-68); sin muestras de trazo ni botones | Botón "Ver en el mapa" con estado pulsado |
 | Contacto | — | — | — | Igual | Botón principal; enlace de correo |
 | Página legal | — | — | Borrador: banda de aviso | Igual | — |
 | Página de créditos | "Por ahora el sitio no tiene fotos publicadas." | Cajas reservadas | Texto alternativo | Igual | Enlaces |
@@ -1114,7 +1118,7 @@ información.
 
 ## Trazabilidad
 
-Los 113 criterios activos. Los criterios de validación de contenido no tienen interfaz propia: el
+Los 116 criterios activos (CA-1 a CA-83, CA-91 y CA-93 a CA-124). Los criterios de validación de contenido no tienen interfaz propia: el
 diseño fija qué se ve cuando el dato falta, que es siempre "nada".
 
 | Criterios | Tema | Sección |
@@ -1194,6 +1198,9 @@ diseño fija qué se ve cuando el dato falta, que es siempre "nada".
 | CA-118 | Aviso de borrador | S11 |
 | CA-119, CA-120 | Identificadores ausentes o de relleno | S2, S11; sin interfaz para el relleno |
 | CA-121 | Páginas legales revisadas | S11, S2 |
+| CA-122 | Altitud fuera del rango declarado o umbrales desordenados | Sin interfaz: la construcción falla; S3.5 ("Datos que el generador rechaza") |
+| CA-123 | Control "Menú" en 360 px | S2 |
+| CA-124 | Revisión humana con capturas del perfil y las láminas | Punto de control, al inicio; S3.3, S3.10, S6.3 |
 
 ---
 
@@ -1203,6 +1210,10 @@ Ninguno se resolvió en silencio. Cada punto dice qué asume este diseño.
 
 **Resolución (2026-10-10):** el humano aceptó los trece puntos tal como se asumieron, salvo el
 punto 5, que decidió en el otro sentido. `spec-writer` lleva estos supuestos a la spec.
+
+**Registro histórico:** esta sección describe la spec tal como estaba antes de esa revisión. La
+spec vigente ya recoge los trece puntos; ante cualquier diferencia, manda la spec. La zona activa
+de 24 px de las líneas de ruta (S9.5) queda cubierta por la excepción de CA-110.
 
 1. **CA-7, "el destino principal".** Dice "uno por cada piso con destinos más el destino
    principal", pero CA-15 define un principal por piso, no uno del sitio. Este diseño toma el

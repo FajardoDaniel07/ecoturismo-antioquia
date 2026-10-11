@@ -28,16 +28,16 @@
 
   /* Base */
   --color-bg: #f5f6f0; /* papel de lámina: fondo de página */
-  --color-surface: #e9ece1; /* superficie: fichas, formulario, panel del mapa */
+  --color-surface: #e9ece1; /* superficie: fichas, panel del mapa, sección de contacto */
   --color-ink: #1d2b26; /* tinta: texto principal y superficies oscuras */
-  --color-ink-muted: #4c5a53; /* texto secundario; borde de controles de formulario */
+  --color-ink-muted: #4c5a53; /* texto secundario; borde de la caja del mapa */
   --color-line: #c9cfc2; /* líneas decorativas y curvas de nivel; nunca única señal */
   --color-white: #ffffff; /* texto sobre colores de piso y sobre primario */
 
   /* Marca y acción */
   --color-primary: #2f5d43; /* cafetal: enlaces, botón secundario, éxito */
   --color-accent: #e0a526; /* guayacán: SOLO relleno, con tinta encima y borde tinta */
-  --color-danger: #a3271c; /* errores de formulario y de carga */
+  --color-danger: #a3271c; /* errores de carga */
 
   /* Pisos térmicos: color fuerte (texto, líneas de ruta, insignias) */
   --color-zone-warm: #7a4e0e; /* piso cálido: tierra de cañón */
@@ -45,7 +45,7 @@
   --color-zone-cold: #33626f; /* piso frío: bosque de niebla */
   --color-zone-paramo: #5f4f70; /* páramo: frailejón al atardecer */
 
-  /* Pisos térmicos: tinte claro (fondo de bloque y de lámina sin fotografía) */
+  /* Pisos térmicos: tinte claro (fondo de la lámina sin fotografía y estratos del perfil) */
   --color-zone-warm-tint: #f6ebcf;
   --color-zone-temperate-tint: #e1ebdd;
   --color-zone-cold-tint: #dde9ea;
@@ -123,7 +123,7 @@
   --space-3: 0.75rem; /* 12 px */
   --space-4: 1rem; /* 16 px: canal de la grilla en móvil */
   --space-5: 1.25rem; /* 20 px: margen lateral en móvil */
-  --space-6: 1.5rem; /* 24 px: canal de la grilla desde 768 px */
+  --space-6: 1.5rem; /* 24 px: canal de la grilla desde 768 px; interlineado del crédito de foto */
   --space-8: 2rem; /* 32 px */
   --space-12: 3rem; /* 48 px */
   --space-16: 4rem; /* 64 px: separación entre secciones en móvil */
@@ -148,7 +148,7 @@
   --radius-*: initial;
   --radius-none: 0;
   --radius-sm: 0.125rem; /* 2 px: fotografías y láminas */
-  --radius-md: 0.25rem; /* 4 px: botones, campos, panel del mapa */
+  --radius-md: 0.25rem; /* 4 px: botones, fichas, caja y panel del mapa */
   --radius-full: 9999px; /* marcas de dificultad, marcadores del mapa */
 
   /* ------------------------------------------------------------------ */
@@ -156,14 +156,14 @@
   /* ------------------------------------------------------------------ */
   --shadow-*: initial;
   --shadow-none: 0 0 #0000;
-  /* Ventana emergente del mapa y controles del visor: sombra teñida de tinta */
+  /* Solo los controles flotantes del mapa: sombra teñida de tinta */
   --shadow-overlay: 0 8px 24px -8px rgb(29 43 38 / 0.35);
 
   /* ------------------------------------------------------------------ */
   /* Movimiento                                                          */
   /* ------------------------------------------------------------------ */
   --duration-fast: 150ms; /* cambio de color en hover, foco y activo */
-  --duration-base: 250ms; /* abrir y cerrar el visor, desplegar un panel */
+  --duration-base: 250ms; /* abrir y cerrar el visor */
   --duration-draw: 900ms; /* aparición del perfil altitudinal (cubierta que se retira), una vez al cargar */
 
   --ease-*: initial;
