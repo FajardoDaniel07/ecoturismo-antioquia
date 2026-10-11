@@ -1,5 +1,9 @@
 ---
-/** Enlace para saltar (CA-94): primer elemento enfocable de toda página, visible al recibir foco. */
+/**
+ * Enlace para saltar (CA-94): primer elemento enfocable de toda página, visible al recibir foco.
+ * Al recibirlo aparece en la esquina superior izquierda del punto del documento donde está
+ * (debajo del aviso académico, si lo hay), sin taparlo (S14.1).
+ */
 interface Props {
   target: string;
 }
@@ -7,9 +11,11 @@ interface Props {
 const { target } = Astro.props;
 ---
 
-<a
-  href={target}
-  class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:inline-flex focus:min-h-12 focus:items-center focus:rounded-md focus:border-2 focus:border-ink focus:bg-accent focus:px-6 focus:font-semibold focus:text-ink"
->
-  Saltar al contenido
-</a>
+<div class="relative">
+  <a
+    href={target}
+    class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:inline-flex focus:min-h-12 focus:items-center focus:rounded-md focus:border-2 focus:border-ink focus:bg-accent focus:px-6 focus:font-semibold focus:text-ink"
+  >
+    Saltar al contenido
+  </a>
+</div>

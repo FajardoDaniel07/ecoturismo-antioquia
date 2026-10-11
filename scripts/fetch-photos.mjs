@@ -211,16 +211,51 @@ async function get(url) {
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-/** Pide la URL propuesta; si falla (y no es 429 ni 5xx) hace un único intento con el original. */
+/** Ancho de la miniatura estándar de Wikimedia que se pide cuando el original es más ancho. */
+const THUMB_WIDTH = 3840;
+
+/**
+ * URL del archivo original. Si el manifiesto trae una reducción, el original va en `originalUrl`;
+ * si no, `url` ya es el original.
+ */
+export function originalUrlOf(entry) {
+  return entry.originalUrl ?? entry.url;
+}
+
+/**
+ * Wikimedia solo sirve miniaturas en anchos estándar. Deriva la de 3840 px a partir del original
+ * (`.../commons/a/ab/Nombre.jpg` -> `.../commons/thumb/a/ab/Nombre.jpg/3840px-Nombre.jpg`). No
+ * depende de la URL de reducción que traiga el manifiesto.
+ */
+export function thumbUrlOf(originalUrl, width = THUMB_WIDTH) {
+  const m =
+    /^(https:\/\/upload\.wikimedia\.org\/wikipedia\/commons)\/([0-9a-f]\/[0-9a-f]{2})\/([^/]+)$/.exec(
+      originalUrl,
+    );
+  return m ? `${m[1]}/thumb/${m[2]}/${m[3]}/${width}px-${m[3]}` : null;
+}
+
+/**
+ * Qué URL pedir primero: la miniatura de 3840 px si el original es más ancho que eso (se reduce
+ * después en local a 2560 px); si no, el original. Un único respaldo: el original.
+ */
+export function planDownload(entry) {
+  const original = originalUrlOf(entry);
+  const thumb = entry.width > THUMB_WIDTH ? thumbUrlOf(original) : null;
+  return { first: thumb ?? original, fallback: thumb ? original : null };
+}
+
+/** Pide la primera URL; si falla (y no es 429 ni 5xx) hace un único intento con el original. */
 async function download(entry) {
+  const { first, fallback } = planDownload(entry);
   try {
-    return { buffer: await get(entry.url), from: entry.url };
+    return { buffer: await get(first), from: first };
   } catch (error) {
     const stop = error instanceof HttpError && (error.status === 429 || error.status >= 500);
-    if (stop || !entry.originalUrl) throw error;
+    if (stop || !fallback) throw error;
     console.warn(`  ${error.message}; se prueba el original (un solo intento).`);
     await sleep(PAUSE_MS);
-    return { buffer: await get(entry.originalUrl), from: entry.originalUrl };
+    return { buffer: await get(fallback), from: fallback };
   }
 }
 

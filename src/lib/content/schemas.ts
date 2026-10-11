@@ -21,6 +21,10 @@ export const MODIFICATIONS = ['none', 'cropped', 'modified'] as const;
 export const RATIOS = ['3:2', '4:5', '1:1'] as const;
 export const FOCUS = ['center', 'top', 'bottom', 'left', 'right'] as const;
 export const LEGAL_KINDS = ['privacy', 'terms', 'cancellation'] as const;
+export const LEGAL_STATUSES = ['draft', 'reviewed', 'sample'] as const;
+/** `academic`: ejercicio académico, sin operador real. `operator`: sitio de un operador real (CA-125). */
+export const SITE_KINDS = ['academic', 'operator'] as const;
+export type SiteKind = (typeof SITE_KINDS)[number];
 
 /** Límites de longitud: "{name} | Ecoturismo Antioquia" ≤ 60 caracteres (CA-33). */
 export const NAME_MAX = 37;
@@ -68,6 +72,8 @@ const fichaFields = {
     .int('minAge debe ser un entero')
     .min(0, 'minAge no puede ser negativo')
     .optional(),
+  /** Citas de las fuentes de los datos, en texto libre. No se pintan en el sitio. */
+  sources: z.array(text('Cada fuente (sources) debe ser un texto no vacío')).optional(),
 };
 
 // ---------------------------------------------------------------------------
@@ -185,8 +191,9 @@ export const legalSchema = z
       SUMMARY_MAX,
       `CA-33: summary admite hasta ${SUMMARY_MAX} caracteres`,
     ),
-    status: z.enum(['draft', 'reviewed'], {
-      error: 'CA-118: status debe ser "draft" (borrador pendiente de revisión) o "reviewed"',
+    status: z.enum(LEGAL_STATUSES, {
+      error:
+        'CA-118: status debe ser "draft" (borrador pendiente de revisión), "reviewed" o "sample" (texto de muestra, solo en modo académico)',
     }),
     reviewedOn: z.coerce
       .date({ error: 'CA-121: reviewedOn debe ser una fecha (AAAA-MM-DD)' })
@@ -195,6 +202,10 @@ export const legalSchema = z
   .refine((l) => l.status !== 'reviewed' || l.reviewedOn !== undefined, {
     path: ['reviewedOn'],
     error: 'CA-121: un texto "reviewed" necesita la fecha de revisión (reviewedOn)',
+  })
+  .refine((l) => l.status !== 'sample' || l.reviewedOn === undefined, {
+    path: ['reviewedOn'],
+    error: 'CA-121: un texto "sample" (de muestra) no puede llevar fecha de revisión (reviewedOn)',
   });
 
 const identifier = z.object({
@@ -203,6 +214,10 @@ const identifier = z.object({
 });
 
 export const operatorSchema = z.object({
+  siteKind: z.enum(SITE_KINDS, {
+    error:
+      'CA-125: siteKind es obligatorio y debe ser "academic" (ejercicio académico) u "operator" (operador real)',
+  }),
   name: text('El operador necesita nombre (name)'),
   whatsapp: z
     .string({ error: 'whatsapp debe ser un texto' })

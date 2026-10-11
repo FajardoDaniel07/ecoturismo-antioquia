@@ -17,7 +17,7 @@ describe('documentTitle (CA-33)', () => {
 
 describe('WhatsApp (CA-36, CA-83)', () => {
   it('abre wa.me/573127951683 con el texto codificado', () => {
-    const url = buildWhatsAppUrl('+573127951683', whatsAppMessage());
+    const url = buildWhatsAppUrl('+573127951683', whatsAppMessage('operator'));
     expect(url.startsWith('https://wa.me/573127951683?text=')).toBe(true);
     expect(new URL(url).searchParams.get('text')).toBe(
       'Hola, quiero información sobre las salidas de Ecoturismo Antioquia.',
@@ -26,16 +26,27 @@ describe('WhatsApp (CA-36, CA-83)', () => {
   });
 
   it('el mensaje de un detalle nombra el destino', () => {
-    const url = buildWhatsAppUrl('+573127951683', whatsAppMessage('Valle de Cocora'));
+    const url = buildWhatsAppUrl('+573127951683', whatsAppMessage('operator', 'Valle de Cocora'));
     expect(new URL(url).searchParams.get('text')).toBe(
       'Hola, quiero información sobre la salida a Valle de Cocora.',
     );
   });
 
   it('codifica caracteres especiales del nombre', () => {
-    const url = buildWhatsAppUrl('+573127951683', whatsAppMessage('Cañón & Río #1'));
+    const url = buildWhatsAppUrl('+573127951683', whatsAppMessage('operator', 'Cañón & Río #1'));
     expect(new URL(url).searchParams.get('text')).toContain('Cañón & Río #1');
     expect(url).toContain('%26');
+  });
+
+  it('CA-132: en modo académico el mensaje dice que es un proyecto de prueba', () => {
+    expect(whatsAppMessage('academic')).toBe(
+      'Hola. Escribo desde el sitio Ecoturismo Antioquia, un proyecto académico de prueba.',
+    );
+    expect(whatsAppMessage('academic', 'Jardín')).toBe(
+      'Hola. Escribo desde el sitio Ecoturismo Antioquia, un proyecto académico de prueba. Vi el destino Jardín.',
+    );
+    const url = buildWhatsAppUrl('+573127951683', whatsAppMessage('academic', 'Jardín'));
+    expect(url.startsWith('https://wa.me/573127951683?text=')).toBe(true);
   });
 
   it('formatea el número', () => {

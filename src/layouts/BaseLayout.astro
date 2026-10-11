@@ -7,6 +7,7 @@
  */
 import '../styles/global.css';
 import besleyUrl from '../assets/fonts/besley-latin-700-normal.woff2?url';
+import AcademicNotice from '../components/ui/AcademicNotice.astro';
 import SkipLink from '../components/ui/SkipLink.astro';
 import SiteHeader from '../components/sections/SiteHeader.astro';
 import SiteFooter from '../components/sections/SiteFooter.astro';
@@ -31,7 +32,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    {site.mode === 'preview' && <meta name="robots" content="noindex, nofollow" />}
+    {!site.indexable && <meta name="robots" content="noindex, nofollow" />}
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content={SITE_NAME} />
@@ -51,11 +52,12 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
     </script>
   </head>
   <body>
+    {site.siteKind === 'academic' && <AcademicNotice />}
     <SkipLink target="#contenido" />
     <SiteHeader links={navLinks(site.sections)} />
     <main id="contenido" tabindex="-1" class="focus:outline-none">
       <slot />
     </main>
-    <SiteFooter operator={site.operator} legal={site.legal} />
+    <SiteFooter operator={site.operator} legal={site.legal} siteKind={site.siteKind} />
   </body>
 </html>

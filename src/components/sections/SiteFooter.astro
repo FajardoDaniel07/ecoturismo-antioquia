@@ -4,6 +4,7 @@
  * aparece si el operador lo entregó y no es de relleno: `operator` ya viene filtrado por la puerta
  * de publicación, así que sin identificadores no hay línea ni hueco.
  */
+import type { SiteKind } from '../../lib/content/schemas';
 import type { LegalDoc, PublishedOperator } from '../../lib/content/validate';
 import { SECTION_IDS } from '../../lib/nav';
 import { SITE_NAME } from '../../lib/seo/meta';
@@ -11,9 +12,11 @@ import { SITE_NAME } from '../../lib/seo/meta';
 interface Props {
   operator: PublishedOperator;
   legal: LegalDoc[];
+  siteKind: SiteKind;
 }
 
-const { operator, legal } = Astro.props;
+const { operator, legal, siteKind } = Astro.props;
+const academic = siteKind === 'academic';
 
 const LEGAL_LABELS: Record<LegalDoc['kind'], string> = {
   privacy: 'Política de tratamiento de datos',
@@ -32,15 +35,21 @@ const links = [
   <div class="mx-auto grid w-full max-w-page grid-cols-1 gap-x-6 gap-y-8 px-5 py-12 md:grid-cols-8 md:px-8 lg:grid-cols-12 lg:px-12">
     <div class="md:col-span-3 lg:col-span-4">
       <p class="font-display text-lg font-bold">{SITE_NAME}</p>
-      {operator.name !== SITE_NAME && <p class="mt-1 text-on-ink-muted">{operator.name}</p>}
-      {operator.identifiers.length > 0 && (
-        <ul class="mt-3 text-sm text-on-ink-muted">
-          {operator.identifiers.map((i) => (
-            <li>
-              {i.label.charAt(0).toUpperCase() + i.label.slice(1)}: {i.value}
-            </li>
-          ))}
-        </ul>
+      {academic ? (
+        <p class="mt-1 text-sm text-on-ink-muted">Proyecto académico</p>
+      ) : (
+        <>
+          {operator.name !== SITE_NAME && <p class="mt-1 text-on-ink-muted">{operator.name}</p>}
+          {operator.identifiers.length > 0 && (
+            <ul class="mt-3 text-sm text-on-ink-muted">
+              {operator.identifiers.map((i) => (
+                <li>
+                  {i.label.charAt(0).toUpperCase() + i.label.slice(1)}: {i.value}
+                </li>
+              ))}
+            </ul>
+          )}
+        </>
       )}
     </div>
 

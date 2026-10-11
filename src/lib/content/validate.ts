@@ -11,10 +11,19 @@
  */
 import { zoneOf, type ZoneId } from '../altitude/zones';
 import { compareByAltitude, resolveFeatured } from '../altitude/sort';
+import { findMissingThirdParties } from '../privacy/third-parties';
 import { croppedSize } from '../photos/policy';
 import { findCommercialTerms } from './commercial-terms';
 import { isPlaceholder } from './placeholders';
-import type { DestinoData, LegalData, Operator, PhotoData, RutaData, Territory } from './schemas';
+import type {
+  DestinoData,
+  LegalData,
+  Operator,
+  PhotoData,
+  RutaData,
+  SiteKind,
+  Territory,
+} from './schemas';
 
 export type BuildMode = 'release' | 'preview';
 export type Severity = 'error' | 'release' | 'warning';
@@ -103,6 +112,10 @@ export interface PublishedOperator {
 
 export interface SiteModel {
   mode: BuildMode;
+  /** Declarado en `operador.json` (CA-125); nunca se deduce de otros datos. */
+  siteKind: SiteKind;
+  /** `siteKind === 'operator' && mode === 'release'`: solo entonces el sitio se indexa (CA-133). */
+  indexable: boolean;
   territory: Territory;
   operator: PublishedOperator;
   destinos: Destino[];
@@ -160,17 +173,32 @@ export function isFatal(issue: Issue, mode: BuildMode): boolean {
 export const SITE_URL_MISSING =
   'Falta SITE_URL: define la dirección pública del sitio antes de publicar';
 
-/** CA-97: la dirección pública solo es obligatoria al publicar. */
+/** `true` si el texto es una dirección absoluta http(s) con dominio. */
+function isAbsoluteUrl(value: string): boolean {
+  try {
+    const url = new URL(value);
+    return (url.protocol === 'https:' || url.protocol === 'http:') && url.hostname !== '';
+  } catch {
+    return false;
+  }
+}
+
+export const SITE_URL_INVALID =
+  'SITE_URL debe ser una dirección absoluta que empiece por https:// (por ejemplo https://ejemplo.vercel.app)';
+
+/** CA-139: la dirección pública solo es obligatoria al publicar, y debe ser una URL absoluta. */
 export function siteUrlIssues(mode: BuildMode, siteUrl: string | undefined): Issue[] {
-  if (mode !== 'release' || (siteUrl ?? '').trim() !== '') return [];
+  if (mode !== 'release') return [];
+  const value = (siteUrl ?? '').trim();
+  if (value !== '' && isAbsoluteUrl(value)) return [];
   return [
     {
       severity: 'release',
       file: '(entorno)',
       field: 'SITE_URL',
-      rule: 'La compilación de publicación necesita la dirección pública del sitio',
-      criterion: 'CA-97',
-      message: SITE_URL_MISSING,
+      rule: 'La compilación de publicación necesita la dirección pública del sitio, absoluta',
+      criterion: 'CA-139',
+      message: value === '' ? SITE_URL_MISSING : SITE_URL_INVALID,
     },
   ];
 }
@@ -232,6 +260,7 @@ export function validateSite(raw: RawSite, mode: BuildMode): ValidationResult {
   }
   if (!territorioEntry || !operadorEntry) return result(null);
 
+  const siteKind = operadorEntry.data.siteKind;
   const territory = territorioEntry.data;
   const territoryFile = territorioEntry.file;
 
@@ -582,7 +611,28 @@ export function validateSite(raw: RawSite, mode: BuildMode): ValidationResult {
       );
       continue;
     }
-    if (first.data.status === 'draft') {
+    const { status } = first.data;
+    if (siteKind === 'academic') {
+      if (status !== 'sample') {
+        add(
+          'error',
+          first.file,
+          'status',
+          'CA-134',
+          'En modo académico todo texto legal es de muestra (status: sample)',
+          `"${first.data.title}" le falta el rótulo de texto de muestra: pon status: sample.`,
+        );
+      }
+    } else if (status === 'sample') {
+      add(
+        'error',
+        first.file,
+        'status',
+        'CA-118',
+        'Un operador real no publica textos de muestra',
+        `"${first.data.title}" es un texto de muestra y el sitio declara siteKind: operator.`,
+      );
+    } else if (status === 'draft') {
       add(
         'release',
         first.file,
@@ -592,6 +642,19 @@ export function validateSite(raw: RawSite, mode: BuildMode): ValidationResult {
         `"${first.data.title}" sigue como borrador pendiente de revisión.`,
       );
     }
+    if (kind === 'privacy') {
+      const missing = findMissingThirdParties(first.body ?? '');
+      if (missing.length > 0) {
+        add(
+          'error',
+          first.file,
+          '(cuerpo)',
+          'CA-135',
+          'La política de datos debe nombrar a cada tercero con el que se comunica el sitio',
+          `La política de datos no nombra a: ${missing.map((t) => t.name).join(', ')}.`,
+        );
+      }
+    }
     legal.push({ ...first.data, id: first.id, slug: LEGAL_SLUGS[kind], body: first.body ?? '' });
   }
 
@@ -600,46 +663,64 @@ export function validateSite(raw: RawSite, mode: BuildMode): ValidationResult {
   const opFile = operadorEntry.file;
   const identifiers: PublishedIdentifier[] = [];
 
-  for (const { key, label } of REQUIRED_IDENTIFIERS) {
-    const item = op.identifiers[key];
-    if (!item) {
+  if (siteKind === 'academic') {
+    // Sin operador real no hay identificadores: cargarlos es un error en las dos compilaciones.
+    const loaded = [
+      ...(['rnt', 'nit', 'legalName'] as const).flatMap((k) => (op.identifiers[k] ? [k] : [])),
+      ...op.identifiers.others.map((_, n) => `others[${n}]`),
+    ];
+    for (const field of loaded) {
       add(
-        'release',
+        'error',
         opFile,
-        `identifiers.${key}`,
+        `identifiers.${field}`,
         'CA-119',
-        'Todo identificador oficial exigido debe estar entregado',
-        `Falta el identificador ${label}.`,
+        'Un sitio académico no carga identificadores oficiales',
+        `El identificador "${field}" no puede cargarse con siteKind: academic; quítalo.`,
       );
-      continue;
     }
-    if (item.fictitious || isPlaceholder(item.value)) {
-      add(
-        'release',
-        opFile,
-        `identifiers.${key}`,
-        'CA-120',
-        'Un identificador de relleno o marcado ficticio no se publica',
-        `El identificador ${label} ("${item.value}") es de relleno o está marcado como ficticio.`,
-      );
-      continue;
+  } else {
+    for (const { key, label } of REQUIRED_IDENTIFIERS) {
+      const item = op.identifiers[key];
+      if (!item) {
+        add(
+          'release',
+          opFile,
+          `identifiers.${key}`,
+          'CA-119',
+          'Todo identificador oficial exigido debe estar entregado',
+          `Falta el identificador ${label}.`,
+        );
+        continue;
+      }
+      if (item.fictitious || isPlaceholder(item.value)) {
+        add(
+          'release',
+          opFile,
+          `identifiers.${key}`,
+          'CA-120',
+          'Un identificador de relleno o marcado ficticio no se publica',
+          `El identificador ${label} ("${item.value}") es de relleno o está marcado como ficticio.`,
+        );
+        continue;
+      }
+      identifiers.push({ label, value: item.value });
     }
-    identifiers.push({ label, value: item.value });
+    op.identifiers.others.forEach((item, index) => {
+      if (item.fictitious || isPlaceholder(item.value)) {
+        add(
+          'release',
+          opFile,
+          `identifiers.others[${index}]`,
+          'CA-120',
+          'Un identificador de relleno o marcado ficticio no se publica',
+          `El identificador "${item.label}" ("${item.value}") es de relleno o está marcado como ficticio.`,
+        );
+      } else {
+        identifiers.push({ label: item.label, value: item.value });
+      }
+    });
   }
-  op.identifiers.others.forEach((item, index) => {
-    if (item.fictitious || isPlaceholder(item.value)) {
-      add(
-        'release',
-        opFile,
-        `identifiers.others[${index}]`,
-        'CA-120',
-        'Un identificador de relleno o marcado ficticio no se publica',
-        `El identificador "${item.label}" ("${item.value}") es de relleno o está marcado como ficticio.`,
-      );
-    } else {
-      identifiers.push({ label: item.label, value: item.value });
-    }
-  });
   for (const field of ['name', 'whatsapp', 'hours', 'email'] as const) {
     if (isPlaceholder(op[field])) {
       add(
@@ -649,6 +730,20 @@ export function validateSite(raw: RawSite, mode: BuildMode): ValidationResult {
         'CA-120',
         'Un dato de contacto de relleno no se publica',
         `El dato ${field} ("${op[field]}") parece de relleno.`,
+      );
+    }
+  }
+
+  // --- Comentarios HTML en los cuerpos: Markdown los copia al HTML publicado (aviso) ---
+  for (const e of [...raw.destinos, ...raw.legal]) {
+    if ((e.body ?? '').includes('<!--')) {
+      add(
+        'warning',
+        e.file,
+        '(cuerpo)',
+        'CA-137',
+        'El cuerpo no debe llevar comentarios HTML: quedarían a la vista en el código de la página',
+        'Hay un comentario HTML (<!-- ... -->); mueve la cita al campo sources y retíralo.',
       );
     }
   }
@@ -688,6 +783,8 @@ export function validateSite(raw: RawSite, mode: BuildMode): ValidationResult {
 
   return result({
     mode,
+    siteKind,
+    indexable: siteKind === 'operator' && mode === 'release',
     territory,
     operator: {
       name: op.name,

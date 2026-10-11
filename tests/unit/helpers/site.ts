@@ -12,6 +12,10 @@ export const entry = <T>(id: string, data: T, folder: string, body = ''): RawEnt
 export const dest = (id: string, over: Partial<DestinoData> = {}) =>
   entry(id, destino({ name: `Destino ${id}`, summary: `Resumen de ${id}.`, ...over }), 'destinos');
 
+/** Cuerpo de una política de datos que nombra a los tres terceros del registro (CA-135). */
+export const PRIVACY_BODY =
+  'Usamos teselas de OpenStreetMap, un enlace a WhatsApp y el alojamiento de Vercel.';
+
 export const legals = (status: LegalData['status'] = 'reviewed'): RawEntry<LegalData>[] =>
   (
     [
@@ -30,6 +34,7 @@ export const legals = (status: LegalData['status'] = 'reviewed'): RawEntry<Legal
         ...(status === 'reviewed' ? { reviewedOn: new Date('2026-11-01') } : {}),
       }),
       'legal',
+      kind === 'privacy' ? PRIVACY_BODY : '',
     ),
   );
 

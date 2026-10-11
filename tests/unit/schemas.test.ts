@@ -75,6 +75,18 @@ describe('destinoSchema', () => {
   });
 });
 
+describe('sources (citas de datos)', () => {
+  it('es opcional y admite una lista de textos', () => {
+    expect(destinos.safeParse(baseDestino).success).toBe(true);
+    expect(destinos.safeParse({ ...baseDestino, sources: ['Anuario 2014, 1.2.3'] }).success).toBe(
+      true,
+    );
+    expect(destinos.safeParse({ ...baseDestino, sources: [''] }).success).toBe(false);
+    const ruta = { ...baseRuta, properties: { ...baseRuta.properties, sources: ['GPS propio'] } };
+    expect(rutas.safeParse(ruta).success).toBe(true);
+  });
+});
+
 describe('ficha', () => {
   it('CA-24: acepta mínima menor que máxima y rechaza lo contrario', () => {
     expect(destinos.safeParse({ ...baseDestino, climate: { minC: 8, maxC: 18 } }).success).toBe(
@@ -228,6 +240,13 @@ describe('legalSchema', () => {
     expect(messages(r)).toContain('CA-118');
   });
 
+  it('CA-134: acepta status "sample" sin fecha y rechaza "sample" con fecha (CA-121 b)', () => {
+    expect(legalSchema.safeParse({ ...base, status: 'sample' }).success).toBe(true);
+    const r = legalSchema.safeParse({ ...base, status: 'sample', reviewedOn: '2026-11-01' });
+    expect(r.success).toBe(false);
+    expect(messages(r)).toContain('CA-121');
+  });
+
   it('CA-121: un texto revisado sin fecha es inválido', () => {
     const r = legalSchema.safeParse({ ...base, status: 'reviewed' });
     expect(r.success).toBe(false);
@@ -237,6 +256,7 @@ describe('legalSchema', () => {
 
 describe('operatorSchema', () => {
   const base = {
+    siteKind: 'operator',
     name: 'Operador',
     whatsapp: '+573127951683',
     hours: 'Lunes a viernes, de 10 a. m. a 10 p. m.',
@@ -266,6 +286,16 @@ describe('operatorSchema', () => {
       expect(operatorSchema.safeParse({ ...base, whatsapp }).success).toBe(false);
     },
   );
+
+  it('CA-125: siteKind es obligatorio, sin valor por defecto, y solo admite academic u operator', () => {
+    const { siteKind: _omit, ...sinModo } = base;
+    void _omit;
+    const missing = operatorSchema.safeParse(sinModo);
+    expect(missing.success).toBe(false);
+    expect(messages(missing)).toContain('CA-125');
+    expect(operatorSchema.safeParse({ ...base, siteKind: 'real' }).success).toBe(false);
+    expect(operatorSchema.safeParse({ ...base, siteKind: 'academic' }).success).toBe(true);
+  });
 
   it('rechaza un correo inválido', () => {
     expect(operatorSchema.safeParse({ ...base, email: 'sin-arroba' }).success).toBe(false);

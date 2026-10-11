@@ -12,6 +12,9 @@ humano".
 con sus remisiones en S2, S3.1, S10 y S11, sus filas en "Estados" y en "Trazabilidad", y una
 línea nueva en la dirección visual (sección 5.7). Todo lo demás conserva su aprobación.
 
+**Revisión con capturas (T-058), pendiente de aprobación humana:** está al final, antes de
+"Pendiente". Propone ajustes a S2, S3.4, S3.5, S3.7 y S6.3, que no cambian hasta aprobarse.
+
 **Punto de control obligatorio: revisión con captura.** La geometría del perfil del hero (S3) y
 de las láminas (S6.3) está especificada con fórmulas, pero no se ha renderizado: en la fase de
 diseño no hay forma de dibujarla. Durante la implementación, antes de darla por cerrada:
@@ -1483,12 +1486,115 @@ de 24 px de las líneas de ruta (S9.5) queda cubierta por la excepción de CA-11
 | 6 | Contradicciones y vacíos | Aceptados como se asumieron; el punto 5, según la decisión 1 | Sección anterior |
 | 7 | Diferencias con la dirección visual | Aceptadas las tres | Punto 13 |
 
+## Revisión con capturas (T-058)
+
+**Pendiente de aprobación humana** (2026-10-11). Es el paso 2 del punto de control inicial
+(CA-124): comparación de las capturas del perfil y las láminas construidos con S3 y S6.3.
+
+Capturas revisadas: escenarios `completo` (7 destinos de prueba), `sin-fotos` (4) y `real` (6), a
+320, 360, 768 y 1280 px, más la primera pantalla a 360 × 640 y 360 × 800 px y las láminas. No se
+generaron capturas nuevas: los ajustes de abajo no se han visto dibujados.
+
+**Recomendación: aprobar con ajustes, sin aplicar el respaldo de S3.10.** Los ajustes R1 a R9,
+R12 a R14 y R16 a R17 son necesarios; el humano aprueba sobre capturas nuevas hechas con ellos.
+
+Al aprobarse, los valores de esta sección sustituyen a los de S2, S3.4, S3.5, S3.7 y S6.3.
+
+### Juicio general
+
+- **A 768 y 1280 px el perfil se lee como una montaña en corte**, no como un gráfico: tiene
+  cuerpo, estratos dentro de la roca, rellanos, cumbre por encima del último destino y lado lejano
+  cortado. Con el contenido real no hay recortes ni avisos.
+- **A 360 px es la variante débil.** Con contenido real funciona. Con nombres largos (`completo`,
+  `sin-fotos`) hay etiquetas cortadas y líneas guía sin texto, y la ladera se ve como una escalera
+  apretada. Se corrige con reglas generales (R1 a R6); no hace falta cambiar la estructura de S3.
+- **Tres láminas cumplen y una no:** la de piso frío sale quebrada, como un sismograma.
+- Si tras los ajustes la variante compacta sigue dando avisos con `completo`, se aplica el
+  respaldo de S3.10 solo en esa variante.
+
+### Perfil: qué cumple y qué no
+
+| Variante | Cumple | No cumple |
+|---|---|---|
+| Amplia (1280 px) | Silueta, estratos, rellanos, cumbre, etiquetas en roca y cielo sin colisiones, en los tres escenarios | Las curvas de eco y los límites entre pisos pasan por debajo de varios textos ("100 m", "Cañón del Sol Quieto", "Bosque de Niebla Serena"). Los nombres de piso salen en minúscula |
+| Media (768 px) | Lo mismo con `real` y `sin-fotos` | Con `completo`, "Salto Cinta de Plata" baja 13 px fuera de la figura y se corta. Un límite entre pisos cruza "Bosque de Niebla Serena" |
+| Compacta (360 y 320 px) | Con `real`: cinco puntos, todas las etiquetas visibles | Con `completo`: dos etiquetas fuera de la figura y dos guías sin texto. Con `sin-fotos`: una etiqueta fuera. Rellanos y subidas casi verticales. Límites entre pisos sobre las etiquetas |
+
+Lecturas de `astro-developer` que se aceptan y pasan a ser parte de S3: los discos de los puntos
+son obstáculos para las etiquetas; el interlineado de etiqueta es de 20 px con la línea base a 15
+px; la franja de piso del borde derecho se recorta con la altura de la silueta en `x = W`; la base
+bajo el valle es una capa aparte.
+
+### Ajustes del perfil
+
+Todos son reglas generales. Ninguno cambia la estructura de S3: R1 a R3 y R7 a R8 completan el
+procedimiento de etiquetas de S3.7; R4 a R6 cambian constantes de S3.4.
+
+| N.º | Qué cambia | Antes | Ahora | Por qué |
+|---|---|---|---|---|
+| R1 | Límite de la figura | Si ninguna opción servía, la etiqueta quedaba en la última posición probada, aunque saliera | Ninguna opción puede salir de la figura. El paso 4 de S3.7 deja de alejarse al tocar un borde | Lo que sale se recorta: es la causa de todas las etiquetas cortadas |
+| R2 | Qué hacer cuando no hay sitio (paso 5, nuevo) | No existía | **Rótulo al margen.** La etiqueta va a la franja superior (de `y = 4` a `Pt − 4`) si su posición preferida es el cielo, o a la franja de la base (de `yValle + 4` a `H − 4`) si es la roca. Se desliza en horizontal de 4 en 4 px hasta quedar libre, sin salir de la figura y sin dejar de cubrir la vertical del punto. Una guía vertical de 1 px en tinta suave une el punto con el borde del rótulo | Encima de un punto siempre hay cielo y debajo siempre hay roca: la guía nunca cruza la línea de cumbres |
+| R3 | Guías | Podía quedar una guía sin texto | Una guía solo se dibuja si su rótulo está completo dentro de la figura, y termina tocándolo. Las guías ya dibujadas son obstáculos para las etiquetas siguientes | Evita las guías huérfanas |
+| R4 | Partición de la etiqueta en la variante compacta | Hasta dos líneas | Hasta tres líneas | A 360 px un nombre de 20 caracteres o más no cabe en dos |
+| R5 | Márgenes y alto | Compacta: `Pt` 32, `Pb` 32, `H` 300. Media: `Pb` 48, `H` 340 | Compacta: `Pt` 56, `Pb` 56, `H` 340. Media: `Pb` 56, `H` 348 | Una etiqueta de dos líneas a 12 px de su punto necesita 56 px; con 32 o 48 no cabía bajo el punto más bajo ni sobre el más alto. Los altos suben para no encoger la montaña |
+| R6 | Rellano máximo de la variante compacta | 24 px | 12 px | Deja más ancho para las subidas, que hoy son casi verticales |
+| R7 | Líneas bajo los textos | Curvas de eco y límites entre pisos pasaban por debajo | Se interrumpen a 3 px de cada texto de la figura: etiquetas, cifras de altitud y nombres de piso | Es la convención de los mapas y la misma de la lámina (S6.3). La línea de cumbres nunca se interrumpe |
+| R8 | Línea de cumbres como obstáculo | No lo era de forma expresa | Ninguna etiqueta puede quedar a menos de 4 px de la línea de cumbres | Con R2 una etiqueta puede moverse lejos de su zona segura |
+| R9 | Nombres de piso | Salen en minúscula ("páramo") | Con mayúscula inicial, como fija S3.6 ("Páramo") | Coherencia con la lámina y el listado |
+| R10 | Condición de aprobación | — | La revisión de CA-124 no se aprueba mientras la construcción emita algún aviso del perfil con `completo`, `sin-fotos` o `real` | Un aviso significa una etiqueta sin sitio |
+| R11 | Llegada de cada subida al rellano (opcional) | `C2 = (Q.x − 0.25 × dx, Q.y)`: llega horizontal | `C2 = (Q.x − 0.25 × dx, Q.y + 0.25 × (P.y − Q.y))`: llega con pendiente y forma un hombro | Las subidas son todas una misma S suave, lo que recuerda a un gráfico escalonado. No bloquea la aprobación; se juzga con captura |
+
+Si, con R1 a R8, un rótulo al margen tampoco encuentra sitio, la construcción avisa (R10) y el
+caso vuelve a diseño.
+
+### Primera pantalla a 360 px
+
+| Ventana | Perfil visible hoy (`real` / `completo`) | Con el aviso académico de S14.1 (59 px) |
+|---|---|---|
+| 360 × 640 px | 141 px / 104 px | Unos 82 px / 45 px |
+| 360 × 800 px | 300 px / 264 px | Unos 241 px / 205 px |
+
+| N.º | Qué cambia | Antes | Ahora | Por qué |
+|---|---|---|---|---|
+| R12 | Tamaño de la explicación del hero en móvil | 21 px | 17 px (`--text-base`) por debajo de 768 px | Recupera unos 46 px, casi todo lo que quita el aviso. El titular sigue siendo el elemento mayor (CA-10). Cambia una regla de la dirección visual (sección 3.1) |
+
+### Láminas
+
+| Piso | ¿Se ve su rasgo? | Observación |
+|---|---|---|
+| Cálido | Sí | Dos haces de curvas junto a un eje sinuoso, con corredor central. Es la mejor de las cuatro |
+| Templado | A medias | Se ven dos lomas con dos anillos cada una y la tercera como un solo círculo. Las curvas comunes casi no se distinguen del tinte |
+| Frío | No | Las curvas salen en zigzag anguloso. Se lee como una señal o un sismograma, no como una ladera |
+| Páramo | Sí | Pocas curvas y dos anillos. Los anillos salen poligonales |
+
+Las cuatro se distinguen entre sí a simple vista por su forma. A 120 px el dibujo queda recortado
+y la lámina se reconoce por el color, la cifra y el nombre, que es lo previsto. Los cuatro tamaños
+de cifra (21, 33, 42 y 52 px) coinciden con S6.3.
+
+| N.º | Qué cambia | Antes | Ahora | Por qué |
+|---|---|---|---|---|
+| R13 | Retícula y trazo de las cuatro láminas | Retícula de 4 unidades; segmentos rectos | Retícula de 2 unidades; cada curva se suaviza (curva que pasa por los puntos, sin esquinas) | Quita los quiebros del frío y los anillos poligonales del páramo |
+| R14 | Función del piso frío | `… + 7·sin(2π·x/70 + 0.3) + 3·sin(2π·x/23 + 1.1)` | `h = 0.45·(200 − y) + 0.03·x + 6·sin(2π·x/90 + 0.3) + 2.5·sin(2π·x/41 + 1.1)`; mismos niveles y maestras | La onda de periodo 23 es demasiado corta para la retícula y produce el zigzag |
+| R15 | Piso templado | Niveles 10, 20, … 80; maestra 50; tercera colina con `A = 42` | Niveles 6, 12, … 84; maestras 18, 36, 54 y 72; tercera colina con `A = 55` | Más anillos por loma y más curvas en color fuerte, porque el color de línea apenas se ve sobre este tinte |
+| R16 | Zona del texto | — | Comprobar en la captura nueva que ninguna curva pasa bajo la cifra ni bajo el nombre del piso, en los cuatro tamaños | En las capturas a tamaño natural no se distingue con certeza |
+
+### Cabecera a 320 y 360 px (CA-110, CA-111)
+
+| N.º | Qué cambia | Antes | Ahora | Por qué |
+|---|---|---|---|---|
+| R17 | Nombre del sitio | 21 px en móvil; sin tamaño fijado en tableta y escritorio | 21 px en todos los anchos. Si no cabe junto al control "Menú", se parte en dos líneas ("Ecoturismo" y "Antioquia"); la cabecera crece en alto | A 320 px la página desborda 15 px por la cabecera. El nombre es lo único que puede ceder: el control no puede encogerse |
+| R18 | Control "Menú" | Relleno lateral de 24 px, el del botón secundario | Relleno lateral de 12 px (`--space-3`); sigue midiendo al menos 44 × 44 px y no se encoge ni se parte | Confirma el ajuste de `astro-developer` para que quepa a 360 px |
+
+Con R17 la página no debe desbordar a 320 px. El perfil no causa desbordamiento en ningún ancho.
+
 ## Pendiente
 
+- La aprobación humana de la revisión con capturas (T-058) y las capturas nuevas con sus ajustes.
 - La revisión con captura del perfil y las láminas (punto de control inicial).
 - La medición de CA-73 sobre el mapa construido, que puede cambiar los dos tokens de teselas.
 - La aprobación humana de la adición del 2026-10-11 (S14 y sus remisiones).
 
 ---
 Estado: APROBADO (2026-10-10, aprobado por el humano). Adición del 2026-10-11 (modo de ejercicio
-académico, S14): aprobada por el humano el 2026-10-11
+académico, S14): aprobada por el humano el 2026-10-11. Revisión con capturas (T-058): pendiente de
+aprobación humana

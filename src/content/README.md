@@ -10,14 +10,32 @@ Los ejemplos de esta guía se validan con los esquemas reales en `tests/unit/con
 - El **nombre del archivo es el identificador** (slug) y va en `kebab-case`: minúsculas, números y guiones, sin tildes ni espacios ni guion bajo. Ejemplo: `valle-de-cocora.md`.
 - El **piso térmico no se escribe**: el sitio lo calcula con la altitud. Tampoco se escriben precios ni fechas de salida.
 - Nada se inventa. Una altitud, un identificador o una licencia que no se pueda comprobar no se escribe: se deja `verified: false` o se omite la clave.
+- **Sin comentarios HTML** (`<!-- ... -->`) en el cuerpo de un destino o de un texto legal: Markdown los copia al HTML publicado y quedarían a la vista. Las citas de los datos van en el campo `sources`. Si queda un comentario, el build avisa.
+- **Sin promesas comerciales**: el sitio no vende ni reserva salidas. Evita "reserva", "reservar", "cupo", "precio", "tarifa", "COP" y "guía incluido". El build avisa de cada coincidencia; "Reserva Natural" como nombre propio es un uso legítimo, pero se revisa a mano.
 - Los cambios no se ven hasta construir: `npm run dev` (vista previa) o `npm run build`.
 
-## Dos modos de construcción
+## Dos ejes: tipo de sitio y compilación
 
-| Orden                   | Modo         | Qué hace con lo incompleto                                                              |
-| ----------------------- | ------------ | --------------------------------------------------------------------------------------- |
-| `npm run dev` / `build` | Vista previa | Se genera. Marca las páginas como no indexables y avisa de lo que impediría publicar.   |
-| `npm run build:release` | Publicación  | Falla si queda algo en borrador, ausente, de relleno o sin verificar. Es el que se usa. |
+**Tipo de sitio** (`siteKind` en `sitio/operador.json`, obligatorio, sin valor por defecto; nunca se deduce de otros datos):
+
+| Valor      | Qué es                                                                                            |
+| ---------- | ------------------------------------------------------------------------------------------------- |
+| `academic` | Ejercicio académico: sin operador real. Muestra un aviso en todas las páginas y **no se indexa**. |
+| `operator` | Sitio de un operador real, con identificadores oficiales y textos legales revisados.              |
+
+**Compilación**:
+
+| Orden                   | Modo         | Qué hace con lo incompleto                                                                                                           |
+| ----------------------- | ------------ | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `npm run dev` / `build` | Vista previa | Se genera. Avisa de lo que impediría publicar y de lo que excluye.                                                                   |
+| `npm run build:release` | Publicación  | Falla si queda algo sin verificar, ausente o de relleno. Es lo que se despliega (`SITE_URL` obligatoria, absoluta y con `https://`). |
+
+Qué exige cada cruce:
+
+|                | Vista previa                                                                                                                                                                                                                                      | Publicación                                                                                                                                                                  |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`academic`** | `siteKind` válido; tres textos legales con `status: sample`; **ningún identificador cargado**; la política de datos nombra a los terceros; todo lo que es error en las dos compilaciones. Una altitud sin verificar excluye el destino con aviso. | Lo anterior, y además altitudes y umbrales verificados, contacto completo y no de relleno, y `SITE_URL`. **No** exige identificadores ni revisión legal.                     |
+| **`operator`** | `siteKind` válido; textos legales `draft` o `reviewed` (nunca `sample`); la política de datos nombra a los terceros.                                                                                                                              | Lo anterior, y además textos `reviewed` con fecha; RNT, NIT y razón social entregados y no de relleno; altitudes y umbrales verificados; contacto no de relleno; `SITE_URL`. |
 
 Los problemas se informan **todos juntos**, cada uno con archivo, campo, regla y criterio (por ejemplo `CA-20`).
 
@@ -66,22 +84,23 @@ Las cifras de este ejemplo son solo de forma, no son datos reales.
 
 Frontmatter YAML entre líneas `---`, y debajo el texto largo del destino en Markdown (varios párrafos; sin encabezado `#`, la página ya trae el título).
 
-| Campo               | Tipo              | Obligatorio | Notas                                                                                                      |
-| ------------------- | ----------------- | ----------- | ---------------------------------------------------------------------------------------------------------- |
-| `name`              | texto             | sí          | Hasta **37** caracteres. Único entre destinos.                                                             |
-| `summary`           | texto             | sí          | Hasta **160** caracteres. Única. Es la descripción de la tarjeta y del buscador.                           |
-| `altitude.meters`   | entero > 0        | sí          | Metros sobre el nivel del mar. Debe caer entre `minM` y `maxM` del territorio.                             |
-| `altitude.verified` | booleano          | sí          | `true` solo si se comprobó. Con `false` el destino **no se publica** (vista previa: se excluye con aviso). |
-| `altitude.source`   | texto             | si verified | Fuente de la cifra.                                                                                        |
-| `featured`          | booleano          | no          | `true` marca el destino principal de su piso. Solo uno por piso; si ninguno, se usa el de menor altitud.   |
-| `climate`           | `{ minC, maxC }`  | no          | Grados Celsius. `minC` debe ser menor que `maxC`.                                                          |
-| `access`            | texto             | no          | Cómo llegar.                                                                                               |
-| `duration`          | `{ value, unit }` | no          | `unit`: `hours` o `days`.                                                                                  |
-| `distanceKm`        | número > 0        | no          | Kilómetros.                                                                                                |
-| `ascentM`           | entero >= 0       | no          | Metros de ascenso acumulado.                                                                               |
-| `difficulty`        | lista cerrada     | no          | `easy` (Fácil), `moderate` (Moderada), `demanding` (Exigente).                                             |
-| `minAge`            | entero >= 0       | no          | Edad mínima, en años.                                                                                      |
-| `photos`            | lista             | no          | El orden es el editorial: la primera es la foto principal. Ver más abajo.                                  |
+| Campo               | Tipo              | Obligatorio | Notas                                                                                                                                            |
+| ------------------- | ----------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `name`              | texto             | sí          | Hasta **37** caracteres. Único entre destinos.                                                                                                   |
+| `summary`           | texto             | sí          | Hasta **160** caracteres. Única. Es la descripción de la tarjeta y del buscador.                                                                 |
+| `altitude.meters`   | entero > 0        | sí          | Metros sobre el nivel del mar. Debe caer entre `minM` y `maxM` del territorio.                                                                   |
+| `altitude.verified` | booleano          | sí          | `true` solo si se comprobó. Con `false` el destino **no se publica** (vista previa: se excluye con aviso).                                       |
+| `altitude.source`   | texto             | si verified | Fuente de la cifra.                                                                                                                              |
+| `featured`          | booleano          | no          | `true` marca el destino principal de su piso. Solo uno por piso; si ninguno, se usa el de menor altitud.                                         |
+| `climate`           | `{ minC, maxC }`  | no          | Grados Celsius. `minC` debe ser menor que `maxC`.                                                                                                |
+| `access`            | texto             | no          | Cómo llegar.                                                                                                                                     |
+| `duration`          | `{ value, unit }` | no          | `unit`: `hours` o `days`.                                                                                                                        |
+| `distanceKm`        | número > 0        | no          | Kilómetros.                                                                                                                                      |
+| `ascentM`           | entero >= 0       | no          | Metros de ascenso acumulado.                                                                                                                     |
+| `difficulty`        | lista cerrada     | no          | `easy` (Fácil), `moderate` (Moderada), `demanding` (Exigente).                                                                                   |
+| `minAge`            | entero >= 0       | no          | Edad mínima, en años.                                                                                                                            |
+| `photos`            | lista             | no          | El orden es el editorial: la primera es la foto principal. Ver más abajo.                                                                        |
+| `sources`           | lista de textos   | no          | Citas de las fuentes de los datos (altitud, clima, acceso...), en texto libre. **No se pintan** en el sitio. Úsalo en lugar de comentarios HTML. |
 
 Un campo opcional que no se conoce **se omite**; no se escribe "N/D" ni un valor de relleno.
 
@@ -145,15 +164,15 @@ El ejemplo no es un destino real: su `altitude.verified` es `false` para que no 
 
 Una ruta por archivo, en formato GeoJSON (`Feature` con una `LineString`). **Las coordenadas van en orden longitud, latitud** (al revés de como las muestra Google Maps); el tercer valor, opcional, es la elevación en metros. Si hay elevación, debe estar en **todos** los puntos o en ninguno. El trazado debería tener 400 puntos como máximo.
 
-| Campo                  | Notas                                                                                                                                    |
-| ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| `type`                 | Siempre `"Feature"`.                                                                                                                     |
-| `geometry.type`        | Siempre `"LineString"`.                                                                                                                  |
-| `geometry.coordinates` | Al menos 2 puntos `[lon, lat]` o `[lon, lat, elevación]`. Longitud -180 a 180, latitud -90 a 90.                                         |
-| `properties.name`      | Nombre de la ruta.                                                                                                                       |
-| `properties.destino`   | Slug de un destino existente (el nombre de su archivo sin `.md`).                                                                        |
-| `properties.elevation` | `{ "minM": entero, "maxM": entero }`. `minM` no puede superar `maxM`.                                                                    |
-| `properties.*`         | Opcionalmente, los mismos campos de ficha del destino: `climate`, `access`, `duration`, `distanceKm`, `ascentM`, `difficulty`, `minAge`. |
+| Campo                  | Notas                                                                                                                                                                       |
+| ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `type`                 | Siempre `"Feature"`.                                                                                                                                                        |
+| `geometry.type`        | Siempre `"LineString"`.                                                                                                                                                     |
+| `geometry.coordinates` | Al menos 2 puntos `[lon, lat]` o `[lon, lat, elevación]`. Longitud -180 a 180, latitud -90 a 90.                                                                            |
+| `properties.name`      | Nombre de la ruta.                                                                                                                                                          |
+| `properties.destino`   | Slug de un destino existente (el nombre de su archivo sin `.md`).                                                                                                           |
+| `properties.elevation` | `{ "minM": entero, "maxM": entero }`. `minM` no puede superar `maxM`.                                                                                                       |
+| `properties.*`         | Opcionalmente, los mismos campos de ficha del destino: `climate`, `access`, `duration`, `distanceKm`, `ascentM`, `difficulty`, `minAge`, y `sources` (citas, no se pintan). |
 
 Una ruta de un destino que no se publica tampoco se publica.
 
@@ -184,13 +203,15 @@ Una ruta de un destino que no se publica tampoco se publica.
 
 Exactamente **tres** textos, uno de cada `kind`, con estos nombres de archivo: `politica-de-datos.md` (`privacy`), `terminos-y-condiciones.md` (`terms`) y `politica-de-cancelacion.md` (`cancellation`).
 
-| Campo        | Valores                            | Notas                                                                                                                                    |
-| ------------ | ---------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| `kind`       | `privacy`, `terms`, `cancellation` | Uno de cada.                                                                                                                             |
-| `title`      | texto                              | Hasta 37 caracteres.                                                                                                                     |
-| `summary`    | texto                              | Hasta 160 caracteres.                                                                                                                    |
-| `status`     | `draft` o `reviewed`               | **Todo texto nace en `draft`.** Solo el humano o su asesor lo pasa a `reviewed`. En publicación, un `draft` hace fallar la construcción. |
-| `reviewedOn` | fecha `AAAA-MM-DD`                 | Obligatoria si `status` es `reviewed`.                                                                                                   |
+| Campo        | Valores                            | Notas                                                                                                                                                                                                 |
+| ------------ | ---------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `kind`       | `privacy`, `terms`, `cancellation` | Uno de cada.                                                                                                                                                                                          |
+| `title`      | texto                              | Hasta 37 caracteres.                                                                                                                                                                                  |
+| `summary`    | texto                              | Hasta 160 caracteres.                                                                                                                                                                                 |
+| `status`     | `sample`, `draft` o `reviewed`     | **`sample`** (texto de muestra): obligatorio en un sitio `academic` y error en uno `operator`. `draft` (borrador) y `reviewed` (revisado): solo en `operator`; un `draft` hace fallar la publicación. |
+| `reviewedOn` | fecha `AAAA-MM-DD`                 | Obligatoria si `status` es `reviewed`; **no admitida** con `sample`.                                                                                                                                  |
+
+**La política de datos (`kind: privacy`) debe nombrar, literalmente, a cada tercero con el que el sitio se comunica**: `OpenStreetMap` (teselas del mapa, al cargarse el mapa), `WhatsApp` (solo al activar el enlace de contacto) y `Vercel` (el alojamiento, siempre). Si falta uno, el build falla con el nombre que falta (CA-135). Lo que el texto afirme debe ser cierto: el sitio no usa cookies ni analítica y no guarda nada en el navegador.
 
 <!-- ejemplo:legal -->
 
@@ -199,28 +220,33 @@ Exactamente **tres** textos, uno de cada `kind`, con estos nombres de archivo: `
 kind: privacy
 title: Política de datos
 summary: Cómo se recogen, usan y protegen los datos personales de quien nos escribe.
-status: draft
+status: sample
 ---
 
-Texto del borrador en Markdown. Este texto no es asesoría legal y debe revisarlo quien corresponda.
+Texto de muestra en Markdown. Este sitio es un ejercicio académico y este texto no es asesoría legal.
+
+El mapa carga teselas de OpenStreetMap, el enlace de contacto abre WhatsApp y el sitio está alojado en Vercel.
 ```
 
 ## 5. `sitio/operador.json`
 
-Datos de contacto e identificadores oficiales del operador.
+Tipo de sitio, datos de contacto e identificadores oficiales.
 
-| Campo                   | Notas                                                             |
-| ----------------------- | ----------------------------------------------------------------- |
-| `name`                  | Nombre del operador.                                              |
-| `whatsapp`              | `+57` y 10 dígitos, **sin espacios ni guiones**: `+573127951683`. |
-| `hours`                 | Horario de atención, como se lee en la página.                    |
-| `email`                 | Correo de contacto.                                               |
-| `identifiers.rnt`       | Registro Nacional de Turismo. `{ "value": "..." }`.               |
-| `identifiers.nit`       | NIT. `{ "value": "..." }`.                                        |
-| `identifiers.legalName` | Razón social. `{ "value": "..." }`.                               |
-| `identifiers.others`    | Lista opcional de `{ "label": "...", "value": "..." }`.           |
+| Campo                   | Notas                                                                                                      |
+| ----------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `siteKind`              | **Obligatorio.** `"academic"` (ejercicio académico) u `"operator"` (operador real). Sin valor por defecto. |
+| `name`                  | Nombre con el que se presenta el sitio.                                                                    |
+| `whatsapp`              | `+57` y 10 dígitos, **sin espacios ni guiones**: `+573127951683`.                                          |
+| `hours`                 | Horario de atención, como se lee en la página.                                                             |
+| `email`                 | Correo de contacto.                                                                                        |
+| `identifiers.rnt`       | Registro Nacional de Turismo. `{ "value": "..." }`. Solo con `siteKind: "operator"`.                       |
+| `identifiers.nit`       | NIT. `{ "value": "..." }`. Solo con `operator`.                                                            |
+| `identifiers.legalName` | Razón social. `{ "value": "..." }`. Solo con `operator`.                                                   |
+| `identifiers.others`    | Lista opcional de `{ "label": "...", "value": "..." }`. Solo con `operator`.                               |
 
-**Los identificadores no se inventan.** Si el operador no los ha entregado, la clave `identifiers.rnt` (o `nit`, o `legalName`) **se omite**: la vista previa se genera sin mostrarlos y la publicación falla nombrando cuál falta (CA-119). Un valor de relleno ("000", "123456", "XXXX", "ejemplo", "pendiente", "NIT 000.000.000-0") o marcado `"fictitious": true` también hace fallar la publicación (CA-120).
+**En un sitio `academic` no hay identificadores: cargar cualquiera (`rnt`, `nit`, `legalName` u `others`) es un error**, en vista previa y en publicación (CA-119). La clave `identifiers` se omite.
+
+**En un sitio `operator`**, los identificadores no se inventan. Si el operador no los ha entregado, la clave se **omite**: la vista previa se genera sin mostrarlos y la publicación falla nombrando cuál falta (CA-119). Un valor de relleno ("000", "123456", "XXXX", "ejemplo", "pendiente", "NIT 000.000.000-0") o marcado `"fictitious": true` también hace fallar la publicación (CA-120).
 
 Datos de contacto ya acordados: WhatsApp +57 312 795 1683, correo danielfajardog1902@gmail.com, atención de lunes a viernes de 10 a. m. a 10 p. m.
 
@@ -228,14 +254,15 @@ Datos de contacto ya acordados: WhatsApp +57 312 795 1683, correo danielfajardog
 
 ```json
 {
-  "name": "Nombre del operador",
+  "siteKind": "academic",
+  "name": "Ecoturismo Antioquia, proyecto académico",
   "whatsapp": "+573127951683",
   "hours": "Lunes a viernes, de 10 a. m. a 10 p. m.",
   "email": "danielfajardog1902@gmail.com"
 }
 ```
 
-Cuando el operador entregue los identificadores, se añaden así (los valores son los que él entregue, tal cual):
+Si el sitio pasara a un operador real, `siteKind` cambia a `"operator"` y se añaden los identificadores que él entregue, tal cual:
 
 ```json
 "identifiers": {
@@ -249,22 +276,30 @@ Cuando el operador entregue los identificadores, se añaden así (los valores so
 
 Cada mensaje trae el archivo, el campo, la regla y el criterio.
 
-| Mensaje (resumen)                                                              | Qué hacer                                                             |
-| ------------------------------------------------------------------------------ | --------------------------------------------------------------------- |
-| `CA-20 altitude.meters debe ser mayor que cero`                                | Escribe la altitud en metros como número.                             |
-| `CA-122 fuera del rango declarado` / `orden estrictamente ascendente`          | Revisa `territorio.json` o la altitud del destino.                    |
-| `CA-104 no se publica: su altitud no tiene la marca de verificada`             | Comprueba la cifra, cita la fuente y pon `verified: true`.            |
-| `CA-15 Hay 2 destinos principales en el piso ...`                              | Deja `featured: true` en uno solo por piso.                           |
-| `CA-31 no es un slug válido`                                                   | Renombra el archivo en kebab-case, sin tildes.                        |
-| `CA-33 repite ...` / `admite hasta 37 caracteres`                              | Cambia el nombre o la descripción; respeta los límites.               |
-| `CA-43 La foto mide ... px`                                                    | Usa un archivo con el lado mayor de 1200 px o más.                    |
-| `CA-46 la foto necesita autor / enlace a su fuente / modification`             | Completa la atribución de la foto.                                    |
-| `CA-47 ... nunca NC ni ND`                                                     | Cambia de foto: esa licencia no se acepta.                            |
-| `CA-48 el texto alternativo menciona al autor`                                 | Reescribe `alt` describiendo solo lo que se ve.                       |
-| `CA-77 el trazado necesita al menos dos puntos` / `elevación en 3 de 5 puntos` | Completa el trazado; elevación en todos los puntos o en ninguno.      |
-| `CA-78 apunta a "x", que no existe en destinos`                                | Usa el slug exacto de un destino.                                     |
-| `CA-100 No queda ningún destino publicable`                                    | Verifica el territorio y al menos una altitud.                        |
-| `CA-118 sigue como borrador`                                                   | Solo bloquea la publicación; lo resuelve la revisión legal.           |
-| `CA-119 Falta el identificador ...`                                            | Solo bloquea la publicación; lo entrega el operador.                  |
-| `CA-120 ... es de relleno`                                                     | Quita el valor de relleno o pide el real.                             |
-| `Falta SITE_URL: define la dirección pública del sitio antes de publicar`      | Define la variable de entorno `SITE_URL` al ejecutar `build:release`. |
+| Mensaje (resumen)                                                              | Qué hacer                                                                                      |
+| ------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------- |
+| `CA-20 altitude.meters debe ser mayor que cero`                                | Escribe la altitud en metros como número.                                                      |
+| `CA-122 fuera del rango declarado` / `orden estrictamente ascendente`          | Revisa `territorio.json` o la altitud del destino.                                             |
+| `CA-104 no se publica: su altitud no tiene la marca de verificada`             | Comprueba la cifra, cita la fuente y pon `verified: true`.                                     |
+| `CA-15 Hay 2 destinos principales en el piso ...`                              | Deja `featured: true` en uno solo por piso.                                                    |
+| `CA-31 no es un slug válido`                                                   | Renombra el archivo en kebab-case, sin tildes.                                                 |
+| `CA-33 repite ...` / `admite hasta 37 caracteres`                              | Cambia el nombre o la descripción; respeta los límites.                                        |
+| `CA-43 La foto mide ... px`                                                    | Usa un archivo con el lado mayor de 1200 px o más.                                             |
+| `CA-46 la foto necesita autor / enlace a su fuente / modification`             | Completa la atribución de la foto.                                                             |
+| `CA-47 ... nunca NC ni ND`                                                     | Cambia de foto: esa licencia no se acepta.                                                     |
+| `CA-48 el texto alternativo menciona al autor`                                 | Reescribe `alt` describiendo solo lo que se ve.                                                |
+| `CA-77 el trazado necesita al menos dos puntos` / `elevación en 3 de 5 puntos` | Completa el trazado; elevación en todos los puntos o en ninguno.                               |
+| `CA-78 apunta a "x", que no existe en destinos`                                | Usa el slug exacto de un destino.                                                              |
+| `CA-100 No queda ningún destino publicable`                                    | Verifica el territorio y al menos una altitud.                                                 |
+| `CA-118 sigue como borrador`                                                   | Solo bloquea la publicación; lo resuelve la revisión legal.                                    |
+| `CA-119 Falta el identificador ...`                                            | Solo bloquea la publicación; lo entrega el operador.                                           |
+| `CA-120 ... es de relleno`                                                     | Quita el valor de relleno o pide el real.                                                      |
+| `CA-125 siteKind es obligatorio`                                               | Añade `"siteKind": "academic"` (o `"operator"`) a `sitio/operador.json`.                       |
+| `CA-119 Un sitio académico no carga identificadores oficiales`                 | Quita `identifiers.*` de `operador.json` (solo van con `operator`).                            |
+| `CA-134 le falta el rótulo de texto de muestra`                                | Pon `status: sample` en ese texto legal (sitio académico).                                     |
+| `CA-118 Un operador real no publica textos de muestra`                         | Con `siteKind: "operator"`, usa `draft` o `reviewed`, no `sample`.                             |
+| `CA-121 un texto "sample" no puede llevar fecha`                               | Quita `reviewedOn` del texto de muestra.                                                       |
+| `CA-135 La política de datos no nombra a: ...`                                 | Menciona literalmente OpenStreetMap, WhatsApp y Vercel en la política de datos.                |
+| `comentario HTML` (aviso)                                                      | Mueve la cita al campo `sources` y retira el comentario.                                       |
+| `CA-137 "reserva" en ...` (aviso)                                              | Reescribe sin promesa comercial, o confirma que es un nombre propio.                           |
+| `Falta SITE_URL: define la dirección pública del sitio antes de publicar`      | Define `SITE_URL` como dirección absoluta con `https://` al ejecutar `build:release` (CA-139). |

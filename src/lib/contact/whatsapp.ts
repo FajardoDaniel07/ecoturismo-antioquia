@@ -1,3 +1,5 @@
+import type { SiteKind } from '../content/schemas';
+
 /** Enlace y mensaje de WhatsApp (CA-36, CA-83). Es un enlace: funciona sin JavaScript. */
 
 /** `phoneE164`: "+573127951683". Devuelve "https://wa.me/573127951683?text=…". */
@@ -6,8 +8,16 @@ export function buildWhatsAppUrl(phoneE164: string, message: string): string {
   return `https://wa.me/${digits}?text=${encodeURIComponent(message)}`;
 }
 
-/** Mensaje inicial; en una página de detalle nombra el destino consultado (CA-36). */
-export function whatsAppMessage(destinoName?: string): string {
+/**
+ * Mensaje inicial. En una página de detalle nombra el destino consultado (CA-36). En modo
+ * académico dice que el sitio es un proyecto de prueba (CA-132, S14.2).
+ */
+export function whatsAppMessage(siteKind: SiteKind, destinoName?: string): string {
+  if (siteKind === 'academic') {
+    const base =
+      'Hola. Escribo desde el sitio Ecoturismo Antioquia, un proyecto académico de prueba.';
+    return destinoName ? `${base} Vi el destino ${destinoName}.` : base;
+  }
   return destinoName
     ? `Hola, quiero información sobre la salida a ${destinoName}.`
     : 'Hola, quiero información sobre las salidas de Ecoturismo Antioquia.';

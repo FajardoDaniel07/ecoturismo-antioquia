@@ -801,7 +801,7 @@ Se intercalan con H4 a H8 según la tabla "Orden recomendado" del final de este 
     `tests/unit/zones.test.ts`, `src/content/README.md`.
   - CA: CA-2, CA-122. Depende de: —
   - Hecho cuando: `npx astro sync` pasa con el contenido real y hay pruebas con `minM: 0`.
-- [ ] **T-120** · `astro-developer` — Esquema: `siteKind` obligatorio en `operatorSchema`; estado
+- [x] **T-120** · `astro-developer` — Esquema: `siteKind` obligatorio en `operatorSchema`; estado
   `sample` en `legalSchema`, incompatible con `reviewedOn`; campo opcional `sources` en destinos y
   rutas. Actualizar la guía de contenido y su prueba.
   - Archivos: `src/lib/content/schemas.ts`, `tests/unit/schemas.test.ts`, `src/content/README.md`,
@@ -809,7 +809,7 @@ Se intercalan con H4 a H8 según la tabla "Orden recomendado" del final de este 
   - CA: CA-125, CA-134. Depende de: T-117.
   - Hecho cuando: un operador sin `siteKind` o con un valor desconocido falla con archivo, campo y
     regla, y los ejemplos de la guía pasan.
-- [ ] **T-121** · `astro-developer` — `validateSite()`: `siteKind` e `indexable` en el modelo;
+- [x] **T-121** · `astro-developer` — `validateSite()`: `siteKind` e `indexable` en el modelo;
   reglas de la tabla R2 del plan (identificador cargado en académico, legal sin `sample` en
   académico, `sample` en operador, identificadores y revisión solo en operador); aviso por
   comentario HTML en un cuerpo; `SITE_URL` con criterio CA-139 y comprobación de URL absoluta.
@@ -817,7 +817,7 @@ Se intercalan con H4 a H8 según la tabla "Orden recomendado" del final de este 
   - CA: CA-118 a CA-121, CA-125, CA-134, CA-138, CA-139. Depende de: T-120.
   - Hecho cuando: hay una prueba por cada celda de la tabla de los cuatro cruces y por cada fila de
     la tabla de reglas de R2, y las 165 pruebas anteriores siguen pasando.
-- [ ] **T-122** · `astro-developer` [P] — Registro de terceros y regla de la política de datos.
+- [x] **T-122** · `astro-developer` [P] — Registro de terceros y regla de la política de datos.
   - Archivos: `src/lib/privacy/third-parties.ts`, `tests/unit/third-parties.test.ts`,
     `src/lib/content/validate.ts`.
   - CA: CA-135, CA-136. Depende de: T-121.
@@ -879,7 +879,7 @@ Se intercalan con H4 a H8 según la tabla "Orden recomendado" del final de este 
 
 ### Interfaz
 
-- [ ] **T-127** · `astro-developer` — Aviso académico en `BaseLayout`, metaetiqueta `robots` según
+- [x] **T-127** · `astro-developer` — Aviso académico en `BaseLayout`, metaetiqueta `robots` según
   `indexable`, pie con "proyecto académico" y mensaje de WhatsApp de prueba. Corrige el resultado
   de T-042, T-047 y T-049, ya hechas.
   - Archivos: `src/components/ui/AcademicNotice.astro`, `src/layouts/BaseLayout.astro`,

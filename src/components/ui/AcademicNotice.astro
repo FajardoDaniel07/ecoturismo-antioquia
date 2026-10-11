@@ -1,0 +1,15 @@
+---
+/**
+ * Aviso del modo de ejercicio académico (S14.1, CA-126 a CA-130): franja de lado a lado, lo primero
+ * de la página, antes del enlace para saltar y de la cabecera. Texto fijo y HTML estático: sin
+ * enlaces, sin control de cierre, sin icono, sin color de alerta y sin JavaScript. No queda fijo al
+ * desplazarse. Es una región con nombre, no una alerta: se lee al llegar a ella.
+ */
+const text = 'Proyecto académico. Este sitio no ofrece servicios turísticos reales.';
+---
+
+<section aria-label="Aviso del sitio" class="border-b-2 border-ink bg-surface">
+  <div class="mx-auto w-full max-w-page px-5 py-2 md:px-8 lg:px-12">
+    <p class="text-sm font-medium text-ink">{text}</p>
+  </div>
+</section>

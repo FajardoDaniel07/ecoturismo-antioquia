@@ -91,6 +91,7 @@ export const legal = (over: Partial<LegalData> = {}): LegalData => ({
 });
 
 export const operator = (over: Partial<Operator> = {}): Operator => ({
+  siteKind: 'operator',
   name: 'Ecoturismo Montaña',
   whatsapp: '+573127951683',
   hours: 'Lunes a viernes, de 10 a. m. a 10 p. m.',
