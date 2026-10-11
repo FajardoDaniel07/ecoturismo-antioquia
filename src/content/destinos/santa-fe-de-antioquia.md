@@ -13,12 +13,15 @@ access: Por carretera, a unos 55 km de Medellín, por el Túnel de Occidente.
 Fuentes de este texto (leídas el 2026-10-11):
 - Temperatura media de la cabecera (27 °C): Anuario Estadístico 2012 de la Gobernación, tabla 1.4.1.
 - Distancia de unos 55 km por el Túnel de Occidente y subregión: https://es.wikipedia.org/wiki/Santa_Fe_de_Antioquia (la distancia no tiene cita en el artículo).
+- Puente de Occidente (puente colgante sobre el río Cauca entre Santa Fe de Antioquia y Olaya): descripciones de las fotos en Wikimedia Commons, https://commons.wikimedia.org/wiki/File:Puente_de_Occidente,_enero_de_2022_-_puente_01.jpg y https://commons.wikimedia.org/wiki/File:Puente_de_occidente_(3147370781).jpg
 - No se encontró una fuente sobre senderos, reservas o atractivos de naturaleza propios del municipio. Por eso la ficha no trae duración, dificultad ni edad.
 -->
 
 Santa Fe de Antioquia queda en el Occidente del departamento, a 550 m de altitud. Es un destino de clima cálido: la temperatura media en el casco urbano es de unos 27 °C, lo que lo hace muy distinto de Medellín, aunque esté a solo unos 55 km.
 
 Este destino es, sobre todo, un paseo por el pueblo: su casco histórico, con calles, plazas e iglesias. No encontramos una fuente que describa senderos o reservas naturales propios del municipio, así que no los incluimos aquí. Si buscas caminatas de naturaleza, mira los otros destinos de esta página.
+
+A pocos kilómetros del casco urbano está el Puente de Occidente, un puente colgante sobre el río Cauca que comunica Santa Fe de Antioquia con el municipio de Olaya.
 
 Qué conviene tener en cuenta:
 

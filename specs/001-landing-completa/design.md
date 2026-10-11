@@ -8,6 +8,10 @@ No decide arquitectura: nombres de archivos, librerías y mecanismos son de `sof
 Estado: APROBADO por el humano el 2026-10-10. Sus decisiones están al final, en "Decisiones del
 humano".
 
+**Adición del 2026-10-11, aprobada por el humano el 2026-10-11:** el modo de ejercicio académico (S14),
+con sus remisiones en S2, S3.1, S10 y S11, sus filas en "Estados" y en "Trazabilidad", y una
+línea nueva en la dirección visual (sección 5.7). Todo lo demás conserva su aprobación.
+
 **Punto de control obligatorio: revisión con captura.** La geometría del perfil del hero (S3) y
 de las láminas (S6.3) está especificada con fórmulas, pero no se ha renderizado: en la fase de
 diseño no hay forma de dibujarla. Durante la implementación, antes de darla por cerrada:
@@ -22,7 +26,7 @@ diseño no hay forma de dibujarla. Durante la implementación, antes de darla po
 
 La implementación del hero y de las láminas no se considera terminada sin esa aprobación.
 
-Referencias: las secciones de este documento se citan como S1 a S13; los criterios de la spec como
+Referencias: las secciones de este documento se citan como S1 a S14; los criterios de la spec como
 CA-n.
 
 ---
@@ -97,6 +101,9 @@ página, el pie.
 contenido". Invisible hasta recibir foco; entonces aparece arriba a la izquierda con el aspecto
 del botón principal. Lleva al contenido principal.
 
+**Modo académico.** Encima de la cabecera va el aviso de S14.1, y el enlace para saltar aparece
+debajo de él. El pie cambia su bloque de identidad (S14.4).
+
 **Cabecera.** Sobre papel, sin sombra. No queda fija al desplazarse: en 360 px quitaría espacio y
 taparía elementos enfocados.
 
@@ -116,7 +123,7 @@ taparía elementos enfocados.
 
 | Bloque | Contenido |
 |---|---|
-| Identidad | "Ecoturismo Antioquia". Debajo, el identificador oficial cuando exista ("Registro Nacional de Turismo N"); mientras no se entregue, no hay línea ni hueco (CA-119) |
+| Identidad | Modo de operador real: "Ecoturismo Antioquia". Debajo, el identificador oficial cuando exista ("Registro Nacional de Turismo N"); mientras no se entregue, no hay línea ni hueco (CA-119). Modo académico: ver S14.4 |
 | Contacto | Enlace "Contacto" |
 | Legales | "Política de tratamiento de datos", "Términos y condiciones", "Política de cancelación" |
 | Fotos | "Créditos de las fotos" |
@@ -146,11 +153,14 @@ La explicación va en dos párrafos a propósito: así ningún bloque de texto o
 titular, que debe ser el elemento más grande de la primera pantalla (CA-10). El hero no tiene
 ninguna fotografía.
 
+En modo académico, el aviso de S14.1 va antes del titular, encima de la cabecera; el orden y el
+contenido del hero no cambian (CA-1).
+
 #### S3.2 Layout
 
 | Rango | Layout |
 |---|---|
-| Móvil | Todo apilado en el orden de S3.1. El perfil va a sangre: ocupa los 360 px de la ventana, sin margen lateral. Alto del perfil: 300 px |
+| Móvil | Todo apilado en el orden de S3.1. Entre la cabecera y el titular, 24 px (`--space-6`). El perfil va a sangre: ocupa los 360 px de la ventana, sin margen lateral. Alto del perfil: 300 px |
 | Tableta | Apilado. Titular en las 8 columnas. Perfil de ancho completo del contenido, 340 px de alto |
 | Escritorio | Titular en las columnas 1 a 9. Debajo, en una fila: explicación en las columnas 1 a 6 y botón en la columna 8, alineado con la primera línea. Debajo, el perfil en las 12 columnas, 380 px de alto |
 
@@ -978,6 +988,8 @@ tesela.
 | Tableta y escritorio | Título, invitación y botón en las columnas 1 a 6; datos en las columnas 8 a 12 |
 
 - No hay formulario, ni colores ni logotipos de terceros.
+- Los textos y mensajes de esta sección son los del modo de operador real. En modo académico
+  cambian el título, la invitación y los mensajes, y se añade una aclaración (S14.2).
 - CA que cubre: CA-36, CA-81 a CA-83, CA-91.
 
 ---
@@ -988,6 +1000,9 @@ Tres páginas con la misma plantilla: "Política de tratamiento de datos", "Tér
 condiciones", "Política de cancelación".
 
 **Jerarquía de contenido:** aviso de borrador (si aplica), título, fecha, texto.
+
+Lo que sigue sobre fecha, borrador e identificador es del modo de operador real. En modo académico
+no hay nada de eso: hay un rótulo de texto de muestra (S14.3).
 
 - Título (h1) propio. Texto corrido en una columna de 70 caracteres; apartados con h2. En
   escritorio, la columna empieza en la columna 3.
@@ -1032,6 +1047,184 @@ condiciones", "Política de cancelación".
 
 ---
 
+### S14. Modo de ejercicio académico
+
+**Aprobada por el humano el 2026-10-11** (adición del 2026-10-11), incluidos los textos del contacto y la aclaración en el detalle.
+
+El sitio declara en sus datos si es un ejercicio académico o tiene un operador real (CA-125). El
+diseño no deduce el modo: lo recibe. Esta sección fija lo que cambia en modo académico; S14.5
+resume las diferencias con el modo de operador real.
+
+Las cuatro piezas comparten un mismo trato, el de **nota del proyecto**: texto en tinta, sin
+iconos, sin colores de alerta. Dicen qué es el sitio con el tono de la nota al pie de una lámina,
+no con el de un aviso de emergencia ni el de un anuncio.
+
+#### S14.1 Aviso en todas las páginas (CA-126 a CA-130)
+
+**Texto final:** "Proyecto académico. Este sitio no ofrece servicios turísticos reales."
+
+Es el texto propuesto por la spec, sin cambios: es corto, literal y no usa regionalismos.
+
+**Dónde va.** Una franja de lado a lado, lo primero de la página, encima de la cabecera. Aparece
+en el inicio, en cada detalle de destino, en las tres páginas legales, en créditos y en la 404.
+
+| Orden en el documento | Elemento |
+|---|---|
+| 1 | Aviso |
+| 2 | Enlace "Saltar al contenido" |
+| 3 | Cabecera |
+| 4 | Contenido principal (en el inicio, empieza con el titular del hero) |
+| 5 | Pie |
+
+- El aviso va antes del titular del hero, como admite CA-1. El orden interno del hero no cambia.
+- El aviso no contiene enlaces ni controles, así que el primer elemento enfocable sigue siendo el
+  enlace para saltar (CA-94).
+- Cuando el enlace para saltar recibe foco, aparece debajo de la franja, sobre el nombre del
+  sitio. No tapa el aviso.
+
+**Presentación**
+
+| Propiedad | Valor |
+|---|---|
+| Fondo | Superficie (`--color-surface`), de lado a lado |
+| Límite inferior | Una línea de 2 px en tinta |
+| Texto | 14 px (`--text-sm`), peso 500, tinta, alineado a la izquierda con el margen del contenido |
+| Contraste | Tinta sobre superficie, 12.3:1 (par de la sección 4.3 de la dirección visual) |
+| Relleno | 8 px arriba y abajo (`--space-2`); a los lados, el margen de la grilla |
+| Peso del texto | Uniforme: ninguna palabra va resaltada |
+
+- No lleva icono, ni color de alerta, ni botón para cerrar, ni enlace (CA-129).
+- No queda fijo al desplazarse: sube con la página. Por eso nunca tapa un control ni un elemento
+  enfocado (CA-128).
+- Es HTML estático: se ve igual sin JavaScript y no depende de ninguna preferencia guardada.
+- No se anima.
+
+**Cuánto ocupa.** Son estimaciones sin renderizar; el alto no es fijo y crece con el texto.
+
+| Ancho | Líneas | Alto aproximado |
+|---|---|---|
+| 320 px (reflujo) | 2 o 3 | 59 a 79 px |
+| 360 px | 2 | 59 px |
+| 768 px | 1 | 38 px |
+| 1280 px | 1 | 38 px |
+| 1280 px con zoom al 200 % | 1 | 38 px de los 640 px efectivos |
+
+Con zoom, o con un tamaño de letra mayor en el navegador, el texto pasa a más líneas y la franja
+crece. No se corta, no se abrevia y no provoca desplazamiento horizontal.
+
+**Menú móvil.** El aviso queda encima de la cabecera y el menú se despliega debajo de ella. No se
+tocan. Con el menú abierto, el aviso sigue visible arriba.
+
+**Visor de fotos.** El visor es un diálogo a pantalla completa y cubre toda la página, aviso
+incluido, mientras está abierto. Al cerrarlo, el aviso está donde estaba.
+
+**Lector de pantalla** (CA-127)
+
+- Es una región con el nombre accesible "Aviso del sitio".
+- Su texto es texto real y está antes del contenido principal en el orden de lectura.
+- No es una alerta ni una región que se anuncie sola: se lee al llegar a ella.
+
+**Efecto sobre el hero a 360 px**
+
+- El titular, la explicación, el botón y el perfil bajan 59 px (38 px desde 768 px).
+- La geometría, las variantes y la selección de puntos de S3 no cambian.
+- El titular sigue siendo el elemento más grande de la primera pantalla (CA-10): el aviso ocupa
+  cerca de un tercio de su área.
+- Lo que cambia es cuánto perfil se ve sin desplazarse. Estimación: en una ventana de 360 × 640
+  px, de unos 120 px a unos 60 px; en una de 360 × 800 px, de unos 280 px a unos 220 px, de los
+  300 px del perfil.
+- Para no perder más, S3.2 fija ahora un dato que no tenía: en móvil, el espacio entre la
+  cabecera y el titular es de 24 px (`--space-6`), en los dos modos.
+
+#### S14.2 Contacto (CA-131, CA-132)
+
+**Aclaración, texto final:** "Este contacto es de prueba: no se reservan ni se venden salidas."
+
+En modo académico, la sección de S10 queda así:
+
+| N.º | Elemento | Texto en modo académico |
+|---|---|---|
+| 1 | Título (h2) | "Contacto de prueba" |
+| 2 | Invitación | "Puedes escribirnos para probar cómo funciona el contacto de este proyecto." |
+| 3 | Aclaración | "Este contacto es de prueba: no se reservan ni se venden salidas." |
+| 4 | Botón principal | "Escribir por WhatsApp" |
+| 5 | Datos | Los mismos de S10: número, horario y correo |
+
+- La aclaración va justo encima del botón, a 12 px, y antes de los datos en el orden de lectura:
+  se lee antes de pulsar el botón y antes de llegar al correo.
+- Estilo: 17 px, peso 600, tinta. Sin icono ni fondo propio.
+- El título y la invitación cambian porque los de S10 ("planear tu salida", "te respondemos")
+  ofrecen un servicio, y en modo académico los textos no pueden prometerlo (CA-137).
+
+| Rango | Disposición |
+|---|---|
+| Móvil | Apilado en el orden de la tabla |
+| Tableta y escritorio | Título, invitación y aclaración en las columnas 1 a 8. Debajo, en una fila: botón en las columnas 1 a 6 y datos en las columnas 8 a 12 |
+
+**Llamada a contacto del detalle de destino** (S7, bloque 9). En modo académico:
+
+- Título (h2): "Escribir sobre {destino}".
+- La misma aclaración, encima del botón.
+
+**Mensaje inicial de WhatsApp en modo académico**
+
+| Página | Mensaje inicial |
+|---|---|
+| Inicio y demás páginas | "Hola. Escribo desde el sitio Ecoturismo Antioquia, un proyecto académico de prueba." |
+| Detalle de destino | "Hola. Escribo desde el sitio Ecoturismo Antioquia, un proyecto académico de prueba. Vi el destino {nombre del destino}." |
+
+#### S14.3 Páginas legales (CA-121, CA-134)
+
+**Rótulo, texto final:** "Texto de muestra de un ejercicio académico. No tiene validez legal."
+
+| Orden | Elemento |
+|---|---|
+| 1 | Título (h1) de la página |
+| 2 | Rótulo |
+| 3 | Texto de muestra |
+
+- El rótulo va justo debajo del título, en la columna de lectura, antes de cualquier contenido.
+- Estilo: bloque de color superficie con una línea inferior de 2 px en tinta y 16 px de relleno;
+  texto de 17 px, peso 500, tinta. Es el mismo trato que el aviso de S14.1, a tamaño de cuerpo.
+- Es texto real, visible sin JavaScript.
+
+**Relación con la banda de borrador de S11.** Son de modos distintos y nunca coinciden.
+
+| | Modo de operador real | Modo académico |
+|---|---|---|
+| Banda "Borrador pendiente de revisión" | Sí, mientras el texto esté en borrador, en vista previa | Nunca |
+| Rótulo de texto de muestra | Nunca | Siempre, en las tres páginas |
+| "Última revisión: {fecha}" | Sí, cuando el texto está revisado | Nunca |
+| Identificador oficial | Sí, si fue entregado | Nunca |
+
+#### S14.4 Pie (CA-98, CA-119)
+
+En modo académico, el bloque de identidad del pie es:
+
+- "Ecoturismo Antioquia", como en S2.
+- Debajo: "Proyecto académico" (14 px, color atenuado sobre tinta).
+- Ningún identificador oficial, ni línea ni hueco para él.
+
+Los enlaces del pie no cambian.
+
+#### S14.5 Qué cambia entre los dos modos
+
+| Pieza | Modo académico | Modo de operador real |
+|---|---|---|
+| Aviso sobre la cabecera | En todas las páginas (S14.1) | No existe; no se reserva espacio |
+| Hero | Empieza 59 px más abajo en móvil | Como en S3 |
+| Contacto: título e invitación | "Contacto de prueba" y su invitación (S14.2) | Los de S10 |
+| Contacto: aclaración | Sí, encima del botón | No |
+| Mensaje inicial de WhatsApp | Los de S14.2 | Los de S10 |
+| Detalle: llamada a contacto | "Escribir sobre {destino}" y aclaración | "¿Te interesa {destino}?" |
+| Páginas legales | Rótulo de muestra; sin fecha ni identificador | Banda de borrador o fecha de revisión; identificador si existe |
+| Pie: identidad | Nombre y "Proyecto académico" | Nombre e identificador si existe |
+| Cabecera, navegación, destinos, galería, mapa, créditos, 404 | Sin cambios | Sin cambios |
+
+- CA que cubre: CA-1, CA-98, CA-119, CA-121, CA-126 a CA-132, CA-134, CA-138.
+
+---
+
 ## Estados
 
 | Elemento | Vacío | Cargando | Error | Sin JS | Foco / hover / activo |
@@ -1052,7 +1245,11 @@ condiciones", "Política de cancelación".
 | Perfil de elevación | Sin datos por punto: no se dibuja (CA-76) | — | — | No existe | — |
 | Lista de rutas | Sección omitida | — | Completa aunque el mapa falle, con sus letras clave; sin muestras de trazo ni botones | Completa, con sus letras clave (CA-68); sin muestras de trazo ni botones | Botón "Ver en el mapa" con estado pulsado |
 | Contacto | — | — | — | Igual | Botón principal; enlace de correo |
-| Página legal | — | — | Borrador: banda de aviso | Igual | — |
+| Aclaración del contacto (modo académico) | Modo de operador real: no existe | — | — | Igual | No es interactiva |
+| Aviso académico | Modo de operador real: no existe ni reserva espacio | Inmediato: es HTML estático | — | Igual, completo (CA-128) | No es interactivo; no se puede cerrar (CA-129) |
+| Rótulo de texto de muestra (modo académico) | Modo de operador real: no existe | — | Si falta, el sitio no se construye (CA-134) | Igual | No es interactivo |
+| Pie: identidad | Modo académico: nombre y "Proyecto académico", sin identificador | — | — | Igual | — |
+| Página legal | — | — | Modo de operador real, borrador: banda de aviso. Modo académico: nunca | Igual | — |
 | Página de créditos | "Por ahora el sitio no tiene fotos publicadas." | Cajas reservadas | Texto alternativo | Igual | Enlaces |
 | Identificador oficial | No se muestra nada (CA-119) | — | — | Igual | — |
 
@@ -1118,12 +1315,12 @@ información.
 
 ## Trazabilidad
 
-Los 116 criterios activos (CA-1 a CA-83, CA-91 y CA-93 a CA-124). Los criterios de validación de contenido no tienen interfaz propia: el
+Los 131 criterios activos (CA-1 a CA-83, CA-91 y CA-93 a CA-139; 139 números, 8 retirados). Los criterios de validación de contenido no tienen interfaz propia: el
 diseño fija qué se ve cuando el dato falta, que es siempre "nada".
 
 | Criterios | Tema | Sección |
 |---|---|---|
-| CA-1, CA-2 | Orden del hero y cifras del titular | S3.1 |
+| CA-1, CA-2 | Orden del hero y cifras del titular; en modo académico, el aviso va antes del titular | S3.1, S14.1 |
 | CA-3 | "Ver destinos" y foco | S3.9 |
 | CA-4 | Cuatro bandas con nombre | S3.5, S3.6 |
 | CA-5, CA-6 | Un punto por destino, enlace de 44 px con nombre | S3.5, S3.7 |
@@ -1179,8 +1376,8 @@ diseño fija qué se ve cuando el dato falta, que es siempre "nada".
 | CA-93, CA-94 | Navegación y enlace para saltar | S2 |
 | CA-95 | Idioma, encabezados y regiones | S1 |
 | CA-96 | Título, descripción y datos para redes del inicio | Sin decisiones de interfaz; sin imagen, como en S3.1 |
-| CA-97 | Mapa del sitio e instrucciones para buscadores | Sin interfaz |
-| CA-98 | Contenido del pie | S2 |
+| CA-97 | Mapa del sitio e instrucciones para buscadores, solo en modo de operador real | Sin interfaz |
+| CA-98 | Contenido del pie, con la identidad de cada modo | S2, S14.4 |
 | CA-99, CA-100 | Mensajes de error de la construcción | Sin interfaz; Estados |
 | CA-101 | "Tú" e infinitivo | Todos los textos de S2 a S13 |
 | CA-102 | Términos locales explicados | S3.1 |
@@ -1195,12 +1392,27 @@ diseño fija qué se ve cuando el dato falta, que es siempre "nada".
 | CA-114 | Pares de contraste | Tokens usados |
 | CA-115, CA-116 | Lighthouse y métricas de carga | S3.1, S1, S8.1, S9.2 |
 | CA-117 | Imagen que no carga | S1, Estados |
-| CA-118 | Aviso de borrador | S11 |
-| CA-119, CA-120 | Identificadores ausentes o de relleno | S2, S11; sin interfaz para el relleno |
-| CA-121 | Páginas legales revisadas | S11, S2 |
+| CA-118 | Aviso de borrador (modo de operador real); en modo académico rige CA-134 | S11, S14.3 |
+| CA-119, CA-120 | Identificadores ausentes, de relleno o, en modo académico, nunca mostrados | S2, S11, S14.4; sin interfaz para el relleno |
+| CA-121 | Páginas legales: revisadas (operador real) o de muestra (académico) | S11, S14.3, S2 |
 | CA-122 | Altitud fuera del rango declarado o umbrales desordenados | Sin interfaz: la construcción falla; S3.5 ("Datos que el generador rechaza") |
 | CA-123 | Control "Menú" en 360 px | S2 |
 | CA-124 | Revisión humana con capturas del perfil y las láminas | Punto de control, al inicio; S3.3, S3.10, S6.3 |
+| CA-125 | Declaración explícita del modo | Sin interfaz; S14 recibe el modo, no lo deduce |
+| CA-126 | Aviso académico en todas las páginas, en la primera pantalla | S14.1 |
+| CA-127 | Aviso: texto real, región con nombre, antes del contenido | S14.1 |
+| CA-128 | Aviso completo sin JavaScript y a 360 px, sin tapar nada | S14.1 |
+| CA-129 | Aviso sin control para cerrarlo | S14.1 |
+| CA-130 | Aviso: contraste y tamaño de letra | S14.1 |
+| CA-131 | Aclaración de contacto de prueba | S14.2 |
+| CA-132 | Mensaje inicial de WhatsApp en modo académico | S14.2 |
+| CA-133 | Sitio no indexable en modo académico | Sin interfaz |
+| CA-134 | Rótulo de texto de muestra en las páginas legales | S14.3 |
+| CA-135 | Contenido veraz de la política de datos | Sin interfaz propia: es contenido; usa la plantilla de S11 y S14.3 |
+| CA-136 | Orígenes externos contactados | Sin interfaz. El diseño solo pide un origen externo: las teselas del mapa (S9.3); las fuentes son autoalojadas |
+| CA-137 | Textos que no prometen servicios | S14.2 (título, invitación y mensajes del contacto); el resto es contenido |
+| CA-138 | Modo de operador real | S14.5 |
+| CA-139 | Puerta de publicación común a los dos modos | Sin interfaz |
 
 ---
 
@@ -1275,6 +1487,8 @@ de 24 px de las líneas de ruta (S9.5) queda cubierta por la excepción de CA-11
 
 - La revisión con captura del perfil y las láminas (punto de control inicial).
 - La medición de CA-73 sobre el mapa construido, que puede cambiar los dos tokens de teselas.
+- La aprobación humana de la adición del 2026-10-11 (S14 y sus remisiones).
 
 ---
-Estado: APROBADO (2026-10-10, aprobado por el humano)
+Estado: APROBADO (2026-10-10, aprobado por el humano). Adición del 2026-10-11 (modo de ejercicio
+académico, S14): aprobada por el humano el 2026-10-11

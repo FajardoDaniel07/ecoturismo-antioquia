@@ -624,7 +624,10 @@ Texto propuesto del aviso (el texto exacto y su presentación los fija `ui-desig
 - **CA-130** — Dado el aviso, cuando mido su contraste, entonces el texto cumple al menos 4.5:1 sobre
   su fondo y su tamaño de letra es de al menos 14 px, según los tokens del diseño. **[axe]**
   **[manual]**
-- **CA-131** — Dado el modo académico, cuando veo la sección de contacto, entonces junto a la acción
+- **CA-131** — Dado el modo académico, cuando veo la sección de contacto del inicio o la llamada a
+  contacto de la página de un destino (ampliado el 2026-10-11 por decisión del humano; en modo
+  académico el título y la invitación del contacto tampoco ofrecen un servicio, ver `design.md`
+  S14.2), entonces junto a la acción
   de WhatsApp y al correo hay una frase que aclara que el contacto es de prueba y que no se reservan
   ni se venden salidas (texto propuesto: "Este contacto es de prueba: no se reservan ni se venden
   salidas."), de modo que nadie crea que contrata un servicio. *Recomendación del analista; no se

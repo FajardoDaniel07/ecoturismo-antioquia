@@ -337,6 +337,21 @@ Cada destino y cada ruta muestran los mismos datos, en este orden, con su etique
 - **Campos de formulario** (el primer lanzamiento no tiene formulario; aplica si se añade uno):
   borde de tinta suave (6.6:1 sobre papel), nunca de color de línea.
 
+### 5.7 Notas del proyecto (modo de ejercicio académico)
+
+Añadido el 2026-10-11; aprobado por el humano el 2026-10-11 junto con la sección S14 del `design.md`
+de la feature 001.
+
+Cuando el sitio se declara ejercicio académico, lo dice con **notas del proyecto**: una franja
+sobre la cabecera de todas las páginas, una aclaración en el contacto y un rótulo en las páginas
+legales.
+
+- Trato único: texto en tinta sobre superficie, con una línea inferior de 2 px en tinta. Sin
+  iconos, sin color de error ni guayacán, sin botón para cerrar, sin animación.
+- Tono de nota al pie de una lámina: dice qué es el sitio, sin alarma y sin publicidad.
+- La franja no queda fija al desplazarse y no compite con el titular del hero: 14 px, peso 500.
+- Textos, posición y medidas: sección S14 de `specs/001-landing-completa/design.md`.
+
 ---
 
 ## 6. Fotografía
