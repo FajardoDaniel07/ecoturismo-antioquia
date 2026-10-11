@@ -1,0 +1,18 @@
+{
+  "siteKind": "operator",
+  "name": "Operadora Montes de Niebla S. A. S.",
+  "whatsapp": "+573105550142",
+  "hours": "Por definir",
+  "email": "contacto@operadora-fixture.invalid",
+  "identifiers": {
+    "rnt": {
+      "value": "99871"
+    },
+    "nit": {
+      "value": "900.555.321-7"
+    },
+    "legalName": {
+      "value": "Operadora Montes de Niebla S. A. S."
+    }
+  }
+}

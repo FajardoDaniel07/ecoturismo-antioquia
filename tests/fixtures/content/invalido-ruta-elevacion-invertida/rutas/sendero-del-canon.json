@@ -1,0 +1,38 @@
+{
+  "type": "Feature",
+  "geometry": {
+    "type": "LineString",
+    "coordinates": [
+      [
+        -75.5,
+        6.2,
+        250
+      ],
+      [
+        -75.495,
+        6.205,
+        290
+      ],
+      [
+        -75.49,
+        6.21,
+        340
+      ],
+      [
+        -75.484,
+        6.213,
+        420
+      ]
+    ]
+  },
+  "properties": {
+    "name": "Sendero del Cañón",
+    "destino": "canon-del-sol-quieto",
+    "elevation": {
+      "minM": 500,
+      "maxM": 100
+    },
+    "distanceKm": 7.5,
+    "difficulty": "moderate"
+  }
+}

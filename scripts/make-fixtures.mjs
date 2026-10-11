@@ -3,7 +3,7 @@
 // Todo el contenido es ficticio (lugares inventados, fotos sintéticas de color plano) y la salida es
 // determinista: volver a ejecutarlo deja los mismos archivos. Los escenarios se usan con
 // CONTENT_ROOT=tests/fixtures/content/<escenario>.
-import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import sharp from 'sharp';
 
@@ -308,8 +308,16 @@ const write = (file, text) => {
 };
 
 function destinoMarkdown(d) {
-  const lines = ['---', `name: ${q(d.name)}`, `summary: ${q(d.summary)}`, 'altitude:'];
-  lines.push(`  meters: ${d.meters}`, '  verified: true', `  source: ${q(SOURCE)}`);
+  const lines = ['---', `name: ${q(d.name)}`, `summary: ${q(d.summary)}`];
+  // `meters: null` omite la altitud entera (defecto de CA-20); `verified: false` quita la marca (CA-104).
+  if (d.meters !== null) {
+    lines.push(
+      'altitude:',
+      `  meters: ${d.meters}`,
+      `  verified: ${d.verified !== false}`,
+      `  source: ${q(SOURCE)}`,
+    );
+  }
   if (d.featured) lines.push('featured: true');
   if (d.climate) lines.push(`climate: { minC: ${d.climate.minC}, maxC: ${d.climate.maxC} }`);
   if (d.access) lines.push(`access: ${q(d.access)}`);
@@ -425,7 +433,10 @@ async function build(name, scenario) {
   const dir = path.join(root, name);
   rmSync(dir, { recursive: true, force: true });
 
-  write(path.join(dir, 'sitio', 'territorio.json'), JSON.stringify(TERRITORY, null, 2) + '\n');
+  write(
+    path.join(dir, 'sitio', 'territorio.json'),
+    JSON.stringify({ ...TERRITORY, ...scenario.territory }, null, 2) + '\n',
+  );
 
   const academic = scenario.siteKind === 'academic';
   const operator = {
@@ -442,7 +453,11 @@ async function build(name, scenario) {
       legalName: { value: 'Operadora Montes de Niebla S. A. S.' },
     };
   }
-  write(path.join(dir, 'sitio', 'operador.json'), JSON.stringify(operator, null, 2) + '\n');
+  // `undefined` quita la clave al serializar (por ejemplo, `siteKind: undefined`).
+  write(
+    path.join(dir, 'sitio', 'operador.json'),
+    JSON.stringify({ ...operator, ...scenario.operator }, null, 2) + '\n',
+  );
 
   for (const item of LEGALS) {
     write(path.join(dir, 'legal', `${item[1]}.md`), legalMarkdown(item, scenario.legalStatus));
@@ -453,15 +468,255 @@ async function build(name, scenario) {
       await photo(path.join(dir, 'photos', d.slug, `foto-${i + 1}.jpg`), size, d.zone, i);
     }
   }
-  // Git no guarda carpetas vacías; la colección de rutas necesita que su carpeta exista.
+  // Git no guarda carpetas vacías; las colecciones necesitan que su carpeta exista.
   if (scenario.rutas.length === 0) write(path.join(dir, 'rutas', '.gitkeep'), '');
+  if (scenario.destinos.length === 0) write(path.join(dir, 'destinos', '.gitkeep'), '');
   for (const r of scenario.rutas) {
     write(path.join(dir, 'rutas', `${r.slug}.json`), rutaJson(r));
   }
+  scenario.post?.(dir);
   console.log(`${name}: ${scenario.destinos.length} destinos, ${scenario.rutas.length} rutas`);
 }
 
+// ---------------------------------------------------------------------------
+// Escenarios inválidos (T-027): cada uno parte de una base pequeña y publicable y le añade un solo
+// defecto. Los prueba tests/build/gates.test.ts.
+// ---------------------------------------------------------------------------
+
+/** Edita un archivo ya escrito: defectos de formato que el generador no produce por sí mismo. */
+const edit = (dir, rel, fn) => {
+  const file = path.join(dir, rel);
+  const before = readFileSync(file, 'utf8');
+  const after = fn(before);
+  if (after === before) throw new Error(`La edición de ${rel} no cambió nada`);
+  writeFileSync(file, after);
+};
+
+const BASE_SLUGS = [
+  'canon-del-sol-quieto',
+  'cafetal-de-la-loma-alta',
+  'bosque-de-niebla-serena',
+  'laguna-espejo-gris',
+];
+
+/** Cuatro destinos (uno por piso, solo el primero con una foto grande) y una ruta. */
+function baseOf(kind) {
+  const operator = kind === 'operator';
+  return {
+    siteKind: kind,
+    legalStatus: operator ? 'reviewed' : 'sample',
+    identifiers: operator,
+    destinos: structuredClone(completo.destinos)
+      .filter((d) => BASE_SLUGS.includes(d.slug))
+      .map((d) => ({ ...d, photos: d.slug === BASE_SLUGS[0] ? [L32] : [] })),
+    rutas: structuredClone(completo.rutas).filter((r) => r.slug === 'sendero-del-canon'),
+  };
+}
+
+const PHOTO_FILE = () => `destinos/${BASE_SLUGS[0]}.md`;
+
+/**
+ * Defectos. `kinds` dice en qué tipos de sitio se genera: los que pide CA-139 para los dos, y el resto
+ * solo en académico (plan, R8). Cada defecto lleva `change(scenario)` y, si hace falta, `post(dir)`.
+ */
+const DEFECTS = {
+  // --- error en ambas compilaciones ---
+  'sin-modo': { kinds: ['academic'], change: (s) => (s.operator = { siteKind: undefined }) },
+  'modo-desconocido': { kinds: ['academic'], change: (s) => (s.operator = { siteKind: 'otro' }) },
+  'identificador-en-academico': {
+    kinds: ['academic'],
+    change: (s) => (s.operator = { identifiers: { rnt: { value: '99871' } } }),
+  },
+  'legal-sin-rotulo': {
+    kinds: ['academic'],
+    change: () => {},
+    post: (dir) =>
+      edit(dir, 'legal/politica-de-cancelacion.md', (t) =>
+        t.replace('status: sample', 'status: draft'),
+      ),
+  },
+  'muestra-en-operador': {
+    kinds: ['operator'],
+    change: () => {},
+    post: (dir) =>
+      edit(dir, 'legal/politica-de-cancelacion.md', (t) =>
+        t.replace('status: reviewed', 'status: sample').replace('reviewedOn: 2026-10-10\n', ''),
+      ),
+  },
+  'muestra-con-fecha': {
+    kinds: ['academic'],
+    change: () => {},
+    post: (dir) =>
+      edit(dir, 'legal/politica-de-cancelacion.md', (t) =>
+        t.replace('status: sample', 'status: sample\nreviewedOn: 2026-10-10'),
+      ),
+  },
+  'politica-sin-terceros': {
+    kinds: ['academic'],
+    change: () => {},
+    post: (dir) =>
+      edit(dir, 'legal/politica-de-datos.md', (t) => t.replace('Vercel', 'el proveedor')),
+  },
+  'altitud-ausente': { kinds: ['academic'], change: (s) => (s.destinos[1].meters = null) },
+  'altitud-cero': { kinds: ['academic'], change: (s) => (s.destinos[1].meters = 0) },
+  'clima-invertido': {
+    kinds: ['academic'],
+    change: (s) => (s.destinos[1].climate = { minC: 30, maxC: 10 }),
+  },
+  'dificultad-invalida': {
+    kinds: ['academic'],
+    change: (s) => (s.destinos[1].difficulty = 'extrema'),
+  },
+  'slug-con-tilde': {
+    kinds: ['academic'],
+    change: (s) => {
+      s.destinos[0].slug = 'cañón-del-sol-quieto';
+      s.rutas[0].destino = 'cañón-del-sol-quieto';
+    },
+  },
+  'nombre-largo': {
+    kinds: ['academic'],
+    change: (s) => (s.destinos[1].name = 'Cafetal de la Loma Alta de Nunca Acabar'),
+  },
+  'nombre-repetido': {
+    kinds: ['academic'],
+    change: (s) => (s.destinos[1].name = s.destinos[0].name),
+  },
+  'foto-pequena': {
+    kinds: ['academic', 'operator'],
+    change: (s) => (s.destinos[0].photos = [[1000, 667, '3:2', 'center']]),
+  },
+  'foto-sin-autor': {
+    kinds: ['academic'],
+    change: () => {},
+    post: (dir) => edit(dir, PHOTO_FILE(), (t) => t.replace(/ {4}author: .*\n/, '')),
+  },
+  'licencia-tipo-nc': {
+    kinds: ['academic'],
+    change: () => {},
+    post: (dir) => edit(dir, PHOTO_FILE(), (t) => t.replace('kind: cc0', 'kind: cc-by-nc')),
+  },
+  'licencia-nombre-nc': {
+    kinds: ['academic', 'operator'],
+    change: () => {},
+    post: (dir) =>
+      edit(dir, PHOTO_FILE(), (t) =>
+        t.replace('kind: cc0', 'kind: cc-by').replace('name: "CC0 1.0"', 'name: "CC BY-NC 4.0"'),
+      ),
+  },
+  'alt-vacio': {
+    kinds: ['academic'],
+    change: () => {},
+    post: (dir) => edit(dir, PHOTO_FILE(), (t) => t.replace(/ {4}alt: .*\n/, '    alt: ""\n')),
+  },
+  'alt-con-autor': {
+    kinds: ['academic', 'operator'],
+    change: () => {},
+    post: (dir) =>
+      edit(dir, PHOTO_FILE(), (t) =>
+        t.replace(/ {4}alt: "(.*)"\n/, '    alt: "$1 de Generador de fixtures"\n'),
+      ),
+  },
+  'ruta-sin-trazado': { kinds: ['academic', 'operator'], change: (s) => (s.rutas[0].points = []) },
+  'ruta-un-punto': {
+    kinds: ['academic'],
+    change: (s) => (s.rutas[0].points = [[-75.5, 6.2, 250]]),
+  },
+  'ruta-elevacion-parcial': {
+    kinds: ['academic', 'operator'],
+    change: (s) =>
+      (s.rutas[0].points = [
+        [-75.5, 6.2, 250],
+        [-75.49, 6.21],
+        [-75.48, 6.22, 400],
+      ]),
+  },
+  'ruta-sin-destino': {
+    kinds: ['academic', 'operator'],
+    change: (s) => (s.rutas[0].destino = 'no-existe'),
+  },
+  'ruta-sin-elevacion': { kinds: ['academic'], change: (s) => (s.rutas[0].elevation = undefined) },
+  'ruta-elevacion-invertida': {
+    kinds: ['academic'],
+    change: (s) => (s.rutas[0].elevation = { minM: 500, maxM: 100 }),
+  },
+  'dos-principales': {
+    kinds: ['academic', 'operator'],
+    change: (s) =>
+      s.destinos.push({
+        ...structuredClone(s.destinos[0]),
+        slug: 'playon-del-sol-quieto',
+        name: 'Playón del Sol Quieto',
+        summary: 'Otro destino cálido que también se marca como principal.',
+        meters: 400,
+        photos: [],
+      }),
+  },
+  'sin-destinos': {
+    kinds: ['academic', 'operator'],
+    change: (s) => {
+      s.destinos = [];
+      s.rutas = [];
+    },
+  },
+  'fuera-de-rango': { kinds: ['academic'], change: (s) => (s.destinos[3].meters = 4200) },
+  'umbrales-desordenados': {
+    kinds: ['academic'],
+    change: (s) => (s.territory = { thresholds: { temperate: 2000, cold: 1000, paramo: 3000 } }),
+  },
+  // --- error solo en publicación ---
+  'altitud-sin-verificar': {
+    kinds: ['academic', 'operator'],
+    change: (s) => (s.destinos[1].verified = false),
+  },
+  'territorio-sin-verificar': {
+    kinds: ['academic', 'operator'],
+    change: (s) => (s.territory = { verified: false }),
+  },
+  'contacto-de-relleno': {
+    kinds: ['academic', 'operator'],
+    change: (s) => (s.operator = { hours: 'Por definir' }),
+  },
+  'identificador-de-relleno': {
+    kinds: ['operator'],
+    change: (s) =>
+      (s.operator = {
+        identifiers: {
+          rnt: { value: '000' },
+          nit: { value: '123456' },
+          legalName: { value: 'Operadora Montes de Niebla S. A. S.' },
+        },
+      }),
+  },
+  'identificador-ficticio': {
+    kinds: ['operator'],
+    change: (s) =>
+      (s.operator = {
+        identifiers: {
+          rnt: { value: '99871', fictitious: true },
+          nit: { value: '900.555.321-7' },
+          legalName: { value: 'Operadora Montes de Niebla S. A. S.' },
+        },
+      }),
+  },
+};
+
+/** Nombre del escenario: `invalido-<defecto>`; con sufijo `-operador` cuando el sitio es de operador y el defecto existe en los dos tipos. */
+const invalid = Object.entries(DEFECTS).flatMap(([name, defect]) =>
+  defect.kinds.map((kind) => {
+    const both = defect.kinds.length === 2;
+    const scenario = baseOf(kind);
+    defect.change(scenario);
+    if (defect.post) scenario.post = defect.post;
+    return [`invalido-${name}${both && kind === 'operator' ? '-operador' : ''}`, scenario];
+  }),
+);
+
+for (const dir of readdirSync(root)) {
+  if (dir.startsWith('invalido-')) rmSync(path.join(root, dir), { recursive: true, force: true });
+}
 await build('academico', academico);
 await build('completo', completo);
 await build('minimo', minimo);
 await build('sin-fotos', sinFotos);
+for (const [name, scenario] of invalid) await build(name, scenario);

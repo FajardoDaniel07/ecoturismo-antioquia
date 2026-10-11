@@ -1,0 +1,11 @@
+{
+  "minM": 100,
+  "maxM": 3800,
+  "thresholds": {
+    "temperate": 2000,
+    "cold": 1000,
+    "paramo": 3000
+  },
+  "verified": true,
+  "source": "Fixture de pruebas (valor ficticio)"
+}
