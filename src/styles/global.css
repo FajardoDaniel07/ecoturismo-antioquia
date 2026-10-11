@@ -1,1 +1,47 @@
-@import "tailwindcss";
+@import 'tailwindcss';
+@import './tokens.css';
+@import './fonts.css';
+
+@layer base {
+  html {
+    background-color: var(--color-bg);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 100%;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--color-bg);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    line-height: var(--text-base--line-height);
+  }
+
+  /* Anillo de foco: tinta sobre fondos claros, guayacán sobre tinta. */
+  :focus-visible {
+    outline: var(--focus-ring-width) solid var(--color-focus);
+    outline-offset: var(--focus-ring-offset);
+  }
+
+  .on-ink :focus-visible,
+  dialog :focus-visible {
+    outline-color: var(--color-focus-on-ink);
+  }
+
+  img,
+  picture,
+  svg {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Un diálogo modal abierto bloquea el desplazamiento de la página. */
+  html:has(dialog[open]:modal) {
+    overflow: hidden;
+  }
+}

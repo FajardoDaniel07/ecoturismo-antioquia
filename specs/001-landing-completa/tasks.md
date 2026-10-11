@@ -46,18 +46,18 @@ prueba").
   - Depende de: —
   - Hecho cuando: el plan dice "APROBADO (fecha, quién)" y cada ADR "Aceptado". **Bloquea todo lo
     demás.**
-- [ ] **T-002** · `ui-designer` [P] — Corregir `design.md`: letra clave de las rutas visible con y
+- [x] **T-002** · `ui-designer` [P] — Corregir `design.md`: letra clave de las rutas visible con y
   sin JavaScript (S9.1 y fila "Lista de rutas" de "Estados"); recuento de 116 criterios en
   "Trazabilidad" (correcciones C1 y C2 del plan).
   - CA: CA-68. Depende de: T-001.
   - Hecho cuando: S9.1 y la tabla de estados coinciden con CA-68, y el humano aprueba el cambio.
-- [ ] **T-003** · `ui-designer` [P] — Corregir la dirección visual 3.3 (Besley estática de peso 700,
+- [x] **T-003** · `ui-designer` [P] — Corregir la dirección visual 3.3 (Besley estática de peso 700,
   Instrument Sans variable) y 5.3 (sombra solo en los controles del mapa), con el comentario de
   `--shadow-overlay` en `tokens.css` en el mismo commit (C3 y C4).
   - Archivos: `docs/design/direccion-visual.md`, `src/styles/tokens.css` (solo comentario).
   - Depende de: T-001.
   - Hecho cuando: los dos documentos dicen lo mismo y el humano aprueba el cambio.
-- [ ] **T-004** · `ui-designer` [P] — Resolver el interlineado de 24 px del crédito (usar
+- [x] **T-004** · `ui-designer` [P] — Resolver el interlineado de 24 px del crédito (usar
   `--space-6` o añadir un token) y limpiar los comentarios de `tokens.css` que hablan de formularios,
   "fondo de bloque" y "desplegar un panel" (C5 y C7).
   - Archivos: `specs/001-landing-completa/design.md`, `src/styles/tokens.css`,
@@ -80,44 +80,44 @@ prueba").
 
 ## H1 — Puesta a punto del repositorio
 
-- [ ] **T-007** · `astro-developer` — Instalar `typescript-eslint` y `prettier-plugin-astro` como
+- [x] **T-007** · `astro-developer` — Instalar `typescript-eslint` y `prettier-plugin-astro` como
   dependencias de desarrollo.
   - Archivos: `package.json`, `package-lock.json`.
   - Depende de: T-001 (**ADR 0009 aprobado**).
   - Hecho cuando: `npm ls typescript-eslint prettier-plugin-astro` las lista sin errores.
-- [ ] **T-008** · `astro-developer` — Configurar ESLint: reglas recomendadas de TypeScript y de
+- [x] **T-008** · `astro-developer` — Configurar ESLint: reglas recomendadas de TypeScript y de
   Astro, `no-explicit-any` como error y las reglas de capas con `no-restricted-imports`.
   - Archivos: `eslint.config.js`.
   - Depende de: T-007.
   - Hecho cuando: `npx eslint .` termina sin errores, y un archivo de prueba en `src/components/ui/`
     que importe `astro:content` produce error.
-- [ ] **T-009** · `astro-developer` [P] — Configurar Prettier con el complemento de Astro y su lista
+- [x] **T-009** · `astro-developer` [P] — Configurar Prettier con el complemento de Astro y su lista
   de exclusiones (`dist/`, `.astro/`, `.claude/`, `.agents/`, `specs/`, `docs/`, archivos de bloqueo).
   - Archivos: `.prettierrc`, `.prettierignore`.
   - Depende de: T-007.
   - Hecho cuando: `npx prettier --check .` pasa y `npm run lint` queda en verde.
-- [ ] **T-010** · `astro-developer` [P] — Ajustar `astro.config.mjs` (`site` desde `SITE_URL` con
+- [x] **T-010** · `astro-developer` [P] — Ajustar `astro.config.mjs` (`site` desde `SITE_URL` con
   valor local por defecto, `trailingSlash: 'always'`, `outDir` desde `OUT_DIR`) y los guiones de
   `package.json`: `build` en modo vista previa, `build:release`, `test:build`, `test:lh`.
   - Archivos: `astro.config.mjs`, `package.json`.
   - CA: CA-97, CA-118, CA-119. Depende de: T-001 (**ADR 0003 aprobado**).
   - Hecho cuando: `npm run build` y `npm run build:release` generan `dist/` con la página de
     plantilla.
-- [ ] **T-011** · `astro-developer` [P] — Añadir las dos fuentes y sus licencias, y declararlas.
+- [x] **T-011** · `astro-developer` [P] — Añadir las dos fuentes y sus licencias, y declararlas.
   - Archivos: `src/assets/fonts/besley-latin-700-normal.woff2`,
     `src/assets/fonts/instrument-sans-latin-wght-normal.woff2`, dos archivos de licencia OFL,
     `src/styles/fonts.css`.
   - CA: CA-116. Depende de: T-001 (**ADR 0007 aprobado**).
   - Hecho cuando: los archivos pesan 18.9 KB y 30.1 KB (± 1 KB) y `fonts.css` declara "Besley" con
     peso 700 e "Instrument Sans" con peso 400 a 700, ambas con `font-display: swap`.
-- [ ] **T-012** · `astro-developer` — Importar `tokens.css` y `fonts.css` desde `global.css`;
+- [x] **T-012** · `astro-developer` — Importar `tokens.css` y `fonts.css` desde `global.css`;
   añadir estilos base: anillo de foco, base de `img`, bloqueo de desplazamiento con diálogo abierto.
   Hacer que `src/pages/index.astro` importe `global.css` y declare `lang="es-CO"`.
   - Archivos: `src/styles/global.css`, `src/pages/index.astro`.
   - CA: CA-95, CA-105, CA-107, CA-113, CA-117. Depende de: T-011.
   - Hecho cuando: en `npm run dev` el fondo de la página es `--color-bg`, el texto usa Instrument
     Sans y una clase `bg-blue-500` no produce ningún estilo.
-- [ ] **T-013** · `astro-developer` [P] — Configurar Vitest y dejar una prueba de humo.
+- [x] **T-013** · `astro-developer` [P] — Configurar Vitest y dejar una prueba de humo.
   - Archivos: `vitest.config.ts`, `tests/unit/smoke.test.ts`.
   - Depende de: T-007.
   - Hecho cuando: `npm run test` pasa con una prueba.
@@ -130,7 +130,7 @@ prueba").
   - CA: CA-79 (política de teselas, ADR 0006). Depende de: T-010.
   - Hecho cuando: `npm run test:e2e` arranca, sirve la página de plantilla y pasa una prueba de humo
     en los cinco proyectos.
-- [ ] **T-015** · `astro-developer` [P] — Instalar `@lhci/cli` como dependencia de desarrollo.
+- [x] **T-015** · `astro-developer` [P] — Instalar `@lhci/cli` como dependencia de desarrollo.
   - Archivos: `package.json`, `package-lock.json`.
   - Depende de: T-001 (**ADR 0009 aprobado**).
   - Hecho cuando: `npx lhci --version` responde.

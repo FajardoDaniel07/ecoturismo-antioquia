@@ -1,0 +1,13 @@
+dist/
+.astro/
+.claude/
+.agents/
+specs/
+docs/
+package-lock.json
+skills-lock.json
+tests/fixtures/
+# Tokens de diseño: los mantiene ui-designer (docs/design/direccion-visual.md).
+src/styles/tokens.css
+# Documento de proyecto mantenido por el humano (no se reformatea).
+CLAUDE.md
