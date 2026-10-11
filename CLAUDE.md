@@ -7,12 +7,20 @@ Idioma del contenido: español (es-CO).
 ## Stack
 
 - **Astro** (salida estática, `output: 'static'`) + **TypeScript** en modo `strict`.
-- **Content Collections** con esquemas Zod para destinos y rutas (fuente única de datos).
+- **Content Collections** con esquemas Zod (fuente única de datos): `destinos`, `rutas`, `legal`,
+  `operador` y `territorio`. Todo el contenido pasa por una sola puerta, `loadSite()`, que valida
+  y decide qué se publica (ADR 0003).
 - **Estilos**: Tailwind CSS + design tokens en `src/styles/tokens.css` (colores, tipografía, espaciado).
-- **Islas interactivas** en TypeScript sin framework UI (web components / `<script>` de Astro):
-  - Galería: lightbox accesible (PhotoSwipe o implementación propia).
-  - Mapa: Leaflet + teselas de OpenStreetMap, rutas en GeoJSON.
-- **Imágenes**: `astro:assets` (`<Image>` / `<Picture>`, AVIF/WebP, tamaños responsivos).
+- **Islas interactivas** en TypeScript sin framework UI: un componente `.astro` con un guion
+  cargador que importa el módulo real (`*.client.ts`) cuando la sección se acerca a la ventana
+  (ADR 0004):
+  - Galería: visor propio sobre `<dialog>`, sin dependencia (ADR 0005).
+  - Mapa: Leaflet 1.9 + teselas de OpenStreetMap, rutas en GeoJSON (ADR 0006).
+- **Imágenes**: `astro:assets` (`<Picture>`, AVIF/WebP, tamaños responsivos). Las fotos son
+  archivos locales en `src/assets/photos/`; su atribución vive en el frontmatter del destino
+  (ADR 0008).
+- **Fuentes**: Besley (estática, peso 700) e Instrument Sans (variable), autoalojadas en
+  `src/assets/fonts/` con `@font-face` en `src/styles/fonts.css`, sin dependencia (ADR 0007).
 - **Pruebas**: Vitest (unitarias), Playwright (e2e) + `@axe-core/playwright` (accesibilidad).
 - **Calidad**: `astro check`, ESLint, Prettier, Lighthouse CI.
 
@@ -43,33 +51,52 @@ Verifica que ambas queden en `.claude/skills/<nombre>/SKILL.md` y haz commit de 
 ## Comandos
 
 ```bash
-npm run dev        # servidor local
-npm run build      # build de producción (incluye astro check)
-npm run preview    # previsualizar el build
-npm run test       # Vitest
-npm run test:e2e   # Playwright + axe
-npm run lint       # ESLint + Prettier --check
+npm run dev            # servidor local (vista previa)
+npm run build          # compilación de vista previa: permisiva, noindex, borradores marcados (incluye astro check)
+npm run build:release  # compilación de publicación: estricta; la única que se despliega
+npm run preview        # previsualizar el build
+npm run test           # Vitest (unitarias)
+npm run test:build     # criterios [build]: construye escenarios y comprueba que el build falla cuando debe
+npm run test:e2e       # Playwright + axe
+npm run test:lh        # Lighthouse CI en modo móvil
+npm run lint           # ESLint + Prettier --check
 ```
+
+`npm run build` no es desplegable. El alojamiento se configura con `npm run build:release`, que
+exige `SITE_URL`, textos legales revisados, identificadores oficiales entregados y altitudes
+verificadas (ADR 0003).
 
 ## Estructura
 
 ```
 src/
   content/
-    destinos/        # un .md por destino (frontmatter validado por Zod)
+    destinos/        # un .md por destino (frontmatter validado por Zod; incluye sus fotos y créditos)
     rutas/           # un .json por ruta (GeoJSON LineString + metadatos)
-  content.config.ts  # esquemas Zod de las colecciones
+    legal/           # tres .md: política de datos, términos, cancelación (borrador o revisado)
+    sitio/           # operador.json (contacto, identificadores) y territorio.json (altitudes, umbrales)
+  content.config.ts  # registra las colecciones; los esquemas viven en src/lib/content/schemas.ts
+  assets/
+    fonts/           # dos WOFF2 y sus licencias OFL
+    photos/          # una carpeta por destino; fotos de terceros con licencia libre
   components/
-    ui/              # componentes presentacionales sin estado (Button, Card, Badge…)
-    sections/        # secciones de la landing (Hero, Destinos, Galeria, MapaRutas, Contacto)
-    islands/         # componentes con JS en el cliente (GalleryLightbox, RouteMap)
+    ui/              # componentes presentacionales sin estado (Button, Ficha, Photo, AltitudePlate…)
+    sections/        # secciones y bloques de página (Hero, Destinos, Galeria, MapaRutas, Contacto…)
+    islands/         # GalleryLightbox y RouteMap: .astro + módulo *.client.ts + runtime/when-visible.ts
   layouts/           # BaseLayout (SEO, meta, fuentes)
-  lib/               # lógica pura y tipada (filtros, formateo, utilidades geo) — testeable
+  lib/               # lógica pura y tipada — testeable. Única excepción: lib/content/load.ts,
+                     # el único módulo que importa astro:content
   pages/
     index.astro
     destinos/[slug].astro
+    legal/[slug].astro
+    creditos.astro
+    404.astro
+    sitemap.xml.ts, robots.txt.ts, data/rutas.json.ts
   styles/
+    global.css       # importa Tailwind, tokens.css y fonts.css
     tokens.css       # generado a partir de la dirección visual (ui-designer)
+    fonts.css        # @font-face de las dos fuentes
 specs/               # artefactos SDD por feature: spec.md, design.md, plan.md, tasks.md
 docs/
   adr/               # Architecture Decision Records
@@ -80,14 +107,20 @@ docs/
   skills/            # skills instaladas (frontend-design, find-skills, …)
   settings.json      # permisos (p. ej. confirmar antes de instalar skills)
 tests/
-  unit/
-  e2e/
+  unit/              # Vitest: una suite por módulo de src/lib/
+  build/             # Vitest: construye escenarios y comprueba el resultado del build
+  e2e/               # Playwright + axe
+  fixtures/          # contenido de prueba (escenarios válidos e inválidos); se usa con CONTENT_ROOT
 ```
 
 ## Reglas de arquitectura (obligatorias)
 
-1. **HTML primero, JS solo donde aporta.** Todo es estático salvo galería y mapa.
-   Las islas se hidratan con `client:visible` (nunca `client:load` sin justificar en un ADR).
+1. **HTML primero, JS solo donde aporta.** Todo es estático salvo galería y mapa. El código de una
+   isla no se descarga hasta que su sección se acerca a la ventana: un guion cargador con
+   `IntersectionObserver` hace `import()` dinámico del módulo. Es el equivalente de `client:visible`
+   para islas sin framework (ADR 0004). Cargar una isla al abrir la página requiere un ADR.
+   Fuera de las islas solo se admiten tres ayudas mínimas (1.5 KB gzip en total): la clase `js` en
+   `<html>`, el cierre del menú móvil con Esc o al elegir enlace, y el propio cargador.
 2. **Una sola fuente de verdad para el contenido.** Ningún componente tiene datos de destinos
    "quemados"; todo sale de `getCollection()`.
 3. **Lógica fuera de los componentes.** Filtros, cálculos de distancia, ordenamiento, etc. van en
