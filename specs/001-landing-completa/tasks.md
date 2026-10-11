@@ -860,7 +860,7 @@ Se intercalan con H4 a H8 según la tabla "Orden recomendado" del final de este 
   - Archivos: `scripts/photos-manifest.json`.
   - CA: CA-46, CA-47. Depende de: T-034.
   - Hecho cuando: cada entrada tiene los ocho datos y ninguna licencia es NC ni ND.
-- [ ] **T-131** · `astro-developer` — Guion de descarga de fotos y su ejecución. Descarga en serie
+- [x] **T-131** · `astro-developer` — Guion de descarga de fotos y su ejecución. Descarga en serie
   con agente de usuario propio, reduce a 2560 px de lado mayor si hace falta, no amplía, y escribe
   un informe con dimensiones, peso y huella de cada archivo.
   - Archivos: `scripts/fetch-photos.mjs`, `src/assets/photos/<destino>/*`,
