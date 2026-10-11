@@ -31,7 +31,7 @@ const MAX_SIDE = 2560;
 const LARGE_SIDE = 2000;
 const MIN_SIDE = 1200;
 const MAX_BYTES = 1.5 * 1024 * 1024;
-const PAUSE_MS = 2000;
+const PAUSE_MS = 6000;
 const TIMEOUT_MS = 60_000;
 
 // ---------------------------------------------------------------------------------------------
@@ -308,7 +308,7 @@ async function check(entries, opts) {
   return { bad, rows };
 }
 
-function reportMarkdown(results) {
+function reportMarkdown(results, missing = 0, stopped = false) {
   const lines = [
     '# Fotos descargadas',
     '',
@@ -316,6 +316,12 @@ function reportMarkdown(results) {
     '',
     `Topes (ADR 0008): lado mayor de ${MAX_SIDE} px y 1.5 MB por archivo; mínimo ${MIN_SIDE} px (CA-43). "Grande" = ${LARGE_SIDE} px o más (CA-42).`,
     '',
+    ...(missing > 0
+      ? [
+          `**Informe parcial:** faltan ${missing} fotos${stopped ? ' (la descarga se detuvo ante un error del servidor)' : ''}.`,
+          '',
+        ]
+      : []),
     '| Destino | Archivo | Declaradas | Guardadas | Peso | Tamaño | Acción | Huella (sha256) |',
     '|---|---|---|---|---|---|---|---|',
   ];
@@ -332,12 +338,27 @@ function reportMarkdown(results) {
 
 async function fetchAll(entries, opts) {
   console.log(`Agente de usuario: ${userAgent()}`);
-  const results = [];
-  let first = true;
+  const actions = new Map();
+  let requested = false;
+  let stopped = false;
   for (const e of entries) {
     const file = targetPath(opts, e);
-    if (!first) await sleep(PAUSE_MS);
-    first = false;
+
+    // Un archivo que ya existe y cumple la política no se vuelve a pedir.
+    if (existsSync(file)) {
+      const have = await describe(file, e);
+      if (have.problems.length === 0) {
+        actions.set(e.file, 'ya existía (se conserva)');
+        console.log(`Ya existe ${e.slug}/${e.file}: ${have.width}×${have.height}, se conserva.`);
+        continue;
+      }
+      console.warn(
+        `${e.slug}/${e.file} existe pero no cumple (${have.problems.join('; ')}); se vuelve a pedir.`,
+      );
+    }
+
+    if (requested) await sleep(PAUSE_MS);
+    requested = true;
     console.log(`Descargando ${e.slug}/${e.file}`);
     let downloaded;
     try {
@@ -345,6 +366,7 @@ async function fetchAll(entries, opts) {
     } catch (error) {
       console.error(`  Falló: ${error.message}. Me detengo (un solo intento por archivo).`);
       process.exitCode = 1;
+      stopped = true;
       break;
     }
     const info = await inspect(downloaded.buffer);
@@ -364,11 +386,20 @@ async function fetchAll(entries, opts) {
     const { buffer, action } = await fit(downloaded.buffer, info);
     mkdirSync(path.dirname(file), { recursive: true });
     writeFileSync(file, buffer);
+    actions.set(e.file, action);
     const d = await describe(file, e);
-    results.push({ ...d, action });
     console.log(`  ${d.width}×${d.height}, ${(d.bytes / 1024).toFixed(0)} KB, ${action}`);
   }
-  return results;
+
+  // El informe cubre todo lo que está guardado, también lo que ya existía.
+  const results = [];
+  for (const e of entries) {
+    const file = targetPath(opts, e);
+    if (!existsSync(file)) continue;
+    const d = await describe(file, e);
+    results.push({ ...d, action: actions.get(e.file) ?? 'existente' });
+  }
+  return { results, stopped };
 }
 
 async function main() {
@@ -398,10 +429,10 @@ async function main() {
     return;
   }
 
-  const results = await fetchAll(entries, opts);
+  const { results, stopped } = await fetchAll(entries, opts);
   if (opts.report && results.length > 0) {
     mkdirSync(path.dirname(opts.report), { recursive: true });
-    writeFileSync(opts.report, reportMarkdown(results));
+    writeFileSync(opts.report, reportMarkdown(results, entries.length - results.length, stopped));
     console.log(`Informe: ${path.relative(ROOT, opts.report)}`);
   }
 }

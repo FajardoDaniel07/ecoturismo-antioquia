@@ -53,6 +53,10 @@
   html:has(dialog[open]:modal) {
     overflow: hidden;
   }
+
+  html {
+    scrollbar-gutter: stable;
+  }
 }
 
 /* Aparición del perfil altitudinal (S3.9): una cubierta del color del papel que se retira hacia

@@ -1,14 +1,18 @@
 ---
 /**
- * Cuadrícula de fotos (S8.1, CA-41, CA-53, CA-65): dos columnas en móvil, cuatro en tableta y cinco
- * en escritorio. Una foto 3:2 ocupa dos columnas y una 4:5 o 1:1 ocupa una; las filas se alinean
- * arriba. Sin JavaScript las miniaturas son imágenes, no enlaces ni botones; la isla del visor las
- * envolverá más adelante. Cada foto lleva su pie: destino y piso (si `showDestino`) y el crédito.
+ * Cuadrícula de fotos (S8.1, CA-41, CA-53, CA-65, CA-66): dos columnas en móvil, cuatro en tableta y
+ * cinco en escritorio. Una foto 3:2 ocupa dos columnas y una 4:5 o 1:1 ocupa una; las filas se
+ * alinean arriba. Sin JavaScript las miniaturas son imágenes, no enlaces ni botones. Con JavaScript,
+ * la isla del visor (`GalleryLightbox`) envuelve cada imagen en un botón: para eso cada foto lleva en
+ * `data-*` los `srcset` de su imagen ampliada (generados aquí, sin pedirse hasta abrir el visor) y,
+ * en un <template>, su pie sobre tinta.
  */
+import { getImage } from 'astro:assets';
 import Photo from '../ui/Photo.astro';
 import PhotoCredit from '../ui/PhotoCredit.astro';
 import ZoneTag from '../ui/ZoneTag.astro';
 import type { Photo as PhotoModel } from '../../lib/content/validate';
+import { allowedWidths } from '../../lib/photos/policy';
 
 interface Props {
   photos: PhotoModel[];
@@ -18,13 +22,41 @@ interface Props {
 const { photos, showDestino } = Astro.props;
 const SIZES = '(min-width: 1024px) 220px, (min-width: 768px) 25vw, 50vw';
 const WIDE_SIZES = '(min-width: 1024px) 440px, (min-width: 768px) 50vw, 100vw';
+/** Anchos de la imagen ampliada del visor (S8.2), limitados al original. */
+const FULL_WIDTHS = [960, 1600, 2560];
+
+/** `srcset` de la imagen ampliada, sin recortar, en un formato. */
+async function fullSrcset(photo: PhotoModel, format: 'avif' | 'webp'): Promise<string> {
+  const widths = allowedWidths(photo.file.width, FULL_WIDTHS);
+  const images = await Promise.all(
+    widths.map((width) => getImage({ src: photo.file, width, format })),
+  );
+  return images.map((img, i) => `${img.src} ${widths[i]}w`).join(', ');
+}
+
+const items = await Promise.all(
+  photos.map(async (photo) => ({
+    photo,
+    avif: await fullSrcset(photo, 'avif'),
+    webp: await fullSrcset(photo, 'webp'),
+  })),
+);
 ---
 
 <ul class="m-0 grid list-none grid-cols-2 items-start gap-4 p-0 md:grid-cols-4 md:gap-6 lg:grid-cols-5">
-  {photos.map((photo) => {
+  {items.map(({ photo, avif, webp }) => {
     const wide = photo.ratio === '3:2';
     return (
-      <li class:list={[wide ? 'col-span-2' : 'col-span-1']} data-photo-item>
+      <li
+        class:list={[wide ? 'col-span-2' : 'col-span-1']}
+        data-photo-item
+        data-destino={photo.destinoName}
+        data-alt={photo.alt}
+        data-full-avif={avif}
+        data-full-webp={webp}
+        data-full-width={photo.file.width}
+        data-full-height={photo.file.height}
+      >
         <Photo photo={photo} slot="grid" sizes={wide ? WIDE_SIZES : SIZES} loading="lazy" />
         <div class="mt-2">
           {showDestino && (
@@ -35,6 +67,13 @@ const WIDE_SIZES = '(min-width: 1024px) 440px, (min-width: 768px) 50vw, 100vw';
           )}
           <PhotoCredit photo={photo} />
         </div>
+        <template data-viewer-caption>
+          <p class="m-0 font-medium text-on-ink">
+            {photo.destinoName}
+            <ZoneTag zone={photo.zone} onInk class="ml-2" />
+          </p>
+          <PhotoCredit photo={photo} onInk />
+        </template>
       </li>
     );
   })}

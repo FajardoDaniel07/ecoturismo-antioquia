@@ -4,10 +4,12 @@ import { zoneName, type ZoneId } from '../../lib/altitude/zones';
 
 interface Props {
   zone: ZoneId;
+  /** Sobre fondo tinta (el visor): texto atenuado en lugar del color fuerte del piso. */
+  onInk?: boolean;
   class?: string;
 }
 
-const { zone, class: extra = '' } = Astro.props;
+const { zone, onInk = false, class: extra = '' } = Astro.props;
 const SWATCH: Record<ZoneId, string> = {
   warm: 'bg-zone-warm',
   temperate: 'bg-zone-temperate',
@@ -23,7 +25,11 @@ const TEXT: Record<ZoneId, string> = {
 ---
 
 <span
-  class:list={['inline-flex items-center gap-2 text-sm leading-5 font-medium', TEXT[zone], extra]}
+  class:list={[
+    'inline-flex items-center gap-2 text-sm leading-5 font-medium',
+    onInk ? 'text-on-ink-muted' : TEXT[zone],
+    extra,
+  ]}
 >
   <span aria-hidden="true" class:list={['size-2.5 shrink-0', SWATCH[zone]]}></span>
   Piso {zoneName(zone)}

@@ -10,6 +10,7 @@ import Ficha from '../ui/Ficha.astro';
 import Photo from '../ui/Photo.astro';
 import TextLink from '../ui/TextLink.astro';
 import ZoneRail from '../ui/ZoneRail.astro';
+import GalleryLightbox from '../islands/GalleryLightbox.astro';
 import Contacto from './Contacto.astro';
 import PhotoGrid from './PhotoGrid.astro';
 import { zoneName, zoneRange } from '../../lib/altitude/zones';
@@ -98,7 +99,9 @@ const SMALL_SIZES = '(min-width: 1024px) 440px, (min-width: 768px) 480px, calc(1
                 ))}
               </ul>
             ) : (
-              <PhotoGrid photos={destino.photos} showDestino={false} />
+              <GalleryLightbox label={`Fotos de ${destino.name}`}>
+                <PhotoGrid photos={destino.photos} showDestino={false} />
+              </GalleryLightbox>
             )}
           </div>
         </section>

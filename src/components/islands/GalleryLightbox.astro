@@ -1,0 +1,216 @@
+---
+/**
+ * Isla del visor de fotos (S8.2, ADR 0004 y 0005). Envuelve una cuadrícula (`<slot />`) con
+ * elementos `[data-photo-item]`. Sin JavaScript no pasa nada: la cuadrícula son imágenes y el
+ * diálogo, que vive en un <template>, no existe en el documento (CA-65). Con JavaScript, un guion
+ * cargador mínimo espera a que la cuadrícula se acerque a la ventana y solo entonces importa el
+ * módulo del visor (CA-66). Los textos en español están aquí, en el HTML, no en el JavaScript.
+ */
+interface Props {
+  /** Nombre accesible del grupo de fotos que el visor recorre. */
+  label?: string;
+}
+
+const { label = 'Fotos' } = Astro.props;
+---
+
+<div data-lightbox data-label={label}>
+  <slot />
+
+  <template data-lightbox-template>
+    <dialog class="lightbox" aria-label="Visor de fotos">
+      <div class="lightbox__bar">
+        <p class="lightbox__counter" data-counter></p>
+        <button type="button" class="lightbox__button" data-close autofocus>
+          Cerrar
+        </button>
+      </div>
+      <div class="lightbox__stage" data-stage>
+        <p class="lightbox__status" data-status>
+          Cargando la foto…
+        </p>
+        <picture data-picture hidden>
+          <source type="image/avif" sizes="100vw" data-source-avif />
+          <source type="image/webp" sizes="100vw" data-source-webp />
+          <img class="lightbox__image" data-image alt="" decoding="async" />
+        </picture>
+      </div>
+      <div class="lightbox__caption" data-caption></div>
+      <div class="lightbox__nav" data-nav>
+        <button type="button" class="lightbox__button" data-prev>
+          Anterior
+        </button>
+        <button type="button" class="lightbox__button" data-next>
+          Siguiente
+        </button>
+      </div>
+      <p class="sr-only" aria-live="polite" data-live></p>
+    </dialog>
+  </template>
+</div>
+
+<script>
+  import { whenVisible } from './runtime/when-visible';
+
+  document.querySelectorAll<HTMLElement>('[data-lightbox]').forEach((root) => {
+    whenVisible(root, () => import('./gallery-lightbox.client').then((m) => m.initLightbox(root)));
+  });
+</script>
+
+<style is:global>
+  /* Miniatura convertida en botón por la isla (CA-54): borde de 2 px en tinta al pasar o enfocar. */
+  .lightbox-thumb {
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border: 2px solid transparent;
+    border-radius: var(--radius-sm);
+    background: none;
+    cursor: pointer;
+    transition: border-color var(--duration-fast) var(--ease-out);
+  }
+  .lightbox-thumb:hover {
+    border-color: var(--color-ink);
+  }
+
+  /* El diálogo: pantalla completa sobre fondo tinta opaco. */
+  dialog.lightbox {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    max-width: none;
+    height: 100%;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: var(--color-ink);
+    color: var(--color-on-ink);
+    flex-direction: column;
+    opacity: 0;
+    transition:
+      opacity var(--duration-base) var(--ease-out),
+      overlay var(--duration-base) allow-discrete,
+      display var(--duration-base) allow-discrete;
+  }
+  dialog.lightbox[open] {
+    display: flex;
+    opacity: 1;
+  }
+  @starting-style {
+    dialog.lightbox[open] {
+      opacity: 0;
+    }
+  }
+  dialog.lightbox::backdrop {
+    background: var(--color-ink);
+  }
+  dialog.lightbox :focus-visible {
+    outline-color: var(--color-focus-on-ink);
+  }
+
+  .lightbox__bar {
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: space-between;
+    min-height: calc(var(--space-12) + var(--space-2));
+    padding: 0 var(--space-4);
+  }
+  .lightbox__counter {
+    margin: 0;
+    color: var(--color-on-ink-muted);
+  }
+  .lightbox__button {
+    min-height: var(--size-touch-target);
+    padding: 0 var(--space-6);
+    border: 1px solid var(--color-on-ink);
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: var(--color-on-ink);
+    font-weight: var(--font-weight-semibold);
+    cursor: pointer;
+    transition:
+      background-color var(--duration-fast) var(--ease-out),
+      color var(--duration-fast) var(--ease-out);
+  }
+  .lightbox__button:hover {
+    background: var(--color-bg);
+    color: var(--color-ink);
+  }
+  /* Extremo: sigue enfocable, pero se ve atenuado y con borde punteado (CA-57). */
+  .lightbox__button[aria-disabled='true'] {
+    border-style: dashed;
+    border-color: var(--color-on-ink-muted);
+    color: var(--color-on-ink-muted);
+    cursor: default;
+  }
+  .lightbox__button[aria-disabled='true']:hover {
+    background: transparent;
+    color: var(--color-on-ink-muted);
+  }
+
+  .lightbox__stage {
+    position: relative;
+    display: flex;
+    flex: 1 1 auto;
+    min-height: 0;
+    align-items: center;
+    justify-content: center;
+    padding: 0 var(--space-4);
+    touch-action: pan-y;
+  }
+  .lightbox__stage picture {
+    display: contents;
+  }
+  .lightbox__stage picture[hidden] {
+    display: none;
+  }
+  .lightbox__image {
+    display: block;
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    background: transparent;
+  }
+  .lightbox__status {
+    position: absolute;
+    top: 0;
+    left: var(--space-4);
+    margin: 0;
+    color: var(--color-on-ink-muted);
+  }
+  .lightbox__status[hidden] {
+    display: none;
+  }
+
+  .lightbox__caption {
+    flex: none;
+    padding: var(--space-3) var(--space-4);
+  }
+  .lightbox__nav {
+    display: flex;
+    flex: none;
+    gap: var(--space-4);
+    padding: 0 var(--space-4) var(--space-4);
+  }
+  .lightbox__nav .lightbox__button {
+    flex: 1 1 0;
+    min-height: var(--space-12);
+  }
+  .lightbox__nav[hidden] {
+    display: none;
+  }
+  @media (min-width: 768px) {
+    .lightbox__nav {
+      justify-content: space-between;
+    }
+    .lightbox__nav .lightbox__button {
+      flex: none;
+      min-width: var(--space-32);
+    }
+  }
+</style>
