@@ -22,3 +22,7 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# artefactos de pruebas y Lighthouse
+.tmp/
+.lighthouseci/

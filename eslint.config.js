@@ -12,6 +12,8 @@ export default defineConfig(
   {
     ignores: [
       'dist/**',
+      '.tmp/**',
+      '.lighthouseci/**',
       '.astro/**',
       '.claude/**',
       '.agents/**',

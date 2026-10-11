@@ -11,3 +11,5 @@ tests/fixtures/
 src/styles/tokens.css
 # Documento de proyecto mantenido por el humano (no se reformatea).
 CLAUDE.md
+.tmp/
+.lighthouseci/
