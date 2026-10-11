@@ -1,0 +1,179 @@
+---
+/**
+ * Perfil altitudinal del hero (S3, CA-4 a CA-9, ADR 0010). Dos capas por variante:
+ * un SVG decorativo estirable (silueta, estratos, curvas) y, encima, HTML con los textos fijos y
+ * una lista ordenada de enlaces (puntos y etiquetas), colocados con `left` en porcentaje y `top`
+ * en px. Las tres variantes están en el HTML y CSS muestra la de su rango; las otras quedan con
+ * `display: none`, fuera del foco y del árbol de accesibilidad. Sin JavaScript.
+ */
+import type { ProfileModel, ProfileVariantId } from '../../lib/altitude/profile';
+import type { ZoneId } from '../../lib/altitude/zones';
+
+interface Props {
+  models: Record<ProfileVariantId, ProfileModel>;
+}
+
+const { models } = Astro.props;
+
+const VARIANTS: { id: ProfileVariantId; show: string }[] = [
+  { id: 'compact', show: 'md:hidden' },
+  { id: 'medium', show: 'hidden md:block lg:hidden' },
+  { id: 'wide', show: 'hidden lg:block' },
+];
+
+const ZONE_TEXT: Record<ZoneId, string> = {
+  warm: 'text-zone-warm',
+  temperate: 'text-zone-temperate',
+  cold: 'text-zone-cold',
+  paramo: 'text-zone-paramo',
+};
+const ZONE_TINT: Record<ZoneId, string> = {
+  warm: 'fill-zone-warm-tint',
+  temperate: 'fill-zone-temperate-tint',
+  cold: 'fill-zone-cold-tint',
+  paramo: 'fill-zone-paramo-tint',
+};
+const ZONE_RAIL: Record<ZoneId, string> = {
+  warm: 'bg-zone-warm',
+  temperate: 'bg-zone-temperate',
+  cold: 'bg-zone-cold',
+  paramo: 'bg-zone-paramo',
+};
+
+// Un texto de 14 px con interlineado de 20 px tiene su línea base a unos 15 px de su borde superior.
+const ASCENT = 15;
+const HALF_TARGET = 22; // el área táctil de 44 px, centrada en el disco
+const NO_SCALE = '[vector-effect:non-scaling-stroke]';
+---
+
+<figure aria-label="Perfil de altitud de Antioquia" class="relative m-0 overflow-hidden">
+  {VARIANTS.map(({ id, show }) => {
+    const m = models[id];
+    const clipId = `profile-clip-${id}`;
+    return (
+      <div class={`relative ${show}`} style={`height:${m.height}px`}>
+        <svg
+          class="absolute inset-0 h-full w-full"
+          viewBox={`0 0 ${m.width} ${m.height}`}
+          preserveAspectRatio="none"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <defs>
+            <clipPath id={clipId}>
+              <path d={m.silhouettePath} />
+            </clipPath>
+          </defs>
+          <g clip-path={`url(#${clipId})`}>
+            <rect
+              x="0"
+              y={m.base.y}
+              width={m.width}
+              height={m.base.height}
+              class={ZONE_TINT[m.base.zone]}
+            />
+            {m.strata.map((s) => (
+              <rect x="0" y={s.y} width={m.width} height={s.height} class={ZONE_TINT[s.zone]} />
+            ))}
+            {m.echoPaths.map((d) => (
+              <path d={d} fill="none" class={`stroke-line stroke-1 ${NO_SCALE}`} />
+            ))}
+            {m.boundaries.map((y) => (
+              <line
+                x1="0"
+                x2={m.width}
+                y1={y}
+                y2={y}
+                class={`stroke-ink-muted stroke-1 ${NO_SCALE}`}
+              />
+            ))}
+          </g>
+          <path
+            d={m.ridgePath}
+            fill="none"
+            stroke-linejoin="round"
+            stroke-linecap="round"
+            class={`stroke-ink stroke-2 ${NO_SCALE}`}
+          />
+        </svg>
+
+        {m.rails.map((rail) => (
+          <span
+            aria-hidden="true"
+            class={`absolute right-0 ${ZONE_RAIL[rail.zone]}`}
+            style={`top:${rail.y}px;height:${rail.height}px;width:${m.railWidth}px`}
+          />
+        ))}
+
+        {m.zoneLabels.map((z) => (
+          <span
+            class={`absolute text-sm leading-5 font-medium ${ZONE_TEXT[z.zone]}`}
+            style={`right:${m.railWidth + 8}px;top:${z.baselineY - ASCENT}px`}
+          >
+            {z.text}
+          </span>
+        ))}
+        <span
+          class="absolute text-sm leading-5 text-ink-muted"
+          style={`left:${m.minLabel.x}px;top:${m.minLabel.y - ASCENT}px`}
+        >
+          {m.minLabel.text}
+        </span>
+        <span
+          class="absolute text-sm leading-5 text-ink-muted"
+          style={`right:calc(100% - ${m.maxLabel.xFraction * 100}%);top:${m.maxLabel.y - ASCENT}px`}
+        >
+          {m.maxLabel.text}
+        </span>
+
+        <ol class="m-0 list-none p-0">
+          {m.points.map((p) => {
+            const l = p.label;
+            const top = l.top - p.y + HALF_TARGET;
+            const edge =
+              l.align === 'left' ? `left:${HALF_TARGET + l.dx}px` : `right:${HALF_TARGET - l.dx}px`;
+            const guideTop = l.side === 'rock' ? HALF_TARGET : l.top + l.height - p.y + HALF_TARGET;
+            const guideHeight = l.side === 'rock' ? l.top - p.y : p.y - (l.top + l.height);
+            return (
+              <li
+                class="absolute size-11 -translate-x-1/2 -translate-y-1/2"
+                style={`left:${p.xFraction * 100}%;top:${p.y}px`}
+              >
+                <a href={p.href} class="group absolute inset-0 block">
+                  <span class="sr-only">
+                    {p.name}, {p.altitudeM} metros
+                  </span>
+                  <span
+                    aria-hidden="true"
+                    class="absolute top-1/2 left-1/2 size-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-ink ring-2 ring-bg transition-colors duration-(--duration-fast) group-hover:size-4 group-hover:bg-accent group-hover:ring-ink group-active:bg-ink-muted"
+                  />
+                  {l.leader && guideHeight > 0 && (
+                    <span
+                      aria-hidden="true"
+                      class="absolute w-px bg-ink-muted"
+                      style={`left:${HALF_TARGET}px;top:${guideTop}px;height:${guideHeight}px`}
+                    />
+                  )}
+                  <span
+                    aria-hidden="true"
+                    class="absolute text-sm leading-5 font-medium whitespace-nowrap text-ink group-hover:underline"
+                    style={`${edge};top:${top}px`}
+                  >
+                    {l.lines.map((line) => (
+                      <span class="block">{line}</span>
+                    ))}
+                  </span>
+                </a>
+              </li>
+            );
+          })}
+        </ol>
+
+        <div
+          aria-hidden="true"
+          class="pointer-events-none absolute inset-0 translate-x-full bg-bg animate-[profile-reveal_var(--duration-draw)_var(--ease-linear)_1]"
+        ></div>
+      </div>
+    );
+  })}
+</figure>

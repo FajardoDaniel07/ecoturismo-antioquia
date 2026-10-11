@@ -1,0 +1,49 @@
+---
+/**
+ * Botón y enlace con aspecto de botón (S1). Si recibe `href` es un `<a>` (navegación);
+ * si no, un `<button>` (acción). Sin flecha ni JavaScript.
+ */
+interface Props {
+  variant: 'primary' | 'secondary' | 'on-ink';
+  href?: string;
+  type?: 'button';
+  pressed?: boolean;
+  fullWidth?: boolean;
+  class?: string;
+}
+
+const {
+  variant,
+  href,
+  type = 'button',
+  pressed,
+  fullWidth = false,
+  class: extra = '',
+} = Astro.props;
+
+const base =
+  'inline-flex items-center justify-center rounded-md px-6 text-center font-semibold transition-colors duration-(--duration-fast) cursor-pointer';
+
+const variants = {
+  primary:
+    'min-h-12 border-2 border-ink bg-accent text-ink hover:bg-ink hover:text-bg active:bg-ink-muted active:text-bg',
+  secondary:
+    'min-h-11 border-2 border-primary bg-transparent text-primary hover:bg-primary hover:text-white active:bg-ink active:text-bg',
+  'on-ink':
+    'min-h-11 border border-on-ink bg-transparent text-on-ink hover:bg-bg hover:text-ink active:bg-bg active:text-ink focus-visible:outline-focus-on-ink',
+} as const;
+
+const classes = [base, variants[variant], fullWidth ? 'w-full' : '', extra]
+  .filter(Boolean)
+  .join(' ');
+---
+
+{href ? (
+  <a href={href} class={classes}>
+    <slot />
+  </a>
+) : (
+  <button type={type} class={classes} aria-pressed={pressed === undefined ? undefined : pressed}>
+    <slot />
+  </button>
+)}

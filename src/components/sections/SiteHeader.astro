@@ -1,0 +1,71 @@
+---
+/**
+ * Cabecera y navegación principal (S2, CA-81, CA-93, CA-123). No queda fija al desplazarse.
+ * Por debajo de 768 px los enlaces van tras un control "Menú" hecho con <details>, que abre y
+ * cierra sin JavaScript; con JavaScript, además, se cierra con Esc o al elegir un enlace.
+ */
+interface Props {
+  links: { label: string; href: string }[];
+}
+
+const { links } = Astro.props;
+
+const linkClass =
+  'inline-flex min-h-11 items-center font-medium whitespace-nowrap text-ink underline-offset-8 decoration-2 hover:underline';
+---
+
+<header class="relative border-b border-line bg-bg">
+  <div class="mx-auto flex h-14 w-full max-w-page items-center justify-between px-5 md:h-16 md:px-8 lg:px-12">
+    <a
+      href="/"
+      class="inline-flex min-h-11 items-center font-display text-lg font-bold whitespace-nowrap text-ink"
+    >
+      Ecoturismo Antioquia
+    </a>
+
+    <nav aria-label="Principal">
+      <details data-menu class="md:hidden">
+        <summary class="inline-flex min-h-11 min-w-11 cursor-pointer list-none items-center justify-center rounded-md border-2 border-primary px-2 font-semibold text-primary transition-colors duration-(--duration-fast) hover:bg-primary hover:text-white [&::-webkit-details-marker]:hidden">
+          Menú
+        </summary>
+        <ul class="absolute top-full right-0 left-0 z-40 border-b border-line bg-bg px-5 pb-3 shadow-none">
+          {links.map((l) => (
+            <li>
+              <a href={l.href} class={`${linkClass} w-full`}>
+                {l.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </details>
+
+      <ul class="hidden items-center gap-6 md:flex">
+        {links.map((l) => (
+          <li>
+            <a href={l.href} class={linkClass}>
+              {l.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const menu = document.querySelector<HTMLDetailsElement>('details[data-menu]');
+  if (menu) {
+    const summary = menu.querySelector('summary');
+    menu.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && menu.open) {
+        menu.open = false;
+        summary?.focus();
+      }
+    });
+    menu.querySelectorAll('a').forEach((a) => {
+      a.addEventListener('click', () => {
+        menu.open = false;
+      });
+    });
+  }
+</script>

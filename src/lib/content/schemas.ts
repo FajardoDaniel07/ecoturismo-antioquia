@@ -233,7 +233,7 @@ export const territorySchema = z
     minM: z
       .number({ error: 'CA-122: minM debe ser un número' })
       .int()
-      .positive('CA-122: minM debe ser mayor que cero'),
+      .nonnegative('CA-122: minM no puede ser negativo (0 es el nivel del mar)'),
     maxM: z
       .number({ error: 'CA-122: maxM debe ser un número' })
       .int()

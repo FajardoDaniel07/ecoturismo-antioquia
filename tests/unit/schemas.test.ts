@@ -285,6 +285,13 @@ describe('territorySchema', () => {
     expect(territorySchema.safeParse(base).success).toBe(true);
   });
 
+  it('CA-122: admite minM = 0 (nivel del mar) y rechaza un mínimo negativo', () => {
+    expect(territorySchema.safeParse({ ...base, minM: 0 }).success).toBe(true);
+    const r = territorySchema.safeParse({ ...base, minM: -1 });
+    expect(r.success).toBe(false);
+    expect(messages(r)).toContain('CA-122');
+  });
+
   it.each([
     ['desordenados', { temperate: 2000, cold: 1000, paramo: 3000 }],
     ['iguales', { temperate: 1000, cold: 1000, paramo: 3000 }],

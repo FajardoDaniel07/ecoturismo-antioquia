@@ -1,0 +1,61 @@
+---
+/**
+ * Estructura común de toda página (CA-33, CA-94, CA-95, CA-96): idioma es-CO, título y
+ * descripción propios, datos para redes sin imagen, canónica, `noindex` en la vista previa,
+ * precarga solo de Besley, clase `js` y regiones (encabezado, navegación, contenido, pie).
+ * Junto con las páginas, es el único componente que llama a `loadSite()`.
+ */
+import '../styles/global.css';
+import besleyUrl from '../assets/fonts/besley-latin-700-normal.woff2?url';
+import SkipLink from '../components/ui/SkipLink.astro';
+import SiteHeader from '../components/sections/SiteHeader.astro';
+import SiteFooter from '../components/sections/SiteFooter.astro';
+import { loadSite } from '../lib/content/load';
+import { navLinks } from '../lib/nav';
+import { SITE_NAME } from '../lib/seo/meta';
+
+interface Props {
+  title: string;
+  description: string;
+}
+
+const { title, description } = Astro.props;
+const site = await loadSite();
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+---
+
+<html lang="es-CO">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {site.mode === 'preview' && <meta name="robots" content="noindex, nofollow" />}
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={SITE_NAME} />
+    <meta property="og:locale" content="es_CO" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <link rel="preload" href={besleyUrl} as="font" type="font/woff2" crossorigin />
+    <script is:inline>
+      document.documentElement.classList.add('js');
+    </script>
+  </head>
+  <body>
+    <SkipLink target="#contenido" />
+    <SiteHeader links={navLinks(site.sections)} />
+    <main id="contenido" tabindex="-1" class="focus:outline-none">
+      <slot />
+    </main>
+    <SiteFooter operator={site.operator} legal={site.legal} />
+  </body>
+</html>

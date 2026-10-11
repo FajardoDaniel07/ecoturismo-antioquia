@@ -45,3 +45,15 @@
     overflow: hidden;
   }
 }
+
+/* Aparición del perfil altitudinal (S3.9): una cubierta del color del papel que se retira hacia
+   la derecha. Su estado por defecto es "ya retirada"; la animación la trae desde el inicio una
+   sola vez. Con movimiento reducido la duración es cero y el perfil aparece dibujado. */
+@keyframes profile-reveal {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(101%);
+  }
+}

@@ -22,6 +22,7 @@ describe('altitud (CA-2, CA-23)', () => {
 
   it('rango con la unidad escrita una sola vez', () => {
     expect(formatAltitudeRange(125, 4080)).toBe('de 125 a 4080 metros de altitud');
+    expect(formatAltitudeRange(0, 4080)).toBe('de 0 a 4080 metros de altitud');
   });
 
   it('nunca escribe "m s. n. m." ni puntos de miles', () => {

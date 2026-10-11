@@ -39,3 +39,13 @@ describe('zoneRange y zoneName', () => {
     expect(ZONES.map(zoneName)).toEqual(['cálido', 'templado', 'frío', 'páramo']);
   });
 });
+
+describe('territorio con mínima en el nivel del mar (0 m)', () => {
+  const sea = { minM: 0, maxM: 4080, thresholds: t };
+
+  it('el piso cálido va de 0 al primer umbral', () => {
+    expect(zoneRange('warm', sea)).toEqual({ fromM: 0, toM: 1000 });
+    expect(zoneOf(0, t)).toBe('warm');
+    expect(zoneOf(2, t)).toBe('warm');
+  });
+});

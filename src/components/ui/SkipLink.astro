@@ -1,0 +1,15 @@
+---
+/** Enlace para saltar (CA-94): primer elemento enfocable de toda página, visible al recibir foco. */
+interface Props {
+  target: string;
+}
+
+const { target } = Astro.props;
+---
+
+<a
+  href={target}
+  class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:inline-flex focus:min-h-12 focus:items-center focus:rounded-md focus:border-2 focus:border-ink focus:bg-accent focus:px-6 focus:font-semibold focus:text-ink"
+>
+  Saltar al contenido
+</a>

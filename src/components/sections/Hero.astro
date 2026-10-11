@@ -1,0 +1,72 @@
+---
+/**
+ * Hero (S3, CA-1, CA-2, CA-3, CA-10, CA-11, CA-102): titular, explicación, botón, perfil y nota.
+ * Sin fotografías y sin JavaScript. El titular es el elemento más grande de la primera pantalla.
+ */
+import AltitudeProfile from '../ui/AltitudeProfile.astro';
+import Button from '../ui/Button.astro';
+import { buildAltitudeProfile, type ProfileVariantId } from '../../lib/altitude/profile';
+import type { Territory } from '../../lib/content/schemas';
+import type { Destino } from '../../lib/content/validate';
+import { formatAltitudeRange } from '../../lib/format/units';
+import { SECTION_IDS } from '../../lib/nav';
+
+interface Props {
+  territory: Territory;
+  destinos: Destino[];
+}
+
+const { territory, destinos } = Astro.props;
+
+const ids: ProfileVariantId[] = ['compact', 'medium', 'wide'];
+const [compact, medium, wide] = ids.map((id) => buildAltitudeProfile(territory, destinos, id));
+const models = { compact: compact!, medium: medium!, wide: wide! };
+
+// Los avisos de geometría (etiqueta sin sitio, estrato bajo, exceso de destinos) salen en el build.
+for (const model of Object.values(models)) {
+  for (const warning of model.warnings) console.warn(`[perfil] ${warning}`);
+}
+
+const shownOnMobile = models.compact.points.length;
+---
+
+<section aria-labelledby="hero-titulo" class="pt-8 pb-16 md:pt-12 lg:pb-24">
+  <div class="mx-auto w-full max-w-page px-5 md:px-8 lg:px-12">
+    <div class="grid grid-cols-4 gap-x-4 md:grid-cols-8 md:gap-x-6 lg:grid-cols-12">
+      <h1
+        id="hero-titulo"
+        class="col-span-4 font-display text-hero font-bold tracking-display text-ink md:col-span-8 lg:col-span-9"
+      >
+        Antioquia, {formatAltitudeRange(territory.minM, territory.maxM)}
+      </h1>
+
+      <div class="col-span-4 mt-6 space-y-4 text-lg text-ink md:col-span-8 lg:col-span-6">
+        <p class="max-w-prose">En la montaña tropical el clima cambia con la altura.</p>
+        <p class="max-w-prose">
+          Cada franja de altura es un piso térmico. Elige a qué altura quieres caminar.
+        </p>
+      </div>
+
+      <div class="col-span-4 mt-6 md:col-span-8 lg:col-span-5 lg:col-start-8">
+        <Button variant="primary" href={`#${SECTION_IDS.destinos}`}>
+          Ver destinos
+        </Button>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-8 md:mx-auto md:max-w-page md:px-8 lg:px-12">
+    <AltitudeProfile models={models} />
+  </div>
+
+  <div class="mx-auto mt-3 w-full max-w-page px-5 md:px-8 lg:px-12">
+    <p class="max-w-prose text-sm text-ink-muted">
+      Este perfil es un esquema: ordena los destinos por altura y no está a escala geográfica.{' '}
+      {models.compact.omitted > 0 && (
+        <span class="md:hidden">
+          Aquí ves {shownOnMobile} destinos. Están todos en la lista de abajo.
+        </span>
+      )}
+    </p>
+  </div>
+</section>
