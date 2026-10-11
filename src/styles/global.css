@@ -32,6 +32,15 @@
     outline-color: var(--color-focus-on-ink);
   }
 
+  /* Si una imagen no llega, el navegador muestra su texto alternativo en 14 px, tinta suave,
+     arriba a la izquierda, dentro de su caja reservada de color superficie (CA-117). */
+  img {
+    background-color: var(--color-surface);
+    color: var(--color-ink-muted);
+    font-size: var(--text-sm);
+    line-height: var(--text-sm--line-height);
+  }
+
   img,
   picture,
   svg {

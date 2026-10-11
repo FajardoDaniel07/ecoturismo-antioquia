@@ -8,26 +8,34 @@ instalación de las cinco dependencias (`leaflet`, `@types/leaflet`, `typescript
 documento sigue el formato pedido en la definición del agente (tarea atómica, verificación "hecho
 cuando…", agente).
 
-## Estado al pausar (2026-10-10)
+## Estado actual (2026-10-11)
 
-El humano pausó el desarrollo. `npm run lint`, `npm run build` y `npm run test` (165 pruebas)
-estaban en verde. Para retomar:
-
-- **Siguiente tarea:** T-043 y T-044 (geometría y etiquetas del perfil), sin empezar. Después,
-  T-046 en adelante.
-- **Orden cambiado:** T-040 a T-045 se adelantaron a T-027, porque T-027 necesita una página que
-  llame a `loadSite()` y esa llega en T-051. T-027 va después de T-051.
-- **T-022 sin cerrar:** los tres escenarios existen (`scripts/make-fixtures.mjs`) y pasan
-  `astro sync`. Falta probarlos con `validateSite()` en ambos modos y aclarar, con un sync limpio,
-  los avisos de entradas duplicadas del escenario `minimo`.
-- **Dependencia aprobada sin instalar:** `yaml` como devDependency (la usa
-  `tests/unit/content-guide.test.ts`); requiere ADR corto antes de declararla.
-- **Contenido real bloqueado (T-029):** el humano aceptó las recomendaciones de
-  `contenido-propuesto.md` (sección 7), pero falta que diga qué salidas ofrece de verdad.
-- **Por confirmar con el humano:** el texto "Apta desde 1 año" (CA-28) y los identificadores de
-  sección de la navegación (`destinos`, `galeria`, `mapa-de-rutas`, `contacto`).
-- **Riesgo anotado para T-043/T-044:** en la variante compacta del perfil, la separación entre
-  puntos queda justo en 44 px con cinco destinos, sin margen.
+- **Revisión del plan del 2026-10-11 (modo académico y Vercel): aprobada por el humano el 2026-10-11**
+  (T-117). Añade el hito HA, con las tareas T-117 a T-142, y cambia el texto de varias tareas
+  pendientes. No se renumeró ni se desmarcó ninguna.
+- **Hecho:** H0 y H1 completos; de H2, T-018 a T-026 (solo falta T-027); de H3, T-029 (lista
+  aprobada); de H4, la lógica (T-040 a T-043 y T-045) y la base de interfaz (T-046 a T-051).
+- **En curso:** `astro-developer` cierra T-044 y remata T-046 a T-051; `ui-designer`
+  completa el `design.md` con el modo académico (T-118); `content-curator` ya escribió
+  `territorio.json`, `operador.json` y seis destinos sin fotos (T-030 a T-033, pendientes de
+  marcar cuando el build pase).
+- **Corrección urgente:** T-119. `territorio.json` declara `minM: 0` y el esquema lo rechazaba;
+  `astro sync` falla con el contenido real hasta que se cierre.
+- **Orden real, distinto del escrito:** T-040 a T-045 se adelantaron a T-027, porque T-027
+  necesita una página que llame a `loadSite()` y esa llega en T-051. **T-027 va después de T-051,
+  T-121 y T-125.** T-022 ya está marcada; lo que le faltaba (probar los escenarios con
+  `validateSite()` y los avisos de `minimo`) y los cambios del modo académico van en T-125.
+- **Decisiones del humano del 2026-10-11:** el sitio es un ejercicio académico, sin operador real
+  ni datos legales; se despliega en Vercel; lista de contenido aprobada (PA-15); ADR 0001 y 0002
+  aceptados; "Apta desde 1 año" (CA-28); CA-110 exceptúa las líneas de ruta del mapa. La spec tiene
+  131 criterios activos.
+- **Ya no aplica en modo académico:** T-038 (identificadores y revisión legal). Se conserva por si
+  el sitio pasa a un operador real.
+- **Bloquea la publicación, no el desarrollo:** la dirección pública del sitio (PA-17, T-139).
+- **Contenido real, hoy:** seis destinos sin fotos y sin rutas. La galería y el mapa no se publican
+  hasta que lleguen T-131, T-132 y T-035; es un estado válido (CA-51, CA-67).
+- **Riesgo anotado para T-044:** en la variante compacta del perfil, la separación entre puntos
+  queda justo en 44 px con cinco destinos, sin margen.
 
 ## Cómo leerlo
 
@@ -54,9 +62,10 @@ estaban en verde. Para retomar:
 | H6 | Islas: visor y mapa | T-078 a T-091 | H3; el visor con el mapa |
 | H7 | Pruebas (fase 7) | T-092 a T-110 | Las suites, entre sí |
 | H8 | Revisión (fase 8) y cierre | T-111 a T-116 | — |
+| HA | Modo académico y despliegue en Vercel (revisión del 2026-10-11) | T-117 a T-142 | Se intercala con H4 a H8; ver su tabla "Orden recomendado" |
 
-Escenarios de prueba citados: `completo`, `minimo`, `sin-fotos`, `invalido-*` (plan, "Escenarios de
-prueba").
+Escenarios de prueba citados: `academico` (por defecto desde T-125), `completo`, `minimo`,
+`sin-fotos`, `invalido-*` (plan, R8).
 
 ---
 
@@ -93,7 +102,7 @@ prueba").
   - Archivos: `CLAUDE.md`.
   - Depende de: T-001.
   - Hecho cuando: `CLAUDE.md` refleja los ADR 0003, 0004, 0007 y 0009.
-- [ ] **T-006** · humano [P] — Pasar los ADR 0001 y 0002 de "Propuesto" a su estado real (C9).
+- [x] **T-006** · humano [P] — Pasar los ADR 0001 y 0002 de "Propuesto" a su estado real (C9).
   - Depende de: —
   - Hecho cuando: ambos ADR tienen estado decidido.
 
@@ -192,7 +201,7 @@ Al terminar T-021 y T-023, `content-curator` puede empezar H3.
   - CA: CA-99. Depende de: T-020.
   - Hecho cuando: `npx astro sync` termina sin errores con `src/content` vacío y con un escenario de
     prueba.
-- [ ] **T-022** · `qa-engineer` [P] — Generar los escenarios `completo`, `minimo` y `sin-fotos`,
+- [x] **T-022** · `qa-engineer` [P] — Generar los escenarios `completo`, `minimo` y `sin-fotos`,
   con imágenes sintéticas de las dimensiones necesarias.
   - Archivos: `tests/fixtures/content/{completo,minimo,sin-fotos}/**`, `scripts/make-fixtures.mjs`.
   - Depende de: T-020.
@@ -223,14 +232,15 @@ Al terminar T-021 y T-023, `content-curator` puede empezar H3.
     `SITE_URL`, falla con el mensaje "Falta SITE_URL…"; con `minimo`, `npm run build` pasa y
     `build:release` falla nombrando los tres textos y los tres identificadores.
 - [ ] **T-027** · `qa-engineer` — Escenarios `invalido-*` y pruebas de build que comprueban código
-  de salida y mensaje. **Cierre de H2.**
+  de salida y mensaje, en los dos tipos de sitio. Incluye los nuevos: `invalido-sin-modo`,
+  `invalido-identificador-en-academico`, `invalido-legal-sin-rotulo` e
+  `invalido-muestra-en-operador`. **Cierre de H2. Va después de T-051.**
   - Archivos: `tests/fixtures/content/invalido-*/**`, `tests/build/gates.test.ts`.
   - CA: CA-15, CA-20, CA-24, CA-43, CA-46, CA-47, CA-77, CA-78, CA-99, CA-100, CA-104, CA-118,
-    CA-119, CA-120, CA-122.
-  - Depende de: T-026.
-  - Hecho cuando: `npm run test:build` pasa y `npm run build`, `npm run lint` y `npm run test` están
-    en verde.
-
+    CA-119, CA-120, CA-122, CA-125, CA-134, CA-138, CA-139.
+  - Depende de: T-026, T-051, T-121, T-125.
+  - Hecho cuando: `npm run test:build` pasa, cada causa de CA-139 tiene su caso en publicación, y
+    `npm run build`, `npm run lint` y `npm run test` están en verde.
 ---
 
 ## H3 — Contenido real
@@ -243,7 +253,7 @@ Corre en paralelo con H4, H5 y H6: el desarrollo trabaja sobre los escenarios de
   - Archivos: `specs/001-landing-completa/contenido-propuesto.md`.
   - Depende de: T-021, T-023.
   - Hecho cuando: el documento lista destinos, pisos, rutas y fotos candidatas con su licencia.
-- [ ] **T-029** · humano — Aprobar la lista propuesta (PA-15).
+- [x] **T-029** · humano — Aprobar la lista propuesta (PA-15).
   - Depende de: T-028.
   - Hecho cuando: el documento dice "APROBADA (fecha, quién)".
 - [ ] **T-030** · `content-curator` — Verificar con fuente citada la altitud mínima y máxima de
@@ -266,43 +276,48 @@ Corre en paralelo con H4, H5 y H6: el desarrollo trabaja sobre los escenarios de
   - Archivos: `src/content/destinos/*.md`.
   - CA: los de T-032. Depende de: T-030.
   - Hecho cuando: igual que T-032.
-- [ ] **T-034** · `content-curator` — Seleccionar las fotos: comprobar licencia y lugar en la fuente,
-  descargar el original o su reducción a 2560 px, y registrar autor, licencia, fuente, modificación,
-  proporción, punto de interés y texto alternativo.
-  - Archivos: `src/assets/photos/<destino>/*`, frontmatter de `src/content/destinos/*.md`.
-  - CA: CA-43, CA-45 a CA-49. Depende de: T-032, T-033.
-  - Hecho cuando: `npm run build` no da errores de fotos, ninguna pesa más de 1.5 MB y cada enlace
-    de fuente y de licencia abre la página correcta.
+- [ ] **T-034** · `content-curator` — Seleccionar las fotos: comprobar licencia y lugar en la
+  página de la fuente y redactar el texto alternativo. **Sin descargar archivos:** el curador no
+  puede. La descarga y el frontmatter pasan a T-130, T-131 y T-132.
+  - Archivos: `specs/001-landing-completa/contenido-propuesto.md` (sección de fotos).
+  - CA: CA-46, CA-47, CA-48. Depende de: T-032, T-033.
+  - Hecho cuando: cada foto elegida tiene autor, licencia, enlace de la fuente, dimensiones
+    declaradas y texto alternativo.
 - [ ] **T-035** · `content-curator` [P] — Escribir las rutas en GeoJSON: trazado de 400 puntos como
   máximo, elevación mínima y máxima, elevación por punto si existe, ficha y destino.
   - Archivos: `src/content/rutas/*.json`.
   - CA: CA-21, CA-76, CA-77, CA-78. Depende de: T-032, T-033.
   - Hecho cuando: `npm run build` no da errores ni avisos de rutas.
-- [ ] **T-036** · `content-curator` [P] — Redactar el borrador de la política de tratamiento de
-  datos, incluyendo que el mapa envía la dirección IP del visitante a OpenStreetMap y que el contacto
-  lleva a WhatsApp.
+- [ ] **T-036** · `content-curator` [P] — Redactar la política de tratamiento de datos de
+  muestra, con `status: sample`. Debe decir con veracidad: que el enlace de WhatsApp abre una
+  conversación con el número del sitio; que el enlace de correo abre el programa de correo del
+  visitante; que al cargar el mapa el navegador envía la dirección IP y las zonas consultadas a
+  OpenStreetMap; que Vercel, el alojamiento, puede registrar datos técnicos de la conexión; y que
+  el sitio no guarda datos, no usa cookies de seguimiento ni analítica.
   - Archivos: `src/content/legal/politica-de-datos.md`.
-  - CA: CA-118. Depende de: T-021.
-  - Hecho cuando: el archivo tiene `status: draft` y menciona los dos terceros.
-- [ ] **T-037** · `content-curator` [P] — Redactar los borradores de términos y condiciones y de
-  política de cancelación.
+  - CA: CA-134, CA-135, CA-137. Depende de: T-120, T-122.
+  - Hecho cuando: `npm run build` no da el error de tercero sin nombrar y el texto cubre los cinco
+    puntos.
+- [ ] **T-037** · `content-curator` [P] — Redactar los textos de muestra de términos y
+  condiciones y de política de cancelación, con `status: sample`. Describen que el sitio es un
+  ejercicio académico y no prometen servicios, reservas, cupos ni precios.
   - Archivos: `src/content/legal/terminos-y-condiciones.md`,
     `src/content/legal/politica-de-cancelacion.md`.
-  - CA: CA-118. Depende de: T-021.
-  - Hecho cuando: ambos tienen `status: draft` y `npm run build` muestra la banda de borrador.
-- [ ] **T-038** · humano — Confirmar con asesoría legal los identificadores exigidos (PA-8),
-  entregar RNT, NIT y razón social, y revisar los tres textos legales. **Bloquea el lanzamiento, no
-  el desarrollo.**
-  - Archivos: `src/content/sitio/operador.json`, `src/content/legal/*.md` (los carga
-    `content-curator` con los datos entregados).
-  - CA: CA-118 a CA-121. Depende de: T-031, T-036, T-037.
-  - Hecho cuando: los tres textos tienen `status: reviewed` con fecha y `npm run build:release` no
-    informa de borradores ni de identificadores ausentes.
-- [ ] **T-039** · humano — Decidir dominio y alojamiento; definir `SITE_URL`; configurar el
-  alojamiento con `npm run build:release`, comprobando que sirve `404.html` y que no suprime la
-  cabecera `Referer`. **Bloquea el lanzamiento, no el desarrollo.**
-  - CA: CA-37, CA-74, CA-97. Depende de: —
-  - Hecho cuando: `npm run build:release` con `SITE_URL` real pasa.
+  - CA: CA-134, CA-137. Depende de: T-120.
+  - Hecho cuando: ambos tienen `status: sample`, `npm run build` pasa y los avisos de promesas
+    comerciales que queden están justificados.
+- [ ] **T-038** · humano — **No aplica en modo académico** (decisión del 2026-10-11): no hay
+  identificadores ni revisión legal que entregar. Se conserva para el caso de que el sitio pase a
+  un operador real: confirmar con asesoría legal los identificadores exigidos (PA-8), entregar RNT,
+  NIT y razón social, y revisar los tres textos legales.
+  - Archivos: `src/content/sitio/operador.json`, `src/content/legal/*.md`.
+  - CA: CA-118 a CA-121, CA-138. Depende de: —
+  - Hecho cuando: no se marca mientras `siteKind` sea `academic`. No bloquea T-115 ni T-116.
+- [ ] **T-039** · humano — Decidir la dirección pública del sitio (PA-17). El alojamiento ya
+  está decidido: Vercel. La configuración del proyecto y de `SITE_URL` es T-139. **Bloquea la
+  publicación, no el desarrollo.**
+  - CA: CA-139. Depende de: —
+  - Hecho cuando: la dirección está decidida y anotada en `plan.md`, "Pendientes".
 
 Cierre de H3 (sin contar T-038 y T-039): `npm run build` en verde con el contenido real y sin
 avisos de contenido.
@@ -329,7 +344,7 @@ avisos de contenido.
   - CA: CA-33, CA-36, CA-83, CA-93. Depende de: T-027.
   - Hecho cuando: las pruebas pasan; el enlace generado abre `wa.me/573127951683` con el texto
     codificado.
-- [ ] **T-043** · `astro-developer` — Geometría del perfil: escala, posiciones, línea de cumbres,
+- [x] **T-043** · `astro-developer` — Geometría del perfil: escala, posiciones, línea de cumbres,
   silueta, estratos, límites, curvas de eco, selección compacta de cinco puntos.
   - Archivos: `src/lib/altitude/profile.ts`, `tests/unit/profile-geometry.test.ts`.
   - CA: CA-4, CA-5, CA-7. Depende de: T-041.
@@ -346,63 +361,63 @@ avisos de contenido.
   - CA: CA-39. Depende de: T-027.
   - Hecho cuando: dos llamadas dan el mismo resultado, los cuatro pisos dan dibujos distintos y cada
     uno marca sus curvas maestras.
-- [ ] **T-046** · `astro-developer` — Controles base: botón principal, secundario y sobre tinta;
+- [x] **T-046** · `astro-developer` — Controles base: botón principal, secundario y sobre tinta;
   enlace de texto; enlace para saltar.
   - Archivos: `src/components/ui/Button.astro`, `TextLink.astro`, `SkipLink.astro`.
   - CA: CA-94, CA-107, CA-110. Depende de: T-017.
   - Hecho cuando: una página de prueba muestra los cuatro estados de S1 y todos miden 44 px de alto
     o más.
-- [ ] **T-047** · `astro-developer` — `BaseLayout`: idioma, título, descripción, datos para redes
+- [x] **T-047** · `astro-developer` — `BaseLayout`: idioma, título, descripción, datos para redes
   sin imagen, canónica, `noindex` en vista previa, precarga de Besley, clase `js`, regiones.
   - Archivos: `src/layouts/BaseLayout.astro`.
   - CA: CA-33, CA-94, CA-95, CA-96. Depende de: T-042, T-046.
   - Hecho cuando: el HTML generado tiene `lang="es-CO"`, una sola precarga de fuente y, en vista
     previa, la etiqueta `noindex`.
-- [ ] **T-048** · `astro-developer` — Cabecera con navegación y menú móvil (`<details>` por debajo de
+- [x] **T-048** · `astro-developer` — Cabecera con navegación y menú móvil (`<details>` por debajo de
   768 px, enlaces en línea desde 768 px), más su mejora con JavaScript (Esc y cierre al elegir).
   - Archivos: `src/components/sections/SiteHeader.astro`.
   - CA: CA-81, CA-93, CA-123. Depende de: T-047.
   - Hecho cuando: a 360 px el menú abre y cierra con teclado con JavaScript desactivado, y a 768 px
     los enlaces están en línea.
-- [ ] **T-049** · `astro-developer` [P] — Pie de página.
+- [x] **T-049** · `astro-developer` [P] — Pie de página.
   - Archivos: `src/components/sections/SiteFooter.astro`.
   - CA: CA-50, CA-98, CA-119, CA-121. Depende de: T-047.
   - Hecho cuando: con `completo` aparece el identificador; con `minimo` no hay línea ni hueco.
-- [ ] **T-050** · `astro-developer` — Componente del perfil: SVG decorativo, capa HTML con textos y
+- [x] **T-050** · `astro-developer` — Componente del perfil: SVG decorativo, capa HTML con textos y
   lista de enlaces, tres variantes, cubierta animada.
   - Archivos: `src/components/ui/AltitudeProfile.astro`.
   - CA: CA-4, CA-6, CA-8, CA-9. Depende de: T-044, T-012.
   - Hecho cuando: en cada rango de ancho se ve una sola variante, los enlaces miden 44 × 44 px y con
     movimiento reducido el perfil aparece dibujado.
-- [ ] **T-051** · `astro-developer` — Sección Hero e inicio mínimo.
+- [x] **T-051** · `astro-developer` — Sección Hero e inicio mínimo.
   - Archivos: `src/components/sections/Hero.astro`, `src/pages/index.astro`.
   - CA: CA-1, CA-2, CA-3, CA-10, CA-11, CA-102. Depende de: T-050, T-048, T-040.
   - Hecho cuando: el inicio muestra titular, explicación, botón, perfil y nota, en ese orden, sin
     JavaScript.
-- [ ] **T-052** · `astro-developer` [P] — Lámina de altitud y símbolos de curvas.
+- [x] **T-052** · `astro-developer` [P] — Lámina de altitud y símbolos de curvas.
   - Archivos: `src/components/ui/AltitudePlate.astro`, `ContourDefs.astro`.
   - CA: CA-38, CA-39. Depende de: T-045, T-040.
   - Hecho cuando: la cifra cambia de tamaño en 140, 280 y 480 px de ancho de lámina y los trazos
     miden 1 px en todos los tamaños.
-- [ ] **T-053** · `astro-developer` [P] — Regla de altitud y etiqueta de piso.
+- [x] **T-053** · `astro-developer` [P] — Regla de altitud y etiqueta de piso.
   - Archivos: `src/components/ui/ZoneRail.astro`, `ZoneTag.astro`.
   - CA: CA-16. Depende de: T-018, T-040.
   - Hecho cuando: a 1024 px es una columna con nombre, rango y franja; por debajo, franja de 6 px
     con el nombre encima.
-- [ ] **T-054** · `astro-developer` [P] — Ficha: filas en orden fijo para destino y ruta, variante
+- [x] **T-054** · `astro-developer` [P] — Ficha: filas en orden fijo para destino y ruta, variante
   completa y resumida; componente con `<dl>` y marcas de dificultad.
   - Archivos: `src/lib/ficha/build.ts`, `tests/unit/ficha.test.ts`, `src/components/ui/Ficha.astro`,
     `DifficultyMarks.astro`.
   - CA: CA-21, CA-22, CA-27, CA-30. Depende de: T-040.
   - Hecho cuando: las pruebas cubren dato ausente y dato parcial de distancia o desnivel, y el
     componente pasa a dos columnas a los 400 px de ancho de panel.
-- [ ] **T-055** · `astro-developer` [P] — Política de fotos y componentes de foto y crédito.
+- [x] **T-055** · `astro-developer` [P] — Política de fotos y componentes de foto y crédito.
   - Archivos: `src/lib/photos/policy.ts`, `tests/unit/photos.test.ts`,
     `src/components/ui/Photo.astro`, `PhotoCredit.astro`.
   - CA: CA-40 a CA-45, CA-48, CA-49, CA-117. Depende de: T-027.
   - Hecho cuando: las pruebas cubren las cuatro filas de S6.4 y "recortada" derivada; la imagen
     nunca se pinta más ancha que su original.
-- [ ] **T-056** · `astro-developer` — Listado de destinos: bloques por piso, tarjeta principal y
+- [x] **T-056** · `astro-developer` — Listado de destinos: bloques por piso, tarjeta principal y
   menor, con foto o lámina.
   - Archivos: `src/components/sections/Destinos.astro`, `DestinoCard.astro`, `src/pages/index.astro`.
   - CA: CA-12 a CA-19, CA-38, CA-42. Depende de: T-052, T-053, T-054, T-055, T-051.
@@ -442,17 +457,18 @@ avisos de contenido.
 
 Puede empezar al terminar T-056, sin esperar a T-060; no se cierra hasta que T-060 esté hecha.
 
-- [ ] **T-062** · `astro-developer` — Sección y llamada de contacto.
+- [ ] **T-062** · `astro-developer` — Sección y llamada de contacto. En modo académico,
+  frase de aclaración junto a la acción de WhatsApp y al correo, y mensaje inicial de prueba.
   - Archivos: `src/components/sections/Contacto.astro`, `src/pages/index.astro`.
-  - CA: CA-36, CA-81, CA-82, CA-83, CA-91. Depende de: T-056.
-  - Hecho cuando: el número, el horario y el correo se leen como texto y el enlace funciona sin
-    JavaScript.
+  - CA: CA-36, CA-81, CA-82, CA-83, CA-91, CA-131, CA-132. Depende de: T-056, T-127.
+  - Hecho cuando: el número, el horario y el correo se leen como texto, el enlace funciona sin
+    JavaScript y la aclaración aparece con `academico` y no con `completo`.
 - [ ] **T-063** · `astro-developer` — Página de detalle, bloques 1 a 6: volver, título, altitud,
-  imagen o lámina, ficha, descripción.
+  imagen o lámina, ficha, descripción (el cuerpo Markdown, con `renderBody()`).
   - Archivos: `src/components/sections/DestinoDetalle.astro`, `src/pages/destinos/[slug].astro`.
-  - CA: CA-23, CA-31 a CA-34, CA-38, CA-40, CA-42. Depende de: T-056.
-  - Hecho cuando: hay una página por destino publicado y la primera altitud del documento dice
-    "metros de altitud".
+  - CA: CA-23, CA-31 a CA-34, CA-38, CA-40, CA-42. Depende de: T-056, T-124.
+  - Hecho cuando: hay una página por destino publicado, la primera altitud del documento dice
+    "metros de altitud" y una ficha de una sola fila se ve completa.
 - [ ] **T-064** · `astro-developer` [P] — Agrupación de la galería.
   - Archivos: `src/lib/gallery/group.ts`, `tests/unit/gallery-group.test.ts`.
   - CA: CA-52. Depende de: T-055.
@@ -493,11 +509,14 @@ Puede empezar al terminar T-056, sin esperar a T-060; no se cierra hasta que T-0
   - Archivos: `src/pages/data/rutas.json.ts`.
   - CA: CA-79. Depende de: T-067.
   - Hecho cuando: `dist/data/rutas.json` existe y pesa menos de 15 KB en gzip con `completo`.
-- [ ] **T-071** · `astro-developer` [P] — Páginas legales con banda de borrador y fecha de revisión.
-  - Archivos: `src/pages/legal/[slug].astro`, `src/components/ui/DraftBanner.astro`.
-  - CA: CA-118, CA-119, CA-121. Depende de: T-049.
-  - Hecho cuando: con `minimo` se ve la banda y no hay fecha; con `completo`, la fecha en letras y
-    sin banda.
+- [ ] **T-071** · `astro-developer` [P] — Páginas legales: cuerpo con `renderBody()`; rótulo
+  de texto de muestra si el estado es `sample`; banda de borrador o fecha de revisión en modo de
+  operador real.
+  - Archivos: `src/pages/legal/[slug].astro`, `src/components/ui/DraftBanner.astro`,
+    `src/components/ui/SampleLabel.astro`.
+  - CA: CA-118, CA-119, CA-121, CA-134. Depende de: T-049, T-118, T-121, T-124.
+  - Hecho cuando: con `academico` las tres páginas llevan el rótulo antes del contenido, sin fecha;
+    con `minimo` se ve la banda; con `completo`, la fecha en letras.
 - [ ] **T-072** · `astro-developer` [P] — Página de créditos.
   - Archivos: `src/pages/creditos.astro`.
   - CA: CA-44, CA-45, CA-50. Depende de: T-055, T-049.
@@ -507,12 +526,14 @@ Puede empezar al terminar T-056, sin esperar a T-060; no se cierra hasta que T-0
   - Archivos: `src/pages/404.astro`.
   - CA: CA-37. Depende de: T-049.
   - Hecho cuando: `dist/404.html` existe con los dos enlaces.
-- [ ] **T-074** · `astro-developer` [P] — Mapa del sitio y `robots.txt`.
-  - Archivos: `src/pages/sitemap.xml.ts`, `src/pages/robots.txt.ts`, `src/lib/seo/meta.ts`, su
+- [ ] **T-074** · `astro-developer` [P] — Mapa del sitio y `robots.txt` según `indexable`.
+  El mapa es una ruta dinámica que no genera archivo cuando el sitio no es indexable.
+  - Archivos: `src/pages/[sitemap].xml.ts`, `src/pages/robots.txt.ts`, `src/lib/seo/meta.ts`, su
     prueba.
-  - CA: CA-97. Depende de: T-063.
-  - Hecho cuando: en publicación el mapa lista el inicio y todos los detalles y `robots.txt` lo
-    referencia; en vista previa `robots.txt` prohíbe el rastreo.
+  - CA: CA-97, CA-133. Depende de: T-063, T-121.
+  - Hecho cuando: con `completo` en publicación el mapa lista el inicio y todos los detalles y
+    `robots.txt` lo referencia; con `academico` no existe `sitemap.xml` y `robots.txt` no
+    bloquea el rastreo ni anuncia mapa.
 - [ ] **T-075** · `qa-engineer` [P] — Prueba que recorre `src/` y falla ante colores, tamaños de
   letra, duraciones o degradados fuera de los tokens, y ante `--font-display` sin peso 700.
   - Archivos: `tests/unit/style-tokens.test.ts`.
@@ -640,22 +661,26 @@ esté cerrado, sin esperar a H6.
 - [ ] **T-097** · `qa-engineer` [P] — e2e del mapa, con teselas interceptadas.
   - Archivos: `tests/e2e/mapa.spec.ts`. CA: CA-67 a CA-72, CA-74, CA-75, CA-76.
   - Depende de: T-091. Hecho cuando: una prueba por criterio pasa y ninguna pide teselas reales.
-- [ ] **T-098** · `qa-engineer` [P] — e2e de contacto, navegación, SEO y legales.
+- [ ] **T-098** · `qa-engineer` [P] — e2e de contacto, navegación, SEO y legales. Lo propio
+  del modo académico va en T-133 y lo del operador real en T-136.
   - Archivos: `tests/e2e/contacto.spec.ts`, `navegacion.spec.ts`, `seo.spec.ts`, `legales.spec.ts`.
-  - CA: CA-81, CA-82, CA-83, CA-91, CA-93 a CA-96, CA-98, CA-118, CA-119, CA-121, CA-123.
+  - CA: CA-81, CA-82, CA-83, CA-91, CA-93 a CA-96, CA-98, CA-123.
   - Depende de: T-077. Hecho cuando: una prueba por criterio pasa.
-- [ ] **T-099** · `qa-engineer` [P] — Accesibilidad con axe: inicio, detalle con fotos, detalle sin
-  fotos, 404, visor abierto, menú abierto, mapa cargado, mapa fallido.
+- [ ] **T-099** · `qa-engineer` [P] — Accesibilidad con axe: inicio, detalle con fotos, detalle
+  sin fotos, las tres páginas legales, créditos, 404, visor abierto, menú abierto, mapa cargado,
+  mapa fallido.
   - Archivos: `tests/e2e/a11y.spec.ts`.
-  - CA: CA-8, CA-18, CA-27, CA-30, CA-48, CA-54, CA-55, CA-71, CA-95, CA-108, CA-114, CA-123.
-  - Depende de: T-091. Hecho cuando: no hay violaciones serious ni critical.
+  - CA: CA-8, CA-18, CA-27, CA-30, CA-48, CA-54, CA-55, CA-71, CA-95, CA-108, CA-114, CA-123,
+    CA-127, CA-130.
+  - Depende de: T-091, T-127. Hecho cuando: no hay violaciones serious ni critical.
 - [ ] **T-100** · `qa-engineer` [P] — Sin JavaScript.
   - Archivos: `tests/e2e/sin-js.spec.ts`. CA: CA-65, CA-68, CA-80, CA-83, CA-112, CA-123.
   - Depende de: T-091. Hecho cuando: las seis tareas de CA-112 pasan con JavaScript desactivado.
 - [ ] **T-101** · `qa-engineer` [P] — 360 px: desplazamiento horizontal y tamaño de objetivos en
-  todas las páginas, con la excepción de los enlaces del crédito.
-  - Archivos: `tests/e2e/responsive-360.spec.ts`. CA: CA-7, CA-16, CA-60, CA-72, CA-91, CA-110.
-  - Depende de: T-091. Hecho cuando: ningún control mide menos de 44 × 44 px salvo la excepción.
+  todas las páginas, con dos excepciones: los enlaces del crédito y las líneas de ruta del mapa.
+  - Archivos: `tests/e2e/responsive-360.spec.ts`. CA: CA-7, CA-16, CA-60, CA-72, CA-91, CA-110,
+    CA-128.
+  - Depende de: T-091. Hecho cuando: ningún control mide menos de 44 × 44 px salvo las excepciones.
 - [ ] **T-102** · `qa-engineer` [P] — Teclado y foco.
   - Archivos: `tests/e2e/teclado.spec.ts`. CA: CA-3, CA-19, CA-94, CA-106, CA-107.
   - Depende de: T-091. Hecho cuando: cada página se recorre completa con Tab sin trampas.
@@ -671,15 +696,16 @@ esté cerrado, sin esperar a H6.
   de miles y cifras sin unidad en todas las páginas.
   - Archivos: `tests/e2e/lenguaje.spec.ts`. CA: CA-23, CA-101, CA-103.
   - Depende de: T-077. Hecho cuando: pasa sobre `completo` y sobre el contenido real.
-- [ ] **T-106** · `qa-engineer` [P] — Build de publicación: recuento de páginas, mapa del sitio y
-  `robots.txt`.
-  - Archivos: `tests/build/release.test.ts`. CA: CA-31, CA-97. Depende de: T-077.
+- [ ] **T-106** · `qa-engineer` [P] — Build de publicación: recuento de páginas; con
+  `completo`, mapa del sitio y `robots.txt`; con `academico`, metaetiqueta de no indexar en todos
+  los HTML y ausencia de mapa.
+  - Archivos: `tests/build/release.test.ts`. CA: CA-31, CA-97, CA-133. Depende de: T-077.
   - Hecho cuando: `npm run test:build` pasa.
 - [ ] **T-107** · `qa-engineer` — Lighthouse CI sobre el inicio, un detalle con fotos y uno sin
-  fotos.
-  - CA: CA-115, CA-116. Depende de: T-091, T-016.
+  fotos, medido como define T-137 (dos pasadas: `academico` y `completo`).
+  - CA: CA-115, CA-116. Depende de: T-091, T-016, T-137.
   - Hecho cuando: `npm run test:lh` cumple las cuatro categorías ≥ 90, LCP ≤ 2.5 s, CLS ≤ 0.1 y
-    TBT ≤ 200 ms.
+    TBT ≤ 200 ms en las dos pasadas.
 - [ ] **T-108** · `qa-engineer` — Listas de comprobación manuales, con pasos y resultado: lector de
   pantalla (NVDA y TalkBack), reflujo a 320 px y 200 %, gestos del mapa en un celular, lenguaje y
   términos locales, contraste del anillo de foco y pares de la sección 4.3.
@@ -724,11 +750,233 @@ esté cerrado, sin esperar a H6.
   - Depende de: T-114.
   - Hecho cuando: `revision.md` dice "APROBADA (fecha, quién)" y todas las tareas de este documento
     están marcadas, salvo T-038 y T-039 si el lanzamiento aún no está listo.
-- [ ] **T-116** · humano — **Lanzamiento.** Con T-038 y T-039 hechas, construir con
-  `npm run build:release` y publicar.
-  - CA: CA-97, CA-118 a CA-121. Depende de: T-115, T-038, T-039.
-  - Hecho cuando: `npm run build:release` pasa con `SITE_URL` real, sin borradores, sin
-    identificadores ausentes y sin altitudes por verificar.
+- [ ] **T-116** · humano — **Publicación.** Con T-139 hecha, fusionar en la rama principal:
+  Vercel ejecuta `npm run build:vercel`, que en producción lanza `build:release`.
+  - CA: CA-133, CA-139. Depende de: T-115, T-139.
+  - Hecho cuando: el despliegue de producción termina en verde con `SITE_URL` real, sin altitudes
+    por verificar ni datos de relleno. La comprobación con peticiones reales es T-140.
+
+---
+
+## HA — Modo académico y despliegue en Vercel (revisión del 2026-10-11)
+
+Tareas añadidas por la revisión del plan del 2026-10-11. No renumeran ni desmarcan las anteriores.
+Se intercalan con H4 a H8 según la tabla "Orden recomendado" del final de este hito.
+
+### Aprobaciones y documentos
+
+- [x] **T-117** · humano — Aprobar la revisión del 2026-10-11 de `plan.md`, la revisión del ADR 0003
+  y el ADR 0012.
+  - Archivos: `specs/001-landing-completa/plan.md`, `docs/adr/0003-*.md`, `docs/adr/0012-*.md`.
+  - Depende de: —
+  - Hecho cuando: el plan y los dos ADR dicen "aprobado (fecha, quién)". **Bloquea T-120 a T-140**,
+    salvo T-119, ya encargada.
+- [ ] **T-118** · `ui-designer` [P] — Completar `design.md` con el modo académico: aviso (texto
+  exacto, lugar, aspecto a 360 px), aclaración del contacto, mensaje inicial de WhatsApp de prueba,
+  rótulo de las páginas legales y pie con "proyecto académico". En curso.
+  - Archivos: `specs/001-landing-completa/design.md`; `src/styles/tokens.css` y
+    `docs/design/direccion-visual.md` solo si hace falta un token.
+  - CA: CA-98, CA-126 a CA-132, CA-134. Depende de: —
+  - Hecho cuando: el humano aprueba el `design.md` y cada texto propuesto por la spec tiene su
+    versión definitiva.
+- [x] **T-142** · `spec-writer` [P] — Ajustar la frase de CA-133 sobre el archivo de instrucciones
+  para buscadores: no bloquea el rastreo; la instrucción de no indexar va en cada página y en la
+  cabecera (plan, R3 e inconsistencia 15).
+  - Archivos: `specs/001-landing-completa/spec.md`.
+  - CA: CA-133. Depende de: T-117.
+  - Hecho cuando: el humano aprueba la nueva redacción.
+- [x] **T-141** · asistente principal [P] — Actualizar `CLAUDE.md`: guion `build:vercel`, línea de
+  despliegue, `vercel.json` y `scripts/` en la estructura, y la descripción de `operador.json` y de
+  `legal/`. El texto propuesto lo entregó `software-architect` con esta revisión.
+  - Archivos: `CLAUDE.md`.
+  - Depende de: T-117.
+  - Hecho cuando: `CLAUDE.md` refleja el ADR 0012 y la revisión del ADR 0003.
+
+### Esquema y puerta de publicación
+
+- [ ] **T-119** · `astro-developer` — Corrección: `territorySchema.minM` admite 0. Comprobar además
+  que el titular ("de 0 a 4080 metros de altitud"), el rango del piso cálido ("De 0 a 1000 m") y la
+  escala del perfil funcionan con mínima 0, y actualizar la guía de contenido. Ya encargada.
+  - Archivos: `src/lib/content/schemas.ts`, `tests/unit/schemas.test.ts`, `tests/unit/units.test.ts`,
+    `tests/unit/zones.test.ts`, `src/content/README.md`.
+  - CA: CA-2, CA-122. Depende de: —
+  - Hecho cuando: `npx astro sync` pasa con el contenido real y hay pruebas con `minM: 0`.
+- [ ] **T-120** · `astro-developer` — Esquema: `siteKind` obligatorio en `operatorSchema`; estado
+  `sample` en `legalSchema`, incompatible con `reviewedOn`; campo opcional `sources` en destinos y
+  rutas. Actualizar la guía de contenido y su prueba.
+  - Archivos: `src/lib/content/schemas.ts`, `tests/unit/schemas.test.ts`, `src/content/README.md`,
+    `tests/unit/content-guide.test.ts`.
+  - CA: CA-125, CA-134. Depende de: T-117.
+  - Hecho cuando: un operador sin `siteKind` o con un valor desconocido falla con archivo, campo y
+    regla, y los ejemplos de la guía pasan.
+- [ ] **T-121** · `astro-developer` — `validateSite()`: `siteKind` e `indexable` en el modelo;
+  reglas de la tabla R2 del plan (identificador cargado en académico, legal sin `sample` en
+  académico, `sample` en operador, identificadores y revisión solo en operador); aviso por
+  comentario HTML en un cuerpo; `SITE_URL` con criterio CA-139 y comprobación de URL absoluta.
+  - Archivos: `src/lib/content/validate.ts`, `tests/unit/validate-modos.test.ts`.
+  - CA: CA-118 a CA-121, CA-125, CA-134, CA-138, CA-139. Depende de: T-120.
+  - Hecho cuando: hay una prueba por cada celda de la tabla de los cuatro cruces y por cada fila de
+    la tabla de reglas de R2, y las 165 pruebas anteriores siguen pasando.
+- [ ] **T-122** · `astro-developer` [P] — Registro de terceros y regla de la política de datos.
+  - Archivos: `src/lib/privacy/third-parties.ts`, `tests/unit/third-parties.test.ts`,
+    `src/lib/content/validate.ts`.
+  - CA: CA-135, CA-136. Depende de: T-121.
+  - Hecho cuando: una política que no nombra a OpenStreetMap, WhatsApp o Vercel produce error con
+    el nombre que falta.
+- [ ] **T-123** · `astro-developer` [P] — Búsqueda de promesas comerciales: lista de términos,
+  función pura y aviso en el build.
+  - Archivos: `src/lib/content/commercial-terms.ts`, `tests/unit/commercial-terms.test.ts`,
+    `src/lib/content/validate.ts`.
+  - CA: CA-137. Depende de: T-121.
+  - Hecho cuando: las pruebas encuentran "reserva", "Reservar", "cupos", "precio", "tarifa", "COP" y
+    "guía incluido", y no encuentran "copa", "preciosa" ni "guías locales".
+- [ ] **T-124** · `astro-developer` [P] — `load.ts`: `renderBody(coleccion, id)` para el cuerpo
+  Markdown de destinos y textos legales.
+  - Archivos: `src/lib/content/load.ts`.
+  - CA: CA-32, CA-134. Depende de: T-117.
+  - Hecho cuando: una página de prueba pinta el cuerpo de un destino del escenario `completo`.
+- [ ] **T-125** · `qa-engineer` — Escenarios: `siteKind` en todos; nuevo `academico` (publicación,
+  escenario por defecto); `sin-fotos` pasa a académico; `completo` y `minimo` quedan como operador
+  real. Probarlos con `validateSite()` en los dos modos de compilación y aclarar los avisos de
+  entradas duplicadas de `minimo`. Corrige el resultado de T-022, ya hecha.
+  - Archivos: `scripts/make-fixtures.mjs`, `tests/fixtures/content/**`, `tests/e2e/scenarios.ts`,
+    `tests/unit/fixtures.test.ts`.
+  - CA: CA-125, CA-138. Depende de: T-121.
+  - Hecho cuando: los cuatro escenarios construyen en su modo, `academico` pasa `build:release` y
+    `npm run test:e2e` sigue en verde con `academico` como escenario por defecto.
+
+### Contenido real
+
+- [ ] **T-126** · `content-curator` — Declarar el contenido real como académico: `siteKind:
+  "academic"` en `operador.json`; mover las citas de los comentarios HTML de cada destino al campo
+  `sources` y retirar los comentarios.
+  - Archivos: `src/content/sitio/operador.json`, `src/content/destinos/*.md`.
+  - CA: CA-125, CA-137. Depende de: T-120.
+  - Hecho cuando: `npm run build` no da errores ni el aviso de comentarios HTML.
+- [ ] **T-130** · `content-curator` — Manifiesto de fotos: por cada foto elegida, destino, nombre de
+  archivo de destino, URL de descarga directa (original o reducción a 2560 px), página de la
+  fuente, autor, licencia y dimensiones declaradas por la fuente. Sustituye la parte de descarga
+  de T-034.
+  - Archivos: `scripts/photos-manifest.json`.
+  - CA: CA-46, CA-47. Depende de: T-034.
+  - Hecho cuando: cada entrada tiene los ocho datos y ninguna licencia es NC ni ND.
+- [ ] **T-131** · `astro-developer` — Guion de descarga de fotos y su ejecución. Descarga en serie
+  con agente de usuario propio, reduce a 2560 px de lado mayor si hace falta, no amplía, y escribe
+  un informe con dimensiones, peso y huella de cada archivo.
+  - Archivos: `scripts/fetch-photos.mjs`, `src/assets/photos/<destino>/*`,
+    `specs/001-landing-completa/fotos-descargadas.md`.
+  - Órdenes: `node scripts/fetch-photos.mjs` y, para comprobar, `node scripts/fetch-photos.mjs
+    --check`.
+  - CA: CA-42, CA-43. Depende de: T-130.
+  - Hecho cuando: `--check` confirma que cada archivo del manifiesto existe, mide 1200 px o más de
+    lado mayor y pesa 1.5 MB o menos; el informe marca cuáles llegan a 2000 px.
+- [ ] **T-132** · `content-curator` — Añadir las fotos descargadas al frontmatter de cada destino,
+  con proporción y punto de interés elegidos a partir del informe de T-131.
+  - Archivos: `src/content/destinos/*.md`.
+  - CA: CA-43, CA-45 a CA-49. Depende de: T-131.
+  - Hecho cuando: `npm run build` no da errores de fotos y cada enlace de fuente y de licencia abre
+    la página correcta.
+
+### Interfaz
+
+- [ ] **T-127** · `astro-developer` — Aviso académico en `BaseLayout`, metaetiqueta `robots` según
+  `indexable`, pie con "proyecto académico" y mensaje de WhatsApp de prueba. Corrige el resultado
+  de T-042, T-047 y T-049, ya hechas.
+  - Archivos: `src/components/ui/AcademicNotice.astro`, `src/layouts/BaseLayout.astro`,
+    `src/components/sections/SiteFooter.astro`, `src/lib/contact/whatsapp.ts`,
+    `tests/unit/small-utils.test.ts`.
+  - CA: CA-1, CA-98, CA-126 a CA-130, CA-132, CA-133. Depende de: T-118, T-121, T-051.
+  - Hecho cuando: con `academico` el aviso está en el inicio antes de `main`, sin control de cierre
+    y visible sin JavaScript a 360 px; con `completo` no hay aviso ni metaetiqueta `robots`.
+
+### Despliegue
+
+- [ ] **T-128** · `astro-developer` — Preparar el despliegue: `vercel.json`, guion `build:vercel` y
+  `scripts/vercel-build.mjs`, y dirección de reserva `https://$VERCEL_URL` en `astro.config.mjs`.
+  - Archivos: `vercel.json`, `scripts/vercel-build.mjs`, `package.json`, `astro.config.mjs`.
+  - CA: CA-133, CA-139. Depende de: T-117 (**ADR 0012 aprobado**).
+  - Hecho cuando: `VERCEL_ENV=production npm run build:vercel` falla sin `SITE_URL` y pasa con
+    ella; sin `VERCEL_ENV`, construye la vista previa.
+- [ ] **T-129** · `qa-engineer` — Prueba de coherencia del despliegue: la cabecera `X-Robots-Tag` de
+  `vercel.json` concuerda con el `siteKind` del contenido real; `trailingSlash` es verdadero; no
+  hay `Referrer-Policy`.
+  - Archivos: `tests/build/deploy.test.ts`.
+  - CA: CA-133. Depende de: T-128, T-126.
+  - Hecho cuando: la prueba pasa y falla al quitar la cabecera.
+- [ ] **T-139** · humano — Crear el proyecto en Vercel: Node.js 24.x; decidir la dirección pública
+  (PA-17; sirve el subdominio `*.vercel.app` del proyecto) y definir `SITE_URL` solo en el entorno
+  Production; no definir `OUT_DIR` ni `CONTENT_ROOT`. **Bloquea la publicación, no el desarrollo.**
+  Sustituye la parte de alojamiento de T-039.
+  - CA: CA-139. Depende de: T-128.
+  - Hecho cuando: un despliegue de vista previa de una rama termina en verde y el de producción
+    falla solo por lo que la puerta de publicación informe.
+- [ ] **T-140** · `qa-engineer` — Verificar el primer despliegue de producción con peticiones
+  reales: `curl -sI <URL>/` (cabecera `X-Robots-Tag: noindex`, sin `Referrer-Policy`);
+  `curl -sI <URL>/creditos` (308 a `/creditos/`); `curl -s -o /dev/null -w "%{http_code}"
+  <URL>/no-existe/` (404, con la página en español); `curl -s <URL>/robots.txt` (sin `Disallow: /`
+  y sin `Sitemap`); `curl -s -o /dev/null -w "%{http_code}" <URL>/sitemap.xml` (404).
+  - Archivos: `specs/001-landing-completa/pruebas-manuales.md`.
+  - CA: CA-37, CA-74, CA-133. Depende de: T-116.
+  - Hecho cuando: los cinco resultados están anotados con fecha y coinciden con lo esperado.
+
+### Pruebas
+
+- [ ] **T-133** · `qa-engineer` [P] — e2e del modo académico: aviso en todas las páginas, sin JS y a
+  360 px, sin control de cierre, persistente; aclaración del contacto y mensaje de WhatsApp;
+  metaetiqueta de no indexar; rótulo de las tres páginas legales; pie.
+  - Archivos: `tests/e2e/academico.spec.ts`.
+  - CA: CA-98, CA-121, CA-126 a CA-134. Depende de: T-127, T-071, T-062.
+  - Hecho cuando: una prueba por criterio pasa en los proyectos de móvil, escritorio y sin
+    JavaScript.
+- [ ] **T-134** · `qa-engineer` [P] — e2e de terceros: orígenes pedidos por cada página y por el
+  inicio con el mapa cargado, contra el registro y el texto de la política; sin cookies ni
+  almacenamiento.
+  - Archivos: `tests/e2e/terceros.spec.ts`.
+  - CA: CA-129, CA-135, CA-136. Depende de: T-122, T-091, T-071.
+  - Hecho cuando: la prueba pasa y falla al añadir a una página un recurso de un origen no
+    declarado.
+- [ ] **T-135** · `qa-engineer` [P] — e2e de promesas comerciales sobre el contenido real, con la
+  lista de frases revisadas.
+  - Archivos: `tests/e2e/promesas.spec.ts`, `tests/e2e/data/terminos-revisados.json`,
+    `tests/e2e/scenarios.ts` (escenario `real`, que construye `src/content` en vista previa).
+  - CA: CA-137. Depende de: T-123, T-077, T-036, T-037.
+  - Hecho cuando: no queda ninguna coincidencia sin revisar y cada frase revisada tiene motivo,
+    revisor y fecha.
+- [ ] **T-136** · `qa-engineer` [P] — e2e y build del modo de operador real: sin aviso, indexable,
+  con mapa del sitio, fecha de revisión e identificador (`completo`); banda de borrador y sin
+  identificador (`minimo`).
+  - Archivos: `tests/e2e/operador.spec.ts`, `tests/build/release.test.ts`.
+  - CA: CA-97, CA-118, CA-119, CA-121, CA-138. Depende de: T-127, T-071, T-074.
+  - Hecho cuando: una prueba por criterio pasa.
+- [ ] **T-137** · `qa-engineer` — Lighthouse CI en dos pasadas: `academico` sin la auditoría
+  `is-crawlable` y `completo` con la categoría SEO completa. Sustituye la forma de medir de T-107.
+  - Archivos: `scripts/lhci.mjs`, `lighthouserc.json`.
+  - CA: CA-115, CA-116. Depende de: T-125, T-091.
+  - Hecho cuando: el informe de `academico` no lista `is-crawlable` y las dos pasadas cumplen los
+    umbrales.
+
+- [ ] **T-138** · `qa-engineer` [P] — Añadir a las listas manuales los pasos del modo académico:
+  contraste y tamaño del aviso; veracidad de la política de datos, punto por punto; revisión a mano
+  de cada coincidencia de la búsqueda de promesas comerciales. Amplía T-108.
+  - Archivos: `specs/001-landing-completa/pruebas-manuales.md`.
+  - CA: CA-130, CA-135, CA-137. Depende de: T-133, T-134, T-135.
+  - Hecho cuando: cada criterio manual nuevo tiene pasos, resultado y fecha.
+
+### Orden recomendado
+
+| Paso | Tareas | Nota |
+|---|---|---|
+| 1 | T-119 | Ya encargada; desbloquea el contenido real |
+| 2 | T-117 | Aprobación; en paralelo siguen T-118 y el trabajo en curso de H4 |
+| 3 | T-120, luego T-121 | Esquema y puerta. Tras T-120, el contenido real no construye hasta T-126 |
+| 4 | T-122, T-123, T-124 y T-125, a la vez | Tras T-121 |
+| 5 | T-126, T-036 y T-037 | Contenido real académico; en paralelo con el paso 4 |
+| 6 | T-127 | Cuando T-051 y T-118 estén cerradas |
+| 7 | T-027 | Escenarios inválidos y pruebas de build, ya con el modo académico |
+| 8 | T-128, luego T-129 | En cualquier momento tras T-117 |
+| 9 | T-034, T-130, T-131, T-132 | Fotos, en paralelo con H4 y H5 |
+| 10 | T-133 a T-138 | Con el resto de H7 |
+| 11 | T-139, T-116, T-140 | Publicación |
 
 ---
 
@@ -755,7 +1003,10 @@ esté cerrado, sin esperar a H6.
 | T-021 y T-023, esquema y guía | El contenido (H3) |
 | T-029, aprobación de la lista (PA-15) | El contenido real |
 | T-060, punto de control CA-124 | El cierre de H5 y lo que sigue |
-| T-038 y T-039, legales, identificadores y dominio | Solo el lanzamiento (T-116) |
+| T-117, aprobación de la revisión del 2026-10-11 | T-120 a T-140, salvo T-119 |
+| T-139, dirección pública y `SITE_URL` en Vercel | Solo la publicación (T-116) |
+| T-038, legales e identificadores | Nada en modo académico |
 
 ---
-Estado: LISTO PARA EJECUTAR (2026-10-10; plan y ADR 0003 a 0010 aprobados por el humano)
+Estado: LISTO PARA EJECUTAR (2026-10-10; plan y ADR 0003 a 0010 aprobados por el humano). Las tareas
+T-117 a T-142 y los textos cambiados por la revisión del 2026-10-11 están sujetos a T-117.

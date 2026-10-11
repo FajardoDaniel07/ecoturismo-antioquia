@@ -1,0 +1,56 @@
+---
+/**
+ * Lámina de altitud (S6.3, CA-38, CA-39): ocupa el lugar de una foto, con su misma proporción y
+ * su mismo radio. Tinte del piso, curvas de nivel (de <ContourDefs>), y abajo a la izquierda un
+ * rótulo con la cifra de altitud y el nombre del piso. Decorativa para el lector de pantalla: la
+ * altitud y el piso ya están en el texto del destino. El tamaño de la cifra depende del ancho de
+ * la lámina (consulta de contenedor), no de la ventana.
+ */
+import { formatAltitude } from '../../lib/format/units';
+import { zoneName, type ZoneId } from '../../lib/altitude/zones';
+
+interface Props {
+  zone: ZoneId;
+  altitudeM: number;
+  ratio: '3:2' | '4:5' | '1:1';
+  class?: string;
+}
+
+const { zone, altitudeM, ratio, class: extra = '' } = Astro.props;
+
+const TINT: Record<ZoneId, string> = {
+  warm: 'bg-zone-warm-tint',
+  temperate: 'bg-zone-temperate-tint',
+  cold: 'bg-zone-cold-tint',
+  paramo: 'bg-zone-paramo-tint',
+};
+const TEXT: Record<ZoneId, string> = {
+  warm: 'text-zone-warm',
+  temperate: 'text-zone-temperate',
+  cold: 'text-zone-cold',
+  paramo: 'text-zone-paramo',
+};
+const [rw, rh] = ratio.split(':').map(Number);
+const name = zoneName(zone);
+---
+
+<div
+  aria-hidden="true"
+  class:list={['@container relative w-full overflow-hidden rounded-sm', TINT[zone], extra]}
+  style={`aspect-ratio:${rw} / ${rh};--plate-line:var(--color-line);--plate-master:var(--color-zone-${zone})`}
+>
+  <svg
+    class="absolute inset-0 h-full w-full"
+    viewBox="0 0 300 200"
+    preserveAspectRatio="xMidYMid slice"
+    focusable="false"
+  >
+    <use href={`#contours-${zone}`}></use>
+  </svg>
+  <div class:list={['absolute bottom-3 left-3 px-2 py-1', TINT[zone]]}>
+    <p class="font-display text-lg leading-none font-bold text-ink @min-[140px]:text-2xl @min-[280px]:text-3xl @min-[480px]:text-4xl">
+      {formatAltitude(altitudeM, 'short')}
+    </p>
+    <p class:list={['mt-1 text-sm leading-5 font-medium capitalize', TEXT[zone]]}>{name}</p>
+  </div>
+</div>

@@ -1,0 +1,79 @@
+---
+/**
+ * Tarjeta de destino del listado (S4, CA-17, CA-18, CA-21, CA-38): foto o lámina, nombre como único
+ * enlace al detalle (su zona activa cubre la foto o la lámina, no el crédito), descripción corta y
+ * tres datos (altitud con piso, duración, dificultad). El principal del piso es grande (3:2) y los
+ * menores llevan una miniatura 1:1.
+ */
+import AltitudePlate from '../ui/AltitudePlate.astro';
+import Ficha from '../ui/Ficha.astro';
+import Photo from '../ui/Photo.astro';
+import PhotoCredit from '../ui/PhotoCredit.astro';
+import { buildFicha } from '../../lib/ficha/build';
+import type { Destino } from '../../lib/content/validate';
+import { cardMedia } from '../../lib/photos/policy';
+
+interface Props {
+  destino: Destino;
+  size: 'featured' | 'minor';
+}
+
+const { destino, size } = Astro.props;
+const featured = size === 'featured';
+const media = cardMedia({ isFeatured: featured, photos: destino.photos });
+const rows = buildFicha(destino, 'summary');
+
+const FEATURED_SIZES = '(min-width: 1024px) 560px, (min-width: 768px) 440px, calc(100vw - 56px)';
+const MINOR_SIZES = '(min-width: 1024px) 220px, (min-width: 768px) 120px, 104px';
+const ratio = featured ? '3:2' : '1:1';
+---
+
+<article
+  class:list={[
+    'relative grid gap-x-4 gap-y-2',
+    featured
+      ? 'grid-cols-1 gap-y-4 md:grid-cols-8 md:gap-x-6 lg:grid-cols-10'
+      : 'grid-cols-[104px_1fr] md:grid-cols-[120px_1fr] lg:grid-cols-5 lg:gap-x-6',
+  ]}
+>
+  <div class:list={[featured ? 'md:col-span-5 lg:col-span-6' : 'lg:col-span-2']}>
+    {media.kind === 'photo' ? (
+      <Photo
+        photo={media.photo}
+        slot={featured ? 'large' : 'thumb'}
+        ratio={ratio}
+        sizes={featured ? FEATURED_SIZES : MINOR_SIZES}
+        loading="lazy"
+      />
+    ) : (
+      <AltitudePlate zone={destino.zone} altitudeM={destino.altitude.meters} ratio={ratio} />
+    )}
+    {featured && media.kind === 'photo' && (
+      <PhotoCredit photo={media.photo} ratio={ratio} class="relative z-10 mt-2" />
+    )}
+  </div>
+
+  <div class:list={[featured ? 'md:col-span-3 lg:col-span-4' : 'lg:col-span-3 lg:row-span-2']}>
+    <h4 class="m-0">
+      <a
+        href={destino.href}
+        class:list={[
+          'font-display font-bold text-ink after:absolute after:inset-0 after:content-[""] hover:underline',
+          featured ? 'text-xl md:text-2xl' : 'text-lg lg:text-xl',
+        ]}
+      >
+        {destino.name}
+      </a>
+    </h4>
+    <p class="mt-2 text-ink">{destino.summary}</p>
+    <Ficha rows={rows} variant="summary" class="mt-3" />
+  </div>
+
+  {!featured && media.kind === 'photo' && (
+    <PhotoCredit
+      photo={media.photo}
+      ratio={ratio}
+      class="relative z-10 col-span-full lg:col-span-2 lg:col-start-1"
+    />
+  )}
+</article>

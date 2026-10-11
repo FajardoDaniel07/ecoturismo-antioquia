@@ -9,7 +9,9 @@ Idioma del contenido: español (es-CO).
 - **Astro** (salida estática, `output: 'static'`) + **TypeScript** en modo `strict`.
 - **Content Collections** con esquemas Zod (fuente única de datos): `destinos`, `rutas`, `legal`,
   `operador` y `territorio`. Todo el contenido pasa por una sola puerta, `loadSite()`, que valida
-  y decide qué se publica (ADR 0003).
+  y decide qué se publica (ADR 0003). `operador.json` declara el tipo de sitio (`siteKind`:
+  `academic` u `operator`); hoy el sitio es un **ejercicio académico**: lleva un aviso en todas las
+  páginas, no se indexa y sus textos legales son de muestra.
 - **Estilos**: Tailwind CSS + design tokens en `src/styles/tokens.css` (colores, tipografía, espaciado).
 - **Islas interactivas** en TypeScript sin framework UI: un componente `.astro` con un guion
   cargador que importa el módulo real (`*.client.ts`) cuando la sección se acerca a la ventana
@@ -23,6 +25,8 @@ Idioma del contenido: español (es-CO).
   `src/assets/fonts/` con `@font-face` en `src/styles/fonts.css`, sin dependencia (ADR 0007).
 - **Pruebas**: Vitest (unitarias), Playwright (e2e) + `@axe-core/playwright` (accesibilidad).
 - **Calidad**: `astro check`, ESLint, Prettier, Lighthouse CI.
+- **Despliegue**: Vercel, salida estática sin adaptador; `vercel.json` fija la orden de build, las
+  barras finales y las cabeceras (ADR 0012).
 
 ## Skills del proyecto
 
@@ -54,6 +58,7 @@ Verifica que ambas queden en `.claude/skills/<nombre>/SKILL.md` y haz commit de 
 npm run dev            # servidor local (vista previa)
 npm run build          # compilación de vista previa: permisiva, noindex, borradores marcados (incluye astro check)
 npm run build:release  # compilación de publicación: estricta; la única que se despliega
+npm run build:vercel   # lo que ejecuta Vercel: build:release en producción, build en vista previa
 npm run preview        # previsualizar el build
 npm run test           # Vitest (unitarias)
 npm run test:build     # criterios [build]: construye escenarios y comprueba que el build falla cuando debe
@@ -62,9 +67,10 @@ npm run test:lh        # Lighthouse CI en modo móvil
 npm run lint           # ESLint + Prettier --check
 ```
 
-`npm run build` no es desplegable. El alojamiento se configura con `npm run build:release`, que
-exige `SITE_URL`, textos legales revisados, identificadores oficiales entregados y altitudes
-verificadas (ADR 0003).
+`npm run build` no es desplegable. En Vercel se configura `npm run build:vercel` (en
+`vercel.json`): en el despliegue de producción lanza `build:release`, que exige `SITE_URL`,
+altitudes verificadas y datos de contacto reales; en modo de operador real exige además textos
+legales revisados e identificadores oficiales (ADR 0003 y 0012).
 
 ## Estructura
 
@@ -73,8 +79,8 @@ src/
   content/
     destinos/        # un .md por destino (frontmatter validado por Zod; incluye sus fotos y créditos)
     rutas/           # un .json por ruta (GeoJSON LineString + metadatos)
-    legal/           # tres .md: política de datos, términos, cancelación (borrador o revisado)
-    sitio/           # operador.json (contacto, identificadores) y territorio.json (altitudes, umbrales)
+    legal/           # tres .md: política de datos, términos, cancelación (muestra, borrador o revisado)
+    sitio/           # operador.json (tipo de sitio, contacto, identificadores) y territorio.json (altitudes, umbrales)
   content.config.ts  # registra las colecciones; los esquemas viven en src/lib/content/schemas.ts
   assets/
     fonts/           # dos WOFF2 y sus licencias OFL
@@ -92,11 +98,13 @@ src/
     legal/[slug].astro
     creditos.astro
     404.astro
-    sitemap.xml.ts, robots.txt.ts, data/rutas.json.ts
+    sitemap.xml (solo si el sitio es indexable), robots.txt.ts, data/rutas.json.ts
   styles/
     global.css       # importa Tailwind, tokens.css y fonts.css
     tokens.css       # generado a partir de la dirección visual (ui-designer)
     fonts.css        # @font-face de las dos fuentes
+scripts/             # guiones de apoyo: escenarios de prueba, Lighthouse, build de Vercel, descarga de fotos
+vercel.json          # despliegue: orden de build, barras finales, cabeceras (ADR 0012)
 specs/               # artefactos SDD por feature: spec.md, design.md, plan.md, tasks.md
 docs/
   adr/               # Architecture Decision Records

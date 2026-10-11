@@ -1,0 +1,19 @@
+---
+/** Tres marcas circulares de 10 px: rellenas en tinta tantas como el nivel (CA-27). Decorativas. */
+interface Props {
+  marks: 1 | 2 | 3;
+}
+
+const { marks } = Astro.props;
+---
+
+<span aria-hidden="true" class="ml-2 inline-flex items-center gap-1 align-middle">
+  {[1, 2, 3].map((n) => (
+    <span
+      class:list={[
+        'size-2.5 rounded-full border-[1.5px] border-ink',
+        n <= marks ? 'bg-ink' : 'bg-transparent',
+      ]}
+    />
+  ))}
+</span>

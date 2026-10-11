@@ -91,3 +91,8 @@ const MONTHS = [
 export function formatLongDate(d: Date): string {
   return `${d.getUTCDate()} de ${MONTHS[d.getUTCMonth()]} de ${d.getUTCFullYear()}`;
 }
+
+/** "De 1000 a 2000 m": rango de un piso en la regla de altitud (CA-16). */
+export function formatAltitudeSpan(fromM: number, toM: number): string {
+  return `De ${num(fromM)} a ${num(toM)} m`;
+}

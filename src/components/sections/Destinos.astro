@@ -1,0 +1,64 @@
+---
+/**
+ * Listado de destinos (S4, CA-12 a CA-19, CA-38, CA-42): un bloque por piso con destinos, de
+ * menor a mayor altura; en cada bloque, el destino principal y los demás. Un piso sin destinos
+ * no deja rastro (CA-14).
+ */
+import ContourDefs from '../ui/ContourDefs.astro';
+import ZoneRail from '../ui/ZoneRail.astro';
+import DestinoCard from './DestinoCard.astro';
+import type { ZoneBlock } from '../../lib/altitude/sort';
+import { cardMedia } from '../../lib/photos/policy';
+import { SECTION_IDS } from '../../lib/nav';
+
+interface Props {
+  blocks: ZoneBlock[];
+}
+
+const { blocks } = Astro.props;
+
+// Los dibujos de curvas se definen una vez, solo para los pisos que muestran alguna lámina.
+const plateZones = blocks
+  .filter(
+    (b) =>
+      cardMedia({ isFeatured: true, photos: b.featured.photos }).kind === 'plate' ||
+      b.others.some((d) => cardMedia({ isFeatured: false, photos: d.photos }).kind === 'plate'),
+  )
+  .map((b) => b.zone);
+---
+
+<section id={SECTION_IDS.destinos} aria-labelledby="destinos-titulo" class="pb-16 lg:pb-24">
+  <ContourDefs zones={plateZones} />
+  <div class="mx-auto w-full max-w-page px-5 md:px-8 lg:px-12">
+    <h2
+      id="destinos-titulo"
+      tabindex="-1"
+      class="font-display text-2xl font-bold text-ink focus:outline-none md:text-3xl"
+    >
+      Destinos
+    </h2>
+    <p class="mt-2 text-ink-muted">Del valle al páramo, de menor a mayor altura.</p>
+
+    <div class="mt-8 space-y-12 lg:space-y-16">
+      {blocks.map((block) => (
+        <ZoneRail
+          zones={[block.zone]}
+          range={block.range}
+          headingLevel={3}
+          id={`piso-${block.zone}`}
+        >
+          <div class="space-y-8">
+            <DestinoCard destino={block.featured} size="featured" />
+            {block.others.length > 0 && (
+              <div class="grid gap-x-6 gap-y-6 md:grid-cols-2">
+                {block.others.map((d) => (
+                  <DestinoCard destino={d} size="minor" />
+                ))}
+              </div>
+            )}
+          </div>
+        </ZoneRail>
+      ))}
+    </div>
+  </div>
+</section>

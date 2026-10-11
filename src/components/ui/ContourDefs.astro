@@ -1,0 +1,33 @@
+---
+/**
+ * Dibujos de curvas de nivel de las láminas (S6.3, CA-39, ADR 0010). Se definen una sola vez por
+ * página; cada lámina los referencia con <use>. Los colores entran por variables CSS heredadas
+ * (--plate-line y --plate-master) y el trazo mide 1 px en cualquier tamaño.
+ */
+import { buildContourPlate } from '../../lib/altitude/contours';
+import type { ZoneId } from '../../lib/altitude/zones';
+
+interface Props {
+  zones: ZoneId[];
+}
+
+const { zones } = Astro.props;
+const plates = zones.map((zone) => buildContourPlate(zone));
+---
+
+{plates.length > 0 && (
+  <svg width="0" height="0" class="absolute" aria-hidden="true" focusable="false">
+    <defs>
+      {plates.map((plate) => (
+        <g id={`contours-${plate.zone}`} fill="none" stroke-width="1">
+          {plate.curves.map((c) => (
+            <path
+              d={c.d}
+              style={`stroke:var(${c.master ? '--plate-master' : '--plate-line'});vector-effect:non-scaling-stroke`}
+            />
+          ))}
+        </g>
+      ))}
+    </defs>
+  </svg>
+)}

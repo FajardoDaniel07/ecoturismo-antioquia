@@ -8,6 +8,11 @@ Entradas leídas: `CLAUDE.md`, `AGENTS.md`, `spec.md` (APROBADA 2026-10-10, 116 
 ADR 0001 y 0002. Las dos preguntas abiertas de la spec (PA-8 y PA-15) no bloquean el desarrollo
 según la propia spec; este plan las trata en "Pendientes".
 
+**Revisión del 2026-10-11 (modo académico y Vercel): aprobada por el humano el 2026-10-11.** El sitio pasa
+a ser un ejercicio académico desplegado en Vercel; la spec tiene ahora 131 criterios activos. Los
+cambios están en la sección "Revisión del 2026-10-11", que manda sobre el texto anterior donde lo
+contradiga, y en la matriz de trazabilidad.
+
 **Revisión del 2026-10-10 (segunda pasada).** El humano respondió las preguntas del plan; sus
 decisiones están incorporadas y resumidas en "Decisiones del humano". Después **aprobó
 explícitamente el plan y los ADR 0003 a 0010**, incluida la instalación de las cinco dependencias,
@@ -717,6 +722,271 @@ cuando la imagen no llega.
 
 ---
 
+## Revisión del 2026-10-11: modo académico y despliegue en Vercel
+
+**Estado de esta revisión: aprobada por el humano el 2026-10-11.** Recoge la revisión de la spec aprobada
+el 2026-10-11 (sección N, CA-125 a CA-139; criterios ajustados CA-1, CA-97, CA-98, CA-108, CA-115,
+CA-118 a CA-121; CA-110 y CA-28) y la decisión de desplegar en Vercel. **Donde esta sección
+contradiga texto anterior del plan, manda esta sección.** La puerta de dos modos de compilación ya
+construida no se rediseña: se extiende.
+
+Lo que queda sin efecto del plan anterior: los identificadores oficiales como requisito universal
+para publicar (D1), `robots.txt` cerrado en vista previa (D1 y D8), y un mapa del sitio que existe
+siempre (D8).
+
+### R1. Declaración del modo (CA-125)
+
+- **Dónde vive:** campo obligatorio `siteKind` en `src/content/sitio/operador.json`, con valor
+  `"academic"` u `"operator"`. Sin valor por defecto. Si falta o no es válido, el esquema detiene
+  cualquier compilación con archivo, campo y regla. El modo nunca se deduce de otros datos (por
+  ejemplo, de que falten identificadores).
+- **Por qué ahí:** `operador.json` ya es el archivo de "quién está detrás del sitio" (nombre,
+  contacto, identificadores). Un archivo o una colección aparte añadiría piezas a cada escenario
+  de prueba sin aportar nada.
+- **Dos ejes independientes.** `BuildMode` (`preview` o `release`) sale de la orden de compilación;
+  `SiteKind` (`academic` u `operator`) sale de los datos. Ninguno condiciona al otro.
+- **Propagación:** `validateSite()` copia `siteKind` al `SiteModel` y calcula un único dato
+  derivado, `indexable = siteKind === 'operator' && mode === 'release'`. `BaseLayout` y las páginas
+  leen esos dos campos de `loadSite()` y los pasan por props; ningún componente vuelve a decidir
+  el modo por su cuenta.
+
+  | Quién lo lee | Para qué |
+  |---|---|
+  | `BaseLayout` | Pintar el aviso académico antes del contenido; metaetiqueta `robots` si `indexable` es falso |
+  | `SiteFooter` | Nombre con "proyecto académico"; sin identificador |
+  | `Contacto` | Frase de aclaración y mensaje inicial de WhatsApp de prueba |
+  | `pages/legal/[slug].astro` | Rótulo de texto de muestra, o banda de borrador y fecha |
+  | `pages/[sitemap].xml.ts`, `pages/robots.txt.ts` | Mapa del sitio solo si `indexable`; texto de `robots.txt` |
+
+### R2. Los cuatro cruces
+
+| | Vista previa (`npm run build`, `astro dev`) | Publicación (`npm run build:release`) |
+|---|---|---|
+| **Académico** | **Muestra:** aviso en todas las páginas; pie con "proyecto académico"; aclaración en el contacto; legales con rótulo de muestra. **Indexación:** no; sin mapa del sitio. **Exige:** `siteKind` válido; tres textos legales con `status: sample`; ningún identificador cargado; todo lo que es `error` en D1. **Tolera con aviso:** altitud de un destino sin verificar (el destino se excluye); `SITE_URL` ausente (usa un valor local) | **Muestra e indexación:** igual que a la izquierda. **Exige además:** altitudes y umbrales verificados; datos de contacto completos y no de relleno; `SITE_URL` definida. **No exige:** identificadores ni revisión legal. Es lo que se despliega |
+| **Operador real** | **Muestra:** sin aviso; borradores legales con la banda "Borrador pendiente de revisión"; identificadores ausentes o de relleno ocultos. **Indexación:** no (es vista previa); sin mapa del sitio. **Exige:** `siteKind` válido; tres textos legales `draft` o `reviewed`; todo lo que es `error` en D1 | **Muestra:** sin aviso; legales revisados con fecha; identificador en el pie. **Indexación:** sí; mapa del sitio y `robots.txt` que lo referencia. **Exige además:** legales `reviewed`; RNT, NIT y razón social entregados y no de relleno; altitudes y umbrales verificados; contacto no de relleno; `SITE_URL` definida |
+
+Reglas nuevas o cambiadas en `validateSite()`:
+
+| Problema | CA | Académico | Operador real |
+|---|---|---|---|
+| `siteKind` ausente o no válido | CA-125 | error (esquema) | error (esquema) |
+| Identificador oficial cargado (`rnt`, `nit`, `legalName` u `others`) | CA-119 (b) | **error** en ambas compilaciones | — |
+| Identificador exigido ausente | CA-119 (a) | no aplica | release |
+| Identificador de relleno o ficticio | CA-120 | no aplica (cargarlo ya es error) | release |
+| Texto legal cuyo `status` no es `sample` | CA-134 | **error**: "le falta el rótulo de texto de muestra" | — |
+| Texto legal con `status: sample` | CA-118 (a) | correcto | **error**: un operador real no publica textos de muestra |
+| Texto legal en `draft` | CA-118 (a) | (cae en la fila de CA-134) | release |
+| `sample` con `reviewedOn` | CA-121 (b) | error (esquema) | — |
+| La política de datos no nombra a un tercero del registro (R4) | CA-135 | error | error |
+| Dato de contacto de relleno | CA-120, CA-139 | release | release |
+| `SITE_URL` ausente o no es una URL absoluta | CA-139 | release | release |
+| Comentario HTML (`<!--`) en el cuerpo de un destino o texto legal | — | aviso | aviso |
+| Término de la lista de promesas comerciales en un texto (R5) | CA-137 | aviso | aviso |
+
+El resto de D1 no cambia y sigue estricto en los dos modos (CA-139).
+
+### R3. Sin indexar: metaetiqueta, cabecera y `robots.txt` (CA-133)
+
+`spec-writer` advirtió que, si `robots.txt` bloquea el rastreo, un buscador no llega a leer la
+instrucción de no indexar y puede listar la dirección igualmente. Es correcto, y decide el diseño:
+
+| Pieza | Sitio no indexable (académico, o cualquier vista previa) | Sitio indexable (operador real en publicación) |
+|---|---|---|
+| Metaetiqueta en cada página, incluida la 404 | `<meta name="robots" content="noindex, nofollow">` | No se emite |
+| Cabecera HTTP en Vercel | `X-Robots-Tag: noindex, nofollow` en todas las rutas (`vercel.json`). Cubre lo que la metaetiqueta no alcanza: imágenes, fuentes y `data/rutas.json` | No se declara |
+| `robots.txt` | **No bloquea el rastreo** (`User-agent: *` y `Disallow:` vacío), no anuncia mapa del sitio y lleva un comentario que dice que el sitio no debe indexarse y dónde se declara | `Allow` general y línea `Sitemap:` |
+| Mapa del sitio | **No existe el archivo** | `sitemap.xml` con el inicio y los detalles |
+
+- El mapa del sitio se genera con una ruta dinámica (`src/pages/[sitemap].xml.ts`) cuyo
+  `getStaticPaths()` devuelve una ruta si `indexable` y ninguna si no. Así el archivo no existe, en
+  lugar de existir vacío.
+- La cabecera vive en `vercel.json`, que es estático y no conoce el contenido. Una prueba de
+  `tests/build/` comprueba la coherencia: si el contenido real declara `academic`, la cabecera debe
+  estar; si declara `operator`, no debe estar.
+- Vercel añade por su cuenta `X-Robots-Tag: noindex` a sus despliegues de vista previa, pero no al
+  dominio de producción `*.vercel.app`. Por eso la cabecera propia es necesaria.
+- **Diferencia con la letra de la spec:** CA-133 dice que el archivo de instrucciones "pide no
+  indexar el sitio". `robots.txt` no tiene una directiva estándar para eso; lo único que puede
+  hacer es bloquear el rastreo, que es lo que hay que evitar. Ver inconsistencia 15.
+
+### R4. Política de datos veraz (CA-135, CA-136)
+
+- **Registro de terceros** en `src/lib/privacy/third-parties.ts`: una lista con nombre, orígenes y
+  momento del contacto.
+
+  | Tercero | Orígenes | Cuándo |
+  |---|---|---|
+  | OpenStreetMap | `https://tile.openstreetmap.org` | Al cargarse el mapa |
+  | WhatsApp | `https://wa.me` | Solo al activar el enlace |
+  | Vercel (alojamiento) | El propio origen del sitio | Siempre |
+
+- **En el build:** `validateSite()` exige que el cuerpo de la política de datos nombre a cada
+  tercero del registro. Una prueba unitaria exige que el origen de la URL de teselas de
+  `map-config.ts` esté en el registro: no se puede añadir un tercero al código sin declararlo.
+- **En e2e (CA-136):** por cada página, y en el inicio también con la sección del mapa cargada, la
+  prueba escucha el evento `request` del navegador, reúne los orígenes distintos del propio y
+  falla si alguno no está en el registro o si su nombre no aparece en el texto de la página de
+  política de datos. **La interceptación de teselas no lo impide:** Playwright emite el evento
+  `request` con la URL original aunque después responda con la tesela local, así que el origen de
+  OpenStreetMap queda registrado sin que salga ninguna petición real.
+- La misma prueba comprueba que el sitio no deja cookies ni escribe en el almacenamiento del
+  navegador, que es lo que la política afirma (y lo que pide CA-129 para el aviso).
+- Que el texto sea veraz en lo demás (correo, datos técnicos del alojamiento, ausencia de
+  analítica) es revisión manual con lista de pasos.
+
+### R5. Búsqueda de promesas comerciales (CA-137)
+
+- **La lista vive en `src/lib/content/commercial-terms.ts`**: "reserva", "reservar" y sus formas,
+  "cupo", "precio", "tarifa", "COP" (solo en mayúsculas y como palabra completa) y "guía incluido".
+  La función pura `findCommercialTerms(texto)` devuelve cada coincidencia con su contexto;
+  compara sin tildes y por palabra completa.
+- **Dos usos.** En el build, `validateSite()` la pasa por los textos de destinos, rutas, contacto y
+  legales y emite **avisos** (no errores): el curador ve la coincidencia al escribir. En e2e, la
+  prueba la pasa por el texto visible de todas las páginas construidas con el contenido real y
+  **falla** ante cualquier coincidencia que no esté revisada.
+- **Usos legítimos.** Ya existen: "Reserva Natural" como nombre propio de un lugar y la propia
+  aclaración de CA-131 ("no se reservan ni se venden salidas"). Se resuelven con una lista de
+  frases revisadas, `tests/e2e/data/terminos-revisados.json`, donde cada entrada lleva la frase
+  exacta, el motivo, quién la revisó y la fecha. Una coincidencia se acepta solo si su contexto
+  contiene una de esas frases. Añadir una entrada es la "revisión a mano" que pide el criterio.
+
+### R6. Lighthouse en modo académico (CA-115)
+
+- `scripts/lhci.mjs` mide dos compilaciones de publicación, en serie:
+
+  | Escenario | Indexable | SEO |
+  |---|---|---|
+  | `academico` | No | Lighthouse se ejecuta con `skipAudits: ["is-crawlable"]`: la auditoría de indexación no se ejecuta y la nota de la categoría se calcula sin ella. Las demás auditorías de SEO siguen contando; nota mínima 90 |
+  | `completo` (operador real) | Sí | Categoría completa, sin omisiones; nota mínima 90 |
+
+- Las otras tres categorías y las métricas de CA-116 se exigen igual en los dos.
+- Hoy el guion mide una vista previa del contenido real, que nunca es indexable: con la
+  configuración actual, la categoría SEO fallaría siempre.
+
+### R7. Despliegue en Vercel (ADR 0012)
+
+**Sin adaptador y sin dependencia nueva.** El sitio es estático; la guía de Astro dice que un sitio
+estático no necesita configuración adicional en Vercel. `@astrojs/vercel` solo hace falta para
+renderizado bajo demanda, que el sitio no usa.
+
+| Ajuste | Valor | Dónde |
+|---|---|---|
+| Framework | Astro | `vercel.json` (`framework`) |
+| Orden de build | `npm run build:vercel` | `vercel.json` (`buildCommand`) |
+| Directorio de salida | `dist` | `vercel.json` (`outputDirectory`) |
+| Instalación | `npm ci` (por defecto) | — |
+| Node.js | 24.x, la misma versión mayor que en desarrollo; 22.x también cumple `engines` | Ajustes del proyecto en Vercel |
+| `SITE_URL` | La dirección pública, con `https://` y sin barra final. **Solo en el entorno Production** | Variables de entorno de Vercel |
+| `OUT_DIR`, `CONTENT_ROOT` | No se definen | — |
+| Barras finales | `"trailingSlash": true`: `/destinos/jardin` redirige con 308 a `/destinos/jardin/`; las rutas con extensión (`robots.txt`, `data/rutas.json`) no se redirigen. Coherente con `trailingSlash: 'always'` de Astro | `vercel.json` |
+| Cabeceras | `X-Robots-Tag` en todas las rutas (R3); `Cache-Control: public, max-age=31536000, immutable` en `/_astro/` | `vercel.json` (`headers`) |
+| Página 404 | `dist/404.html`, que Vercel sirve en las rutas inexistentes | Se comprueba tras el primer despliegue |
+| `Referrer-Policy` | No se define ninguna: la política de teselas de OpenStreetMap exige que el navegador envíe `Referer` | — |
+
+**Qué orden ejecuta Vercel.** `npm run build:vercel` llama a `scripts/vercel-build.mjs`, que mira
+la variable de sistema `VERCEL_ENV`:
+
+| Despliegue de Vercel | `VERCEL_ENV` | Orden | Resultado |
+|---|---|---|---|
+| Production (rama principal) | `production` | `npm run build:release` | Compilación estricta. Si falta `SITE_URL` o hay una altitud sin verificar, el despliegue falla y el sitio anterior sigue en línea |
+| Preview (otras ramas y solicitudes de cambio) | `preview` | `npm run build` | Vista previa permisiva y no indexable. No necesita `SITE_URL`: `astro.config.mjs` usa `https://$VERCEL_URL` como dirección de reserva |
+
+**El significado de los guiones no cambia:** `npm run build` sigue siendo la vista previa y la
+puerta de las fases 6 a 8; `build:release` sigue siendo la única compilación publicable. Lo que se
+configura en Vercel es `build:vercel`, que elige entre los dos. El despliegue de vista previa de
+Vercel corresponde a la vista previa del proyecto, y el de producción a la publicación.
+
+**Dominio (PA-17).** Sigue sin definir. El subdominio `*.vercel.app` que Vercel asigna al proyecto
+sirve como dirección pública mientras tanto. Definir `SITE_URL` es un paso humano (T-139).
+
+### R8. Escenarios de prueba
+
+| Escenario | `siteKind` | Compilación | Cambio | Para qué |
+|---|---|---|---|---|
+| `academico` | academic | publicación | **Nuevo. Pasa a ser el escenario por defecto** de los proyectos de Playwright. Mismo contenido que `completo`, con legales `sample`, sin identificadores y con una política de datos que nombra a los tres terceros | Casi todo e2e y axe; CA-126 a CA-136; Lighthouse sin auditoría de indexación |
+| `completo` | operator | publicación | Solo añade `siteKind` | CA-138, CA-97, CA-121 (a); Lighthouse con SEO completo |
+| `minimo` | operator | vista previa | Solo añade `siteKind` | CA-14, CA-64, CA-67, CA-118 (a), CA-119 (a) |
+| `sin-fotos` | academic | vista previa | Pasa a académico: legales `sample`, sin identificadores | CA-38, CA-39, CA-51, CA-124; aviso en vista previa |
+| `invalido-sin-modo` | — | ambas | Nuevo | CA-125 |
+| `invalido-identificador-en-academico` | academic | ambas | Nuevo | CA-119 (b) |
+| `invalido-legal-sin-rotulo` | academic | ambas | Nuevo: un texto legal en `draft` | CA-134 |
+| `invalido-muestra-en-operador` | operator | ambas | Nuevo: un texto legal `sample` | CA-118 (a), CA-138 |
+| Demás `invalido-*` | academic | ambas | Añaden `siteKind` | Los de antes |
+
+El contenido real de `src/content/` declara `siteKind: "academic"` (T-126). La búsqueda de promesas
+comerciales (R5) y la medición de CA-73 se hacen sobre el contenido real, no sobre escenarios.
+
+### R9. Problemas reportados y qué decide el plan
+
+| Problema | Decisión |
+|---|---|
+| `territorySchema` exigía `minM` positivo; la mínima real es 0 m | El esquema admite 0 (corrección ya encargada, T-119). CA-2 y CA-122 no necesitan cambio de redacción: "de 0 a 4080 metros de altitud" cumple CA-2, y CA-122 solo pide orden estrictamente ascendente. La altitud de un **destino** sigue siendo mayor que cero (CA-20) |
+| `altitude` no admite un rango por destino (Parque Arví va de 2340 a 2680 m) | **Límite documentado, sin cambio de esquema.** El perfil, el orden y el piso necesitan una sola cifra por destino. `altitude.meters` es la cota representativa y `altitude.source` dice cuál es (la cabecera, el punto de llegada o el límite inferior). El rango se cuenta en `summary` y en el cuerpo. Un rango en la ficha cambiaría CA-17, CA-21 y el diseño |
+| `climate` no admite una sola cifra (Jardín solo tiene temperatura media) | **Límite documentado.** CA-24 fija la forma "Entre X y Y °C". Sin rango con fuente, el campo se omite y la media se cuenta en el cuerpo |
+| `access` y otros datos no tienen fuente propia; las citas están en comentarios HTML del `.md` | **Cambio de esquema pequeño:** campo opcional `sources`, una lista de citas en texto libre, en destinos y rutas. No se pinta. Los comentarios HTML del cuerpo se retiran: Markdown los copia al HTML publicado y quedarían a la vista en el código de la página. `validateSite()` avisa si queda alguno |
+| La mayoría de los destinos no tiene duración, distancia, desnivel ni edad | **Soportado sin cambios.** `buildFicha()` omite la fila sin dato (CA-22) y S5 del diseño retira fila, etiqueta y separador. La ficha mínima tiene una fila (altitud) y, con los datos actuales, dos o tres. En el listado, un destino puede mostrar solo la altitud. Conviene que `ui-designer` vea esa ficha corta junto a la imagen en el detalle de escritorio (se revisa en T-076) |
+| `load.ts` no entrega el cuerpo Markdown renderizado | `load.ts` exporta `renderBody(coleccion, id)`, que devuelve el componente `Content` de Astro. Sigue siendo el único módulo que importa `astro:content`. Las páginas de detalle y legales lo llaman y pasan el contenido por `slot` |
+| `content-curator` no puede descargar archivos binarios | T-034 se divide en tres: manifiesto (curador), descarga y verificación de dimensiones con un guion (`astro-developer`), y frontmatter de las fotos (curador) |
+| Orden real de ejecución | T-040 a T-045 se adelantaron a T-027; T-027 va después de T-051; lo que le faltaba a T-022 va en T-125. Reflejado en `tasks.md` |
+
+### R10. Contratos que cambian
+
+```ts
+// lib/content/schemas.ts
+export const SITE_KINDS = ['academic', 'operator'] as const;
+export type SiteKind = (typeof SITE_KINDS)[number];
+// operatorSchema: + siteKind: z.enum(SITE_KINDS)            obligatorio, sin valor por defecto (CA-125)
+// legalSchema:    status: 'draft' | 'reviewed' | 'sample'    'sample' no admite reviewedOn (CA-134, CA-121 b)
+// destinoSchema y rutaSchema.properties: + sources: string[]  opcional; citas que no se pintan
+// territorySchema: minM >= 0
+
+// lib/content/validate.ts
+export interface SiteModel {
+  mode: BuildMode;
+  siteKind: SiteKind;      // nuevo
+  indexable: boolean;      // nuevo: siteKind === 'operator' && mode === 'release'
+  // …el resto no cambia
+}
+
+// lib/content/load.ts
+export function renderBody(collection: 'destinos' | 'legal', id: string): Promise<AstroComponentFactory>;
+
+// lib/content/commercial-terms.ts
+export const COMMERCIAL_TERMS: readonly { id: string; pattern: RegExp }[];
+export function findCommercialTerms(text: string): { term: string; index: number; context: string }[];
+
+// lib/privacy/third-parties.ts
+export interface ThirdParty { id: string; name: string; origins: string[]; when: 'always' | 'map' | 'link' }
+export const THIRD_PARTIES: readonly ThirdParty[];
+export function isDeclaredOrigin(origin: string, siteOrigin: string): boolean;
+
+// lib/contact/whatsapp.ts
+export function whatsAppMessage(siteKind: SiteKind, destinoName?: string): string;   // CA-83, CA-132
+
+// lib/seo/meta.ts
+export function buildRobotsTxt(indexable: boolean, sitemapUrl: string): string;      // sustituye a (sitemapUrl, mode)
+
+// components
+interface AcademicNoticeProps {}                                  // ui/AcademicNotice.astro: texto fijo, sin estado ni JS
+interface SampleLabelProps {}                                     // ui/SampleLabel.astro: rótulo de CA-134
+interface SiteFooterProps { operator: PublishedOperator; legal: LegalDoc[]; siteKind: SiteKind }
+interface ContactoProps { operator: PublishedOperator; siteKind: SiteKind; variant: 'section' | 'cta'; destinoName?: string }
+```
+
+Archivos nuevos: `src/lib/content/commercial-terms.ts`, `src/lib/privacy/third-parties.ts`,
+`src/components/ui/AcademicNotice.astro`, `src/components/ui/SampleLabel.astro`,
+`src/pages/[sitemap].xml.ts` (en lugar de `sitemap.xml.ts`), `vercel.json`,
+`scripts/vercel-build.mjs`, `scripts/fetch-photos.mjs`, `scripts/photos-manifest.json`,
+`tests/e2e/data/terminos-revisados.json`.
+
+**Presentación.** El texto exacto y el aspecto del aviso, de la aclaración del contacto, del rótulo
+de las páginas legales y del pie los fija `design.md`, que `ui-designer` está completando y aún no
+está aprobado. El plan fija el comportamiento: el aviso es HTML estático dentro de una región con
+nombre, antes de `<main>` en el orden del documento, sin `role="alert"` ni región viva, sin control
+de cierre, sin JavaScript y sin nada guardado en el navegador (CA-126 a CA-130).
+
+---
+
 ## Matriz de trazabilidad
 
 Rutas relativas a `src/`. Pruebas: `unit` en `tests/unit/`, `e2e` y `axe` en `tests/e2e/`, `build`
@@ -727,7 +997,7 @@ escenario de prueba cuando no es `completo`.
 
 | Criterio | Archivo(s) responsable(s) | Prueba |
 |---|---|---|
-| CA-1 | `sections/Hero.astro`, `pages/index.astro` | e2e: orden de los cuatro elementos |
+| CA-1 | `sections/Hero.astro`, `pages/index.astro`, `layouts/BaseLayout.astro` (aviso) | e2e: orden de los cuatro elementos; en modo académico el aviso puede ir antes del titular |
 | CA-2 | `lib/format/units.ts` (`formatAltitudeRange`), `Hero.astro` | unit |
 | CA-3 | `Hero.astro` (ancla), `sections/Destinos.astro` (`h2` con `id` y `tabindex="-1"`) | e2e: clic, toque y Enter; elemento activo |
 | CA-4 | `lib/altitude/profile.ts`, `ui/AltitudeProfile.astro` | e2e: cuatro nombres visibles |
@@ -764,7 +1034,7 @@ escenario de prueba cuando no es `completo`.
 | CA-25 | `lib/format/units.ts` (`formatDuration`) | unit |
 | CA-26 | `lib/format/units.ts` (`formatDistanceAscent`) | unit |
 | CA-27 | `lib/format/units.ts` (`difficultyInfo`), `ui/DifficultyMarks.astro`, `schemas.ts` | unit; axe |
-| CA-28 | `lib/format/units.ts` (`formatMinAge`) | unit |
+| CA-28 | `lib/format/units.ts` (`formatMinAge`) | unit, con "Apta desde 1 año" y "Apta para todas las edades" |
 | CA-29 | `lib/altitude/zones.ts` (`zoneOf`), `lib/content/validate.ts` | unit, con casos en el umbral |
 | CA-30 | `ui/Ficha.astro` (`<dl>`, `<dt>`, `<dd>`) | axe; manual |
 
@@ -855,8 +1125,8 @@ escenario de prueba cuando no es `completo`.
 | CA-94 | `ui/SkipLink.astro`, `BaseLayout.astro` | e2e |
 | CA-95 | `BaseLayout.astro` y todas las secciones | axe; e2e: `lang`, un `h1`, niveles sin saltos, regiones |
 | CA-96 | `BaseLayout.astro` | e2e: metadatos presentes y sin imagen |
-| CA-97 | `pages/sitemap.xml.ts`, `pages/robots.txt.ts`, `lib/seo/meta.ts` | unit; build: contenido de los dos archivos en `dist` |
-| CA-98 | `sections/SiteFooter.astro` | e2e en todas las páginas |
+| CA-97 | `pages/[sitemap].xml.ts`, `pages/robots.txt.ts`, `lib/seo/meta.ts` | unit; build (`completo`): el mapa lista inicio y detalles y `robots.txt` lo referencia; build (`academico`): no existe el mapa |
+| CA-98 | `sections/SiteFooter.astro` | e2e en todas las páginas: (`academico`) nombre con "proyecto académico"; (`completo`) nombre del operador |
 | CA-99 | `lib/content/validate.ts`, `lib/content/load.ts`, `schemas.ts` (mensajes) | build: el mensaje contiene archivo, campo y regla |
 | CA-100 | `lib/content/validate.ts` | unit; build (`invalido-sin-destinos`) |
 
@@ -876,14 +1146,14 @@ escenario de prueba cuando no es `completo`.
 |---|---|---|
 | CA-106 | Todos los componentes interactivos | e2e de teclado por página, con visor y mapa abiertos y cerrados |
 | CA-107 | `styles/global.css` (`:focus-visible`) | e2e: contorno calculado; manual de contraste |
-| CA-108 | Todas las páginas | axe: inicio, detalle con fotos, detalle sin fotos, 404, visor abierto, mapa cargado, mapa fallido |
+| CA-108 | Todas las páginas | axe: inicio, detalle con fotos, detalle sin fotos, las tres legales, créditos, 404, visor abierto, mapa cargado, mapa fallido |
 | CA-109 | Todas las páginas | manual: NVDA y TalkBack con las cinco tareas |
-| CA-110 | Todos los componentes | e2e a 360 px: sin desplazamiento horizontal; controles ≥ 44 px salvo los enlaces del crédito |
+| CA-110 | Todos los componentes | e2e a 360 px: sin desplazamiento horizontal; controles ≥ 44 px salvo los enlaces del crédito y las líneas de ruta del mapa |
 | CA-111 | Todos los componentes | manual a 320 px y 200 % |
 | CA-112 | Páginas, `MapaRutas.astro`, `PhotoGrid.astro`, `SiteHeader.astro` | e2e sin JS |
 | CA-113 | `styles/tokens.css`, `styles/global.css`, `route-map.client.ts` | e2e con movimiento reducido emulado |
 | CA-114 | `styles/tokens.css` y su uso | axe (contraste); manual de los pares de la sección 4.3 |
-| CA-115 | Todo el sitio | Lighthouse CI, tres páginas, las cuatro categorías ≥ 90 |
+| CA-115 | Todo el sitio; `scripts/lhci.mjs`, `lighthouserc.json` | Lighthouse CI, tres páginas: (`academico`) sin la auditoría `is-crawlable`; (`completo`) categoría SEO completa; las cuatro categorías ≥ 90 |
 | CA-116 | `BaseLayout.astro`, `styles/fonts.css`, `Hero.astro` | Lighthouse CI: LCP ≤ 2.5 s, CLS ≤ 0.1, TBT ≤ 200 ms |
 | CA-117 | `ui/Photo.astro`, `styles/global.css` | e2e: imágenes abortadas; la posición del contenido no cambia |
 
@@ -891,17 +1161,39 @@ escenario de prueba cuando no es `completo`.
 
 | Criterio | Archivo(s) responsable(s) | Prueba |
 |---|---|---|
-| CA-118 | `schemas.ts` (`legalSchema`), `validate.ts`, `pages/legal/[slug].astro`, `ui/DraftBanner.astro` | build: publicación de `minimo` falla nombrando el texto; e2e (`minimo`): banda visible |
-| CA-119 | `schemas.ts` (`operatorSchema`), `validate.ts`, `SiteFooter.astro` | unit; build: publicación falla nombrando el identificador; e2e (`minimo`): sin línea ni hueco |
-| CA-120 | `lib/content/placeholders.ts`, `validate.ts` | unit con la lista de marcadores; build (`invalido-relleno`) |
-| CA-121 | `pages/legal/[slug].astro`, `SiteFooter.astro`, `lib/format/units.ts` (`formatLongDate`) | e2e: tres páginas con `h1`, fecha e identificador |
+| CA-118 | `schemas.ts` (`legalSchema`), `validate.ts`, `pages/legal/[slug].astro`, `ui/DraftBanner.astro` | (a) build: publicación de `minimo` falla nombrando el texto; e2e (`minimo`): banda visible. (b) unit: en académico no se exige revisión |
+| CA-119 | `schemas.ts` (`operatorSchema`), `validate.ts`, `SiteFooter.astro` | unit en los cuatro cruces. (a) build: publicación de `minimo` falla nombrando el identificador; e2e (`minimo`): sin línea ni hueco. (b) build (`invalido-identificador-en-academico`): falla en ambas compilaciones; e2e (`academico`): ningún identificador |
+| CA-120 | `lib/content/placeholders.ts`, `validate.ts` | unit con la lista de marcadores, incluidos el WhatsApp y el correo reales como no relleno; build (`invalido-relleno`) |
+| CA-121 | `pages/legal/[slug].astro`, `SiteFooter.astro`, `ui/SampleLabel.astro`, `lib/format/units.ts` (`formatLongDate`) | (a) e2e (`completo`): `h1`, fecha e identificador. (b) e2e (`academico`): `h1` y rótulo, sin fecha ni identificador |
 | CA-122 | `schemas.ts` (`territorySchema`), `validate.ts` | unit; build (`invalido-fuera-de-rango`, `invalido-umbrales`) |
 | CA-123 | `sections/SiteHeader.astro` | e2e a 360 px y en el borde de 767 y 768 px, con y sin JS; axe con el menú abierto |
-| CA-124 | `tests/e2e/capturas.spec.ts` genera las capturas en `specs/001-landing-completa/capturas/`: perfil a 360, 768 y 1280 px (y 320 px como dato adicional) y las cuatro láminas en los cuatro tamaños de cifra | manual: aprobación escrita del humano, registrada en `specs/001-landing-completa/revision-capturas.md`. Los ajustes de parámetros los anota `ui-designer` en `design.md` |
+| CA-124 | `tests/e2e/capturas.spec.ts` genera las capturas en `specs/001-landing-completa/capturas/`: perfil a 320, 360, 768 y 1280 px y las cuatro láminas en los cuatro tamaños de cifra | manual: aprobación escrita del humano en `specs/001-landing-completa/revision-capturas.md` |
 
-Los 116 criterios activos tienen archivo responsable. Ninguno queda sin asignar.
+### N. Modo de ejercicio académico
+
+| Criterio | Archivo(s) responsable(s) | Prueba |
+|---|---|---|
+| CA-125 | `schemas.ts` (`operatorSchema.siteKind`), `validate.ts`, `content/sitio/operador.json` | unit; build (`invalido-sin-modo`) en ambas compilaciones |
+| CA-126 | `ui/AcademicNotice.astro`, `layouts/BaseLayout.astro` | e2e (`academico`) a 360 px: aviso dentro de la primera pantalla en inicio, cada detalle, tres legales, créditos y 404 |
+| CA-127 | `ui/AcademicNotice.astro`, `BaseLayout.astro` | axe; e2e: texto real, región con nombre, antes de `main` en el documento, sin `role="alert"` ni región viva |
+| CA-128 | `ui/AcademicNotice.astro`, `styles/global.css` | e2e sin JS y a 360 px: completo, sin desplazamiento horizontal y sin tapar ningún elemento enfocable |
+| CA-129 | `ui/AcademicNotice.astro` | e2e: sin botones ni enlaces de cierre; sigue tras recargar, navegar y abrir un contexto nuevo; sin cookies ni almacenamiento |
+| CA-130 | `ui/AcademicNotice.astro`, `styles/tokens.css` | axe (contraste); e2e: tamaño de letra ≥ 14 px; manual del par de color |
+| CA-131 | `sections/Contacto.astro` | e2e (`academico`): frase presente junto a WhatsApp y correo; (`completo`): ausente |
+| CA-132 | `lib/contact/whatsapp.ts`, `Contacto.astro` | unit; e2e (`academico`): texto del enlace decodificado, con y sin destino |
+| CA-133 | `BaseLayout.astro`, `pages/robots.txt.ts`, `pages/[sitemap].xml.ts`, `lib/seo/meta.ts`, `vercel.json` | build (`academico`, publicación): metaetiqueta en todos los HTML, sin `sitemap.xml`, `robots.txt` sin línea `Sitemap`; e2e: metaetiqueta en cada tipo de página; build: coherencia de `vercel.json` |
+| CA-134 | `schemas.ts` (`status: sample`), `validate.ts`, `pages/legal/[slug].astro`, `ui/SampleLabel.astro` | unit; build (`invalido-legal-sin-rotulo`); e2e (`academico`): rótulo antes del contenido en las tres |
+| CA-135 | `content/legal/politica-de-datos.md`, `lib/privacy/third-parties.ts`, `validate.ts` | unit: la política nombra a cada tercero; e2e: sin cookies ni almacenamiento; manual: veracidad del texto con lista de pasos |
+| CA-136 | `lib/privacy/third-parties.ts`, `lib/routes/map-config.ts`, todas las páginas | e2e: orígenes pedidos por cada página y por el inicio con el mapa cargado, contra el registro y el texto de la política; unit: el origen de las teselas está en el registro |
+| CA-137 | `lib/content/commercial-terms.ts`, `validate.ts` (aviso), `src/content/**`, `tests/e2e/data/terminos-revisados.json` | unit de la búsqueda; e2e sobre el contenido real: ninguna coincidencia sin revisar; manual: revisión de cada coincidencia |
+| CA-138 | `validate.ts`, `BaseLayout.astro`, `pages/[sitemap].xml.ts`, `SiteFooter.astro` | unit en los cuatro cruces; build y e2e (`completo`): sin aviso, sin metaetiqueta, con mapa del sitio, fecha e identificador; build (`invalido-muestra-en-operador`) |
+| CA-139 | `validate.ts`, `load.ts` (`siteUrlIssues`) | build en publicación, para cada causa y en los dos modos: sin verificar, foto inválida, ruta inválida, dos principales, sin destinos, contacto de relleno, sin `SITE_URL` |
+
+Los 131 criterios activos tienen archivo responsable. Ninguno queda sin asignar.
 
 ### Escenarios de prueba
+
+**Actualizado por R8** de la revisión del 2026-10-11: se añade `academico`, que pasa a ser el escenario por defecto, y cada escenario declara `siteKind`. La tabla siguiente es la del 2026-10-10.
 
 | Escenario | Modo | Contenido | Para qué |
 |---|---|---|---|
@@ -956,6 +1248,13 @@ que mide los archivos de `dist/_astro/`.
 | R12 | El repositorio crece con las fotos | Clonado lento | Tope por foto; con el contenido previsto (unas 25 fotos) son menos de 40 MB |
 | R13 | Marcadores de relleno demasiado estrictos o laxos (CA-120) | Falsos positivos o datos de prueba publicados | Lista explícita con pruebas unitarias; el campo `fictitious` es la vía segura |
 | R14 | Numerales tabulares de Instrument Sans en el subconjunto latino sin confirmar | Columnas de cifras desalineadas | Comprobar al cargar la fuente; el diseño ya lo trata como opcional |
+| R16 | `vercel.json` es estático y no conoce `siteKind` | Si el sitio pasara a operador real, la cabecera `X-Robots-Tag` seguiría impidiendo indexar | Prueba de `tests/build/` que exige coherencia entre `siteKind` del contenido real y la cabecera |
+| R17 | La nota de SEO de Lighthouse con `skipAudits` depende de cómo esa versión recalcula la categoría | CA-115 con medición distinta de la esperada | Comprobar en T-137 que el informe no lista `is-crawlable` y que la nota sale de las demás auditorías; si no, afirmar cada auditoría de SEO por separado |
+| R18 | La lista de promesas comerciales da falsos positivos ("Reserva Natural", textos legales de muestra que hablan de cancelaciones) | Ruido que lleva a ampliar la lista de frases revisadas sin leer | Cada frase revisada lleva motivo, revisor y fecha; `quality-reviewer` las repasa en la fase 8 |
+| R19 | El contenido real es escaso: seis destinos sin fotos, sin rutas todavía, fichas de una a tres filas | La galería y el mapa no se publican; el sitio real ejercita menos que los escenarios | Es un estado válido (CA-51, CA-67). Las pruebas usan escenarios completos; T-131 y T-035 amplían el contenido |
+| R20 | La descarga de fotos depende de Wikimedia Commons y de su política de agente de usuario | T-131 falla o se bloquea | El guion se identifica con un agente de usuario propio, descarga en serie y se ejecuta una sola vez; las fotos quedan en el repositorio |
+| R21 | Vercel sirve `404.html` y aplica las cabeceras como se espera, pero no se ha comprobado en este proyecto | CA-37 o CA-133 fallan solo en producción | T-140 lo verifica con peticiones reales tras el primer despliegue |
+| R22 | Un despliegue de producción con `siteKind` mal declarado | Operador real declarado académico: aviso visible y sin indexar. Académico declarado operador: la publicación falla por faltar identificadores | Las dos fallas son visibles y seguras; por eso la declaración es obligatoria (CA-125) |
 | R15 | `--mode preview` cambia `import.meta.env.MODE` pero no `PROD` | Confusión entre modos | El modo se lee en un solo sitio (`load.ts`) y se pasa como dato |
 
 ---
@@ -1010,7 +1309,13 @@ No se editó ningún documento. Cada punto dice qué asume el plan.
 | 11 | Dirección visual 3.1 y `design.md` S4 | El nombre de un destino menor mide 21 px en tableta y móvil; la tabla tipográfica solo prevé 33 y 27 px para títulos de destino | El diseño; el tamaño está en la escala |
 | 12 | Comentarios de `tokens.css` | Mencionan formularios (`--color-surface`, `--color-ink-muted`, `--color-danger`, `--radius-md`), tinte como "fondo de bloque" (`--color-zone-*-tint`) y "desplegar un panel" (`--duration-base`), que ya no existen en el diseño | Solo son comentarios; no afectan valores |
 | 13 | Dirección visual 3.3 y uso real | Pide dos archivos variables; Besley solo se usa en peso 700 y su archivo estático pesa 18.9 KB frente a 36.6 KB | **Decidido por el humano:** Besley estática de peso 700 (decisión D5). Corrección pendiente C3 |
-| 14 | ADR 0001 y 0002 | Siguen en estado "Propuesto" aunque el proyecto ya se rige por ellos | Sin cambio; lo decide el humano |
+| 14 | ADR 0001 y 0002 | Seguían en "Propuesto" | Resuelto: aceptados por el humano el 2026-10-11 |
+| 15 | spec CA-133 y el funcionamiento de los buscadores | Pide que el archivo de instrucciones para buscadores "pida no indexar el sitio". `robots.txt` no tiene directiva estándar de no indexar; solo puede bloquear el rastreo, y eso impide que el buscador lea la instrucción real | `robots.txt` no bloquea, no anuncia mapa y lleva un comentario; la instrucción va en la metaetiqueta y en la cabecera `X-Robots-Tag` (R3). Conviene que `spec-writer` ajuste la frase |
+| 16 | spec CA-97, tarea T-026 y código | El problema "falta `SITE_URL`" lleva hoy el criterio CA-97; tras la revisión corresponde a CA-139 | Se corrige la etiqueta en T-121 |
+| 17 | spec CA-21, CA-24 y el contenido real | La ficha pide una altitud y un rango de clima; hay destinos con rango de altitud y destinos con solo temperatura media | Límite documentado (R9); sin cambio de esquema ni de spec |
+| 18 | spec CA-118 (b) y CA-134 | En modo académico "no se exige revisión", pero el contenido necesita un estado que no sea borrador ni revisado | Estado nuevo `sample` en el esquema (R2) |
+| 19 | `design.md` y la spec | El diseño aún no recoge el aviso, la aclaración del contacto, el rótulo de muestra ni el pie académico | En curso por `ui-designer` (T-118); el plan fija comportamiento y remite la presentación al diseño |
+| 20 | `CLAUDE.md`, `scripts/lhci.mjs` y CA-115 | El guion de Lighthouse mide una vista previa del contenido real, que nunca es indexable | Se mide la publicación de dos escenarios (R6) |
 
 ---
 
@@ -1059,11 +1364,14 @@ Este plan no edita esos documentos. Cada corrección es una tarea de `tasks.md`.
 
 Ninguno bloquea el desarrollo.
 
-1. **Dominio y alojamiento.** Bloquea el lanzamiento. El proveedor debe usar `build:release`, servir
-   `404.html` y no suprimir la cabecera `Referer`.
-2. **PA-8.** Confirmación legal de los identificadores exigidos y entrega de sus valores; revisión de
-   los tres textos legales. Bloquea el lanzamiento.
-3. **PA-15.** El humano aprueba la lista de destinos y rutas que proponga `content-curator`.
+1. **Dominio (PA-17).** El alojamiento es Vercel (R7). Falta decidir la dirección pública y definir
+   `SITE_URL` en el entorno Production. Bloquea la publicación, no el desarrollo.
+2. **PA-8.** Reclasificada: no aplica en modo académico. Solo vuelve si el sitio pasa a un operador
+   real.
+3. **PA-15.** Cerrada: lista aprobada el 2026-10-11.
+7. **Aprobación de la revisión del 2026-10-11** de este plan, del ADR 0003 revisado y del ADR 0012.
+8. **Redacción de CA-133** (inconsistencia 15), para `spec-writer`.
+9. **Aprobación del `design.md`** con el aviso, la aclaración del contacto, el rótulo y el pie.
 4. **CA-124.** Revisión con capturas del perfil y las láminas; decide si aplica el respaldo.
 5. **CA-73.** Medición del contraste de las rutas sobre las teselas, con el mapa construido.
 
@@ -1073,7 +1381,7 @@ Ninguno bloquea el desarrollo.
 
 - [0001 — Astro + TypeScript como stack base](../../docs/adr/0001-stack-astro-typescript.md) (existente)
 - [0002 — Uso de skills en el flujo SDD](../../docs/adr/0002-politica-de-skills.md) (existente)
-- [0003 — Modelo de contenido y puerta de publicación](../../docs/adr/0003-modelo-de-contenido-y-puerta-de-publicacion.md)
+- [0003 — Modelo de contenido y puerta de publicación](../../docs/adr/0003-modelo-de-contenido-y-puerta-de-publicacion.md) (revisado el 2026-10-11; la revisión fue aprobada por el humano el 2026-10-11)
 - [0004 — Islas sin framework con carga diferida](../../docs/adr/0004-islas-sin-framework.md)
 - [0005 — Visor de fotos propio sobre `<dialog>`](../../docs/adr/0005-visor-propio-sobre-dialog.md)
 - [0006 — Leaflet y teselas de OpenStreetMap](../../docs/adr/0006-leaflet-y-teselas-osm.md)
@@ -1081,6 +1389,9 @@ Ninguno bloquea el desarrollo.
 - [0008 — Fotos de terceros locales y atribución en el contenido](../../docs/adr/0008-fotos-locales-y-atribucion.md)
 - [0009 — Herramientas de calidad: dependencias de desarrollo](../../docs/adr/0009-herramientas-de-calidad.md)
 - [0010 — Perfil, láminas y gráficos generados en el build](../../docs/adr/0010-graficos-generados-en-build.md)
+- [0011 — `yaml` como dependencia de desarrollo](../../docs/adr/0011-yaml-para-probar-la-guia-de-contenido.md)
+- [0012 — Despliegue en Vercel sin adaptador y política de no indexación](../../docs/adr/0012-despliegue-en-vercel.md) (propuesto)
 
 ---
-Estado: APROBADO (2026-10-10, aprobado por el humano)
+Estado: APROBADO (2026-10-10, aprobado por el humano). Revisión del 2026-10-11 (modo académico y
+despliegue en Vercel): APROBADA (2026-10-11, por el humano).

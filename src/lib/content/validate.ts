@@ -11,6 +11,7 @@
  */
 import { zoneOf, type ZoneId } from '../altitude/zones';
 import { compareByAltitude, resolveFeatured } from '../altitude/sort';
+import { croppedSize } from '../photos/policy';
 import { isPlaceholder } from './placeholders';
 import type { DestinoData, LegalData, Operator, PhotoData, RutaData, Territory } from './schemas';
 
@@ -148,24 +149,6 @@ const collator = new Intl.Collator('es');
 
 function normalize(value: string): string {
   return value.toLowerCase().normalize('NFD').replace(/\p{M}/gu, '').replace(/\s+/g, ' ').trim();
-}
-
-function ratioValue(ratio: PhotoData['ratio']): number {
-  const [w, h] = ratio.split(':').map(Number);
-  return (w ?? 1) / (h ?? 1);
-}
-
-function croppedSize(
-  width: number,
-  height: number,
-  ratio: PhotoData['ratio'],
-): { width: number; height: number; changed: boolean } {
-  const target = ratioValue(ratio);
-  const actual = width / height;
-  if (Math.abs(actual - target) < 0.005) return { width, height, changed: false };
-  return actual > target
-    ? { width: Math.round(height * target), height, changed: true }
-    : { width, height: Math.round(width / target), changed: true };
 }
 
 /** `true` si el problema detiene la construcción en ese modo. */

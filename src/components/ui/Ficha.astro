@@ -1,0 +1,53 @@
+---
+/**
+ * Ficha de salida (S5, CA-21, CA-22, CA-30): lista de definiciones con una fila por dato. Cada
+ * etiqueta (<dt>) queda asociada a su valor (<dd>). La variante `full` va en un panel de color
+ * superficie; la `summary` (listado) va sin panel. Desde 400 px de ancho de panel, cada fila pasa
+ * a dos columnas (40 % y 60 %); por debajo, etiqueta encima y valor debajo.
+ */
+import type { FichaRow } from '../../lib/ficha/build';
+import { SWATCH } from './zone-swatch';
+import DifficultyMarks from './DifficultyMarks.astro';
+
+interface Props {
+  rows: FichaRow[];
+  variant: 'full' | 'summary';
+  class?: string;
+}
+
+const { rows, variant, class: extra = '' } = Astro.props;
+const full = variant === 'full';
+---
+
+{rows.length > 0 && (
+  <div class:list={['@container', extra]}>
+    <dl class:list={['m-0', full ? 'rounded-md bg-surface p-4 md:p-6' : '']}>
+      {rows.map((row, i) => (
+        <div
+          class:list={[
+            'grid grid-cols-1 gap-x-4 @min-[400px]:grid-cols-[2fr_3fr]',
+            full && i > 0 ? 'mt-3 border-t border-line pt-3' : '',
+            !full && i > 0 ? 'mt-1' : '',
+          ]}
+        >
+          <dt class="font-medium text-ink-muted">{row.label}</dt>
+          <dd class="m-0 text-ink [font-variant-numeric:tabular-nums]">
+            {row.zone && row.zoneText ? (
+              <>
+                {row.value.slice(0, row.value.length - row.zoneText.length)}
+                <span
+                  aria-hidden="true"
+                  class:list={['mr-1 inline-block size-2.5 align-baseline', SWATCH[row.zone]]}
+                />
+                {row.zoneText}
+              </>
+            ) : (
+              row.value
+            )}
+            {row.marks && <DifficultyMarks marks={row.marks} />}
+          </dd>
+        </div>
+      ))}
+    </dl>
+  </div>
+)}

@@ -1,0 +1,40 @@
+---
+/**
+ * Crédito de una foto (S6.2, CA-44, CA-45, CA-48): una sola línea de texto de 14 px (varias solo
+ * si no cabe), con interlineado de 24 px (--space-6). Los enlaces del crédito son enlaces dentro de
+ * una frase: miden al menos 24 px de alto con 4 px de relleno que no mueven el texto (excepción en
+ * línea de WCAG 2.5.8, decidida por el humano).
+ */
+import { creditParts, type Ratio } from '../../lib/photos/policy';
+import type { Photo } from '../../lib/content/validate';
+
+interface Props {
+  photo: Photo;
+  /** Proporción con la que se muestra, si difiere de la de la foto (cuenta como recorte). */
+  ratio?: Ratio;
+  onInk?: boolean;
+  class?: string;
+}
+
+const { photo, ratio, onInk = false, class: extra = '' } = Astro.props;
+const c = creditParts(photo, ratio);
+const link = onInk
+  ? 'py-1 text-on-ink underline underline-offset-2 hover:bg-bg hover:text-ink'
+  : 'py-1 text-primary underline underline-offset-2 hover:text-ink';
+---
+
+<p class:list={['text-sm leading-6', onInk ? 'text-on-ink-muted' : 'text-ink-muted', extra]}>
+  Foto: {c.author}.
+  <a href={c.licenseUrl} class={`${link} ml-1`} aria-label={`Licencia ${c.licenseName}`}>
+    {c.licenseName}
+  </a>
+  .
+  <a
+    href={c.sourceUrl}
+    class={`${link} ml-1`}
+    aria-label={`Fuente de la foto de ${photo.destinoName}`}
+  >
+    Fuente
+  </a>
+  .{c.note && <> {c.note}.</>}
+</p>

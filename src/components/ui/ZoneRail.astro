@@ -1,0 +1,58 @@
+---
+/**
+ * Regla de altitud de un bloque de piso (S1, CA-16). Envuelve el contenido del bloque.
+ * Desde 1024 px: una columna fija a la izquierda (columnas 1 y 2) con la franja de 6 px, el nombre
+ * del piso y su rango. Por debajo: franja de 6 px en el borde izquierdo del bloque, de toda su
+ * altura, y el nombre del piso con su rango en una línea encima del contenido.
+ * Varios pisos (galería) reparten la franja en tramos iguales, sin degradados.
+ */
+import { zoneName, type ZoneId } from '../../lib/altitude/zones';
+import { formatAltitudeSpan } from '../../lib/format/units';
+
+interface Props {
+  zones: ZoneId[];
+  range?: { fromM: number; toM: number };
+  heading?: string;
+  headingLevel?: 2 | 3;
+  id?: string;
+}
+
+const { zones, range, heading, headingLevel = 3, id } = Astro.props;
+const Heading = `h${headingLevel}` as 'h2' | 'h3';
+
+const SWATCH: Record<ZoneId, string> = {
+  warm: 'bg-zone-warm',
+  temperate: 'bg-zone-temperate',
+  cold: 'bg-zone-cold',
+  paramo: 'bg-zone-paramo',
+};
+const TEXT: Record<ZoneId, string> = {
+  warm: 'text-zone-warm',
+  temperate: 'text-zone-temperate',
+  cold: 'text-zone-cold',
+  paramo: 'text-zone-paramo',
+};
+const first = zones[0];
+const title = heading ?? (first ? `Piso ${zoneName(first)}` : '');
+---
+
+<div class="relative pl-4 lg:grid lg:grid-cols-12 lg:gap-x-6">
+  <span aria-hidden="true" class="absolute inset-y-0 left-0 flex w-1.5 flex-col">
+    {zones.map((z) => (
+      <span class:list={['flex-1', SWATCH[z]]} />
+    ))}
+  </span>
+  <div class="lg:col-span-2">
+    <Heading id={id} class:list={['font-medium', first ? TEXT[first] : '']}>
+      <span class="text-base">{title}</span>
+      {range && (
+        <span class="ml-2 text-sm text-ink-muted lg:mt-1 lg:ml-0 lg:block">
+          {formatAltitudeSpan(range.fromM, range.toM)}
+        </span>
+      )}
+    </Heading>
+  </div>
+  <div class="mt-4 lg:col-span-10 lg:mt-0">
+    <slot />
+  </div>
+</div>

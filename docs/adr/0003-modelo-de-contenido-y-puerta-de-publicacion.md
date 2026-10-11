@@ -1,6 +1,7 @@
 # ADR 0003 — Modelo de contenido y puerta de publicación
 
-Estado: Aceptado (2026-10-10, aprobado por el humano) · Fecha: 2026-10-10 · Feature: 001-landing-completa
+Estado: Aceptado (2026-10-10, aprobado por el humano). Revisión del 2026-10-11 (tipo de sitio):
+aceptada (2026-10-11, aprobada por el humano) · Fecha: 2026-10-10 · Feature: 001-landing-completa
 
 Revisión del 2026-10-10: incorpora las decisiones del humano sobre el significado de `npm run build`,
 `SITE_URL`, el idioma de las claves, los identificadores exigidos y CA-122.
@@ -89,3 +90,72 @@ del rango declarado) y Astro no permite validar las dimensiones de una imagen de
   identificadores oficiales y la revisión de los textos legales.
 - (−) Cambiar el idioma de las claves después de cargar contenido obliga a migrar todos los
   archivos.
+
+## Revisión del 2026-10-11: tipo de sitio (académico u operador real)
+
+Estado de esta revisión: **Aceptada (2026-10-11, aprobada por el humano).** Lo decidido el 2026-10-10
+sigue aceptado y construido; esta revisión lo extiende y, donde lo contradice, lo sustituye.
+
+### Contexto
+El humano decidió que el sitio es un ejercicio académico: no hay operador real, ni RNT, NIT o razón
+social, y no se inventan. La spec añadió el modo de ejercicio académico (CA-125 a CA-139) y conservó
+el modo de operador real (CA-138). Con la puerta tal como estaba, el sitio no podía publicarse
+nunca: exigía tres identificadores y tres textos legales revisados.
+
+### Decisión
+12. **El tipo de sitio se declara en los datos**: campo obligatorio `siteKind` (`"academic"` u
+    `"operator"`) en `src/content/sitio/operador.json`, sin valor por defecto. Si falta o no es
+    válido, cualquier compilación falla. Nunca se deduce de otros datos (CA-125).
+13. **Dos ejes independientes.** El modo de compilación (`preview` o `release`) sale de la orden; el
+    tipo de sitio sale del contenido. `validateSite()` entrega ambos en el modelo, más
+    `indexable = siteKind === 'operator' && mode === 'release'`.
+14. **En modo académico:**
+    - Ningún identificador oficial se exige ni se muestra. Si alguno aparece cargado, la compilación
+      falla en ambos modos de compilación (CA-119 b). Sustituye al punto 10 para este tipo de sitio.
+    - Los tres textos legales llevan `status: "sample"`, un estado nuevo. La página pinta el rótulo
+      de texto de muestra siempre que el estado es `sample`; si un texto no lo tiene, la compilación
+      falla (CA-134). No hay fecha de revisión.
+    - El sitio no es indexable en ninguna compilación (ADR 0012).
+15. **En modo de operador real** rige todo lo decidido el 2026-10-10. Un texto legal `sample` es un
+    error: un operador real no publica textos de muestra.
+16. **Lo demás sigue estricto en los dos tipos de sitio** (CA-139): altitudes y umbrales
+    verificados, fotos, rutas, destino principal, al menos un destino, contacto no de relleno y
+    `SITE_URL`, cuyo problema pasa a etiquetarse CA-139.
+17. **Sustituye al punto 7:** una compilación no indexable no cierra `robots.txt`; declara
+    `noindex` en cada página y por cabecera (ADR 0012).
+18. **Dos reglas nuevas en la puerta:** la política de datos debe nombrar a cada tercero de un
+    registro en código (CA-135), como error; y una búsqueda de términos de promesa comercial sobre
+    los textos (CA-137), como aviso.
+19. **Campo opcional `sources`** en destinos y rutas, para las citas de datos que no son la altitud.
+    No se pinta. Los comentarios HTML en el cuerpo Markdown producen aviso, porque acabarían en el
+    HTML publicado.
+20. **`territorio.minM` admite 0** (nivel del mar). La altitud de un destino sigue siendo mayor
+    que cero.
+21. **`load.ts` entrega también el cuerpo renderizado** con `renderBody(coleccion, id)`. Sigue
+    siendo el único módulo que importa `astro:content`.
+22. **Límites que se documentan y no se resuelven en el esquema:** una sola altitud por destino,
+    aunque el lugar abarque un rango; y clima solo como rango, sin temperatura media.
+
+### Alternativas consideradas
+- **Un archivo o una colección aparte para el tipo de sitio.** Más limpio de nombre, pero añade una
+  pieza a cada escenario de prueba y a la puerta sin cambiar el comportamiento.
+- **Deducir el modo académico de la ausencia de identificadores.** Prohibido por CA-125: un operador
+  real al que le faltan datos pasaría por académico.
+- **Reutilizar `reviewed` para los textos de muestra.** Diría que un asesor revisó un texto que
+  nadie revisó, y pintaría una fecha de revisión.
+- **Rótulo escrito a mano en el cuerpo de cada texto.** Dependería de que el curador lo copie igual
+  tres veces; con el estado `sample` lo pinta la plantilla y no puede faltar.
+- **Quitar el modo de operador real.** Perdería reglas ya construidas y probadas; la spec lo
+  conserva (CA-138).
+- **Altitud como rango en el esquema.** Cambiaría la ficha, el perfil y el orden; es un cambio de
+  spec y de diseño, no de esta revisión.
+
+### Consecuencias
+- (+) El sitio académico se puede publicar sin inventar datos legales, y la puerta sigue impidiendo
+  publicar cifras sin verificar.
+- (+) Un error al declarar el tipo de sitio falla de forma visible y segura en los dos sentidos.
+- (−) Todos los escenarios de prueba deben declarar `siteKind`; hace falta uno nuevo, `academico`.
+- (−) El contenido real debe añadir `siteKind`, pasar los legales a `sample` y mover sus citas de
+  los comentarios HTML a `sources`.
+- (−) El archivo se sigue llamando `operador.json` aunque en modo académico no haya operador.
+- (−) PA-8 deja de bloquear la publicación; el dominio (PA-17) sigue bloqueándola.

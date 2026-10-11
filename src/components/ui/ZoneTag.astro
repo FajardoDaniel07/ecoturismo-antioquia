@@ -1,0 +1,30 @@
+---
+/** Etiqueta de piso: cuadrado de su color fuerte y su nombre escrito (nunca solo color). */
+import { zoneName, type ZoneId } from '../../lib/altitude/zones';
+
+interface Props {
+  zone: ZoneId;
+  class?: string;
+}
+
+const { zone, class: extra = '' } = Astro.props;
+const SWATCH: Record<ZoneId, string> = {
+  warm: 'bg-zone-warm',
+  temperate: 'bg-zone-temperate',
+  cold: 'bg-zone-cold',
+  paramo: 'bg-zone-paramo',
+};
+const TEXT: Record<ZoneId, string> = {
+  warm: 'text-zone-warm',
+  temperate: 'text-zone-temperate',
+  cold: 'text-zone-cold',
+  paramo: 'text-zone-paramo',
+};
+---
+
+<span
+  class:list={['inline-flex items-center gap-2 text-sm leading-5 font-medium', TEXT[zone], extra]}
+>
+  <span aria-hidden="true" class:list={['size-2.5 shrink-0', SWATCH[zone]]}></span>
+  Piso {zoneName(zone)}
+</span>

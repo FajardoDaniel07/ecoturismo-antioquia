@@ -1,0 +1,69 @@
+---
+/**
+ * Foto de un destino (S6.1, CA-43, CA-49, CA-117): AVIF y WebP con <Picture>, recortada por el
+ * build a su proporción y punto de interés, sin filtros ni texto encima. Nunca se pide un ancho
+ * mayor que el original. Reserva su caja con su proporción y color superficie antes de cargar.
+ */
+import { Picture } from 'astro:assets';
+import type { Photo } from '../../lib/content/validate';
+import { allowedWidths, croppedSize, type Ratio } from '../../lib/photos/policy';
+import PhotoCredit from './PhotoCredit.astro';
+
+interface Props {
+  photo: Photo;
+  slot: 'large' | 'small' | 'thumb';
+  sizes: string;
+  loading?: 'lazy' | 'eager';
+  /** Muestra el crédito justo debajo (a 8 px). */
+  credit?: boolean;
+  /** Proporción que manda sobre la de la foto (miniaturas 1:1, principal del listado 3:2). */
+  ratio?: Ratio;
+  class?: string;
+}
+
+const {
+  photo,
+  slot,
+  sizes,
+  loading = 'lazy',
+  credit = false,
+  ratio,
+  class: extra = '',
+} = Astro.props;
+
+const CANDIDATES = {
+  large: [480, 720, 960, 1200],
+  small: [320, 480, 960],
+  thumb: [104, 208, 240],
+};
+
+const shown: Ratio = ratio ?? (slot === 'thumb' ? '1:1' : photo.ratio);
+const [rw, rh] = shown.split(':').map(Number) as [number, number];
+const crop = croppedSize(photo.file.width, photo.file.height, shown);
+const widths = allowedWidths(crop.width, CANDIDATES[slot]);
+const width = Math.max(...widths);
+const height = Math.round((width * rh) / rw);
+---
+
+<figure class:list={['m-0', extra]}>
+  <Picture
+    src={photo.file}
+    alt={photo.alt}
+    widths={widths}
+    sizes={sizes}
+    formats={['avif', 'webp']}
+    width={width}
+    height={height}
+    fit="cover"
+    position={photo.focus}
+    loading={loading}
+    decoding="async"
+    class="block h-auto w-full rounded-sm bg-surface"
+    style={`aspect-ratio:${rw} / ${rh}`}
+  />
+  {credit && (
+    <figcaption class="mt-2">
+      <PhotoCredit photo={photo} ratio={shown} />
+    </figcaption>
+  )}
+</figure>

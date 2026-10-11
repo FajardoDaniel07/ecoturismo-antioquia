@@ -637,8 +637,10 @@ Texto propuesto del aviso (el texto exacto y su presentación los fija `ui-desig
   destino si vengo de uno, según CA-83), de modo que quien recibe el mensaje sabe de dónde viene.
   *Recomendación del analista.* **[e2e]**
 - **CA-133** — Dado el modo académico, cuando examino cualquier página (inicio, detalle, legales,
-  créditos, 404) en la compilación de publicación, entonces declara que no debe indexarse, el archivo
-  de instrucciones para buscadores pide no indexar el sitio, y no existe mapa del sitio. **[build]**
+  créditos, 404) en la compilación de publicación, entonces declara que no debe indexarse (en la propia
+  página y en la respuesta del servidor), el archivo de instrucciones para buscadores no bloquea el
+  rastreo, para que los buscadores puedan leer esa declaración, ni anuncia un mapa del sitio, y no
+  existe mapa del sitio (redacción ajustada el 2026-10-11 por decisión del humano). **[build]**
   **[e2e]**
 - **CA-134** — Dado el modo académico, cuando abro la política de datos, los términos o la política
   de cancelación, entonces existen como textos de muestra y cada uno lleva, antes del contenido, un
