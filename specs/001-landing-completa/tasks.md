@@ -121,7 +121,7 @@ prueba").
   - Archivos: `vitest.config.ts`, `tests/unit/smoke.test.ts`.
   - Depende de: T-007.
   - Hecho cuando: `npm run test` pasa con una prueba.
-- [ ] **T-014** · `qa-engineer` [P] — Configurar Playwright: proyectos de escritorio (1280 px),
+- [x] **T-014** · `qa-engineer` [P] — Configurar Playwright: proyectos de escritorio (1280 px),
   tableta (768 px), móvil (360 px, táctil), sin JavaScript y movimiento reducido; arranque que
   construye cada escenario en serie con `CONTENT_ROOT` y `OUT_DIR` y luego lo sirve; interceptación
   global de `tile.openstreetmap.org` con una tesela local.
@@ -134,12 +134,12 @@ prueba").
   - Archivos: `package.json`, `package-lock.json`.
   - Depende de: T-001 (**ADR 0009 aprobado**).
   - Hecho cuando: `npx lhci --version` responde.
-- [ ] **T-016** · `qa-engineer` — Configurar Lighthouse CI: modo móvil, tres pasadas, aserciones de
+- [x] **T-016** · `qa-engineer` — Configurar Lighthouse CI: modo móvil, tres pasadas, aserciones de
   CA-115 y CA-116, usando el Chromium de Playwright.
   - Archivos: `lighthouserc.json`, `scripts/lhci.mjs`.
   - CA: CA-115, CA-116. Depende de: T-014, T-015.
   - Hecho cuando: `npm run test:lh` se ejecuta contra la página de plantilla y entrega un informe.
-- [ ] **T-017** · `astro-developer` — **Cierre de H1.**
+- [x] **T-017** · `astro-developer` — **Cierre de H1.**
   - Depende de: T-008 a T-016.
   - Hecho cuando: `npm run build`, `npm run lint` y `npm run test` están en verde.
 
@@ -149,23 +149,23 @@ prueba").
 
 Al terminar T-021 y T-023, `content-curator` puede empezar H3.
 
-- [ ] **T-018** · `astro-developer` — Pisos térmicos: `zoneOf`, `zoneRange`, `zoneName`, `ZONES`,
+- [x] **T-018** · `astro-developer` — Pisos térmicos: `zoneOf`, `zoneRange`, `zoneName`, `ZONES`,
   con pruebas en el umbral exacto.
   - Archivos: `src/lib/altitude/zones.ts`, `tests/unit/zones.test.ts`.
   - CA: CA-29. Depende de: T-017.
   - Hecho cuando: las pruebas pasan, incluida "altitud igual al umbral pertenece al piso superior".
-- [ ] **T-019** · `astro-developer` [P] — Detector de valores de relleno.
+- [x] **T-019** · `astro-developer` [P] — Detector de valores de relleno.
   - Archivos: `src/lib/content/placeholders.ts`, `tests/unit/placeholders.test.ts`.
   - CA: CA-120. Depende de: T-017.
   - Hecho cuando: las pruebas rechazan "000", "123456", "XXXX", "ejemplo", "pendiente" y
     "NIT 000.000.000-0", y aceptan el WhatsApp y el correo reales.
-- [ ] **T-020** · `astro-developer` — Esquemas Zod de las cinco colecciones, con mensajes en español
+- [x] **T-020** · `astro-developer` — Esquemas Zod de las cinco colecciones, con mensajes en español
   que citan el criterio, y tipos inferidos.
   - Archivos: `src/lib/content/schemas.ts`, `tests/unit/schemas.test.ts`.
   - CA: CA-20, CA-24, CA-27, CA-46, CA-47, CA-48, CA-77, CA-78, CA-118, CA-119, CA-122.
   - Depende de: T-018.
   - Hecho cuando: por cada criterio hay una prueba con un dato válido y otra con uno inválido.
-- [ ] **T-021** · `astro-developer` — Registrar las colecciones en `content.config.ts`, leyendo la
+- [x] **T-021** · `astro-developer` — Registrar las colecciones en `content.config.ts`, leyendo la
   raíz de `CONTENT_ROOT`.
   - Archivos: `src/content.config.ts`.
   - CA: CA-99. Depende de: T-020.
@@ -176,17 +176,17 @@ Al terminar T-021 y T-023, `content-curator` puede empezar H3.
   - Archivos: `tests/fixtures/content/{completo,minimo,sin-fotos}/**`, `scripts/make-fixtures.mjs`.
   - Depende de: T-020.
   - Hecho cuando: cada escenario pasa `astro sync` y contiene los casos que lista el plan.
-- [ ] **T-023** · `astro-developer` [P] — Guía de contenido para `content-curator`: campos, valores
+- [x] **T-023** · `astro-developer` [P] — Guía de contenido para `content-curator`: campos, valores
   permitidos, dónde van las fotos y un ejemplo completo de destino, ruta y texto legal.
   - Archivos: `src/content/README.md`.
   - Depende de: T-020.
   - Hecho cuando: el ejemplo de la guía pasa los esquemas en una prueba unitaria.
-- [ ] **T-024** · `astro-developer` — `validateSite()`, primera parte: modelo publicado, pisos
+- [x] **T-024** · `astro-developer` — `validateSite()`, primera parte: modelo publicado, pisos
   derivados, orden, destino principal, slugs, títulos y descripciones, rango y umbrales, CA-100.
   - Archivos: `src/lib/content/validate.ts`, `tests/unit/validate-destinos.test.ts`.
   - CA: CA-15, CA-31, CA-33, CA-99, CA-100, CA-104, CA-122. Depende de: T-020, T-018.
   - Hecho cuando: cada regla tiene una prueba y cada problema trae archivo, campo, regla y criterio.
-- [ ] **T-025** · `astro-developer` — `validateSite()`, segunda parte: fotos (dimensiones, texto
+- [x] **T-025** · `astro-developer` — `validateSite()`, segunda parte: fotos (dimensiones, texto
   alternativo, licencia), rutas (destino, elevación por punto completa o ausente, coordenadas),
   textos legales, identificadores, modos de publicación y vista previa.
   - Archivos: `src/lib/content/validate.ts`, `tests/unit/validate-resto.test.ts`.
@@ -194,7 +194,7 @@ Al terminar T-021 y T-023, `content-curator` puede empezar H3.
   - Depende de: T-024, T-019.
   - Hecho cuando: las pruebas cubren cada fila de la tabla de severidades del plan (D1), en los dos
     modos.
-- [ ] **T-026** · `astro-developer` — `loadSite()`: lee las colecciones, decide el modo, comprueba
+- [x] **T-026** · `astro-developer` — `loadSite()`: lee las colecciones, decide el modo, comprueba
   `SITE_URL` en publicación, memoriza y lanza un único error con todos los problemas.
   - Archivos: `src/lib/content/load.ts`.
   - CA: CA-97, CA-99. Depende de: T-025, T-021, T-022.
