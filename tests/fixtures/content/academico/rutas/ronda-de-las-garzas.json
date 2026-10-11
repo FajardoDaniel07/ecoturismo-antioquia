@@ -1,0 +1,34 @@
+{
+  "type": "Feature",
+  "geometry": {
+    "type": "LineString",
+    "coordinates": [
+      [
+        -75.52,
+        6.18
+      ],
+      [
+        -75.516,
+        6.183
+      ],
+      [
+        -75.512,
+        6.181
+      ],
+      [
+        -75.51,
+        6.185
+      ]
+    ]
+  },
+  "properties": {
+    "name": "Ronda de las Garzas",
+    "destino": "playon-de-las-garzas-azules",
+    "elevation": {
+      "minM": 250,
+      "maxM": 290
+    },
+    "distanceKm": 3,
+    "difficulty": "easy"
+  }
+}

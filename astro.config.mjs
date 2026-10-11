@@ -10,11 +10,14 @@ const site =
 
 // SITE_URL solo es obligatoria en la compilación de publicación (la valida el contenido, ADR 0003).
 // OUT_DIR permite a las pruebas construir cada escenario en su propia carpeta.
+// CACHE_DIR les da además un almacén de contenido propio: sin él, dos builds simultáneos con
+// distinta raíz de contenido comparten node_modules/.astro y pueden leer entradas del otro.
 // https://astro.build/config
 export default defineConfig({
   site,
   trailingSlash: 'always',
   outDir: process.env.OUT_DIR ?? 'dist',
+  cacheDir: process.env.CACHE_DIR ?? './node_modules/.astro',
   vite: {
     plugins: [tailwindcss()],
   },

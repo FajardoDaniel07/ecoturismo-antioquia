@@ -210,9 +210,13 @@ const completo = {
       difficulty: 'demanding',
     },
   ],
+  siteKind: 'operator',
   legalStatus: 'reviewed',
   identifiers: true,
 };
+
+/** Mismo contenido que `completo`, como sitio académico publicable: textos de muestra y sin identificadores. */
+const academico = { ...completo, siteKind: 'academic', legalStatus: 'sample', identifiers: false };
 
 const minimo = {
   destinos: [
@@ -228,6 +232,7 @@ const minimo = {
     },
   ],
   rutas: [],
+  siteKind: 'operator',
   legalStatus: 'draft',
   identifiers: false,
 };
@@ -287,7 +292,8 @@ const sinFotos = {
       difficulty: 'easy',
     },
   ],
-  legalStatus: 'draft',
+  siteKind: 'academic',
+  legalStatus: 'sample',
   identifiers: false,
 };
 
@@ -368,6 +374,13 @@ const LEGALS = [
 ];
 
 function legalMarkdown([kind, , title], status) {
+  const privacy =
+    kind === 'privacy'
+      ? [
+          'El sitio no guarda datos de quien lo visita. El alojamiento está en Vercel; el mapa pide sus teselas a OpenStreetMap solo cuando se carga; y el enlace de contacto abre WhatsApp solo cuando se activa.',
+          '',
+        ]
+      : [];
   const lines = [
     '---',
     `kind: ${kind}`,
@@ -381,6 +394,7 @@ function legalMarkdown([kind, , title], status) {
     '',
     `Texto de prueba de la ${title.toLowerCase()}. No tiene validez legal.`,
     '',
+    ...privacy,
     'Segundo párrafo del texto, para comprobar la maquetación de las páginas legales.',
     '',
   );
@@ -413,8 +427,10 @@ async function build(name, scenario) {
 
   write(path.join(dir, 'sitio', 'territorio.json'), JSON.stringify(TERRITORY, null, 2) + '\n');
 
+  const academic = scenario.siteKind === 'academic';
   const operator = {
-    name: 'Operadora Montes de Niebla S. A. S.',
+    siteKind: scenario.siteKind,
+    name: academic ? 'Ejercicio Montes de Niebla' : 'Operadora Montes de Niebla S. A. S.',
     whatsapp: '+573105550142',
     hours: 'Lunes a viernes, de 9 a. m. a 5 p. m.',
     email: 'contacto@operadora-fixture.invalid',
@@ -445,6 +461,7 @@ async function build(name, scenario) {
   console.log(`${name}: ${scenario.destinos.length} destinos, ${scenario.rutas.length} rutas`);
 }
 
+await build('academico', academico);
 await build('completo', completo);
 await build('minimo', minimo);
 await build('sin-fotos', sinFotos);

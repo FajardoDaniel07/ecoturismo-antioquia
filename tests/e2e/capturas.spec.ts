@@ -6,6 +6,8 @@
  * Salida: .tmp/capturas/ca-124/<escenario>/<pieza>-<ancho>.png
  *   perfil-<ancho>.png          el perfil del hero (figura completa) a 320, 360, 768 y 1280 px
  *   pantalla-<ancho>x<alto>.png la primera pantalla completa, sin desplazarse (360x640 y 360x800)
+ *   aviso-<ancho>.png, cabecera-<ancho>.png  (solo sitios académicos) la franja del aviso y los
+ *                               primeros 200 px de la página a 360, 768 y 1280 px
  *   lamina-<piso>-natural.png   cada lámina del listado, a su tamaño real
  *   lamina-<piso>-<ancho>.png   la lámina a 120, 200, 360 y 520 px (solo `sin-fotos`), para ver
  *                               cada tamaño de cifra (21, 33, 42 y 52 px)
@@ -22,6 +24,7 @@ const FIRST_SCREENS = [
   { width: 360, height: 640 },
   { width: 360, height: 800 },
 ];
+const NOTICE_WIDTHS = [360, 768, 1280];
 const PLATE_WIDTHS = [120, 200, 360, 520];
 const ZONES = [
   { id: 'warm', name: 'calido' },
@@ -159,6 +162,40 @@ for (const scenario of capturaScenarios) {
         note(
           `\npantalla-${width}x${height}.png: del perfil (${Math.round(box?.height ?? 0)} px de alto) se ven ${Math.round(visible)} px sin desplazarse; empieza en y = ${Math.round(box?.y ?? 0)}`,
         );
+      });
+    }
+
+    for (const width of NOTICE_WIDTHS) {
+      test(`CA-124: aviso del sitio y cabecera a ${width} px`, async ({ page }) => {
+        await page.setViewportSize({ width, height: 800 });
+        await page.goto(`${base}/`);
+        await settle(page);
+        // Solo el sitio académico lleva el aviso (CA-126): en los demás se anota su ausencia.
+        const notice = page.getByRole('region', { name: 'Aviso del sitio' });
+        if ((await notice.count()) === 0) {
+          note(`
+aviso a ${width} px: este escenario no muestra el aviso académico`);
+          return;
+        }
+        await notice.screenshot({ path: path.join(outDir, `aviso-${width}.png`) });
+        await page.screenshot({
+          path: path.join(outDir, `cabecera-${width}.png`),
+          clip: { x: 0, y: 0, width, height: 200 },
+        });
+        const box = await notice.boundingBox();
+        const lines = await notice.evaluate((el) => {
+          const p = el.querySelector('p');
+          return p
+            ? Math.round(
+                p.getBoundingClientRect().height / parseFloat(getComputedStyle(p).lineHeight),
+              )
+            : 0;
+        });
+        note(
+          `
+aviso-${width}.png: franja de ${Math.round(box?.width ?? 0)} x ${Math.round(box?.height ?? 0)} px en y = ${Math.round(box?.y ?? 0)}; texto en ${lines} línea(s)`,
+        );
+        note(`cabecera-${width}.png: los primeros 200 px de la página (aviso y cabecera)`);
       });
     }
 

@@ -2,7 +2,7 @@
 kind: cancellation
 title: "Política de cancelación"
 summary: "Texto de prueba: política de cancelación de un operador inventado."
-status: draft
+status: sample
 ---
 
 Texto de prueba de la política de cancelación. No tiene validez legal.

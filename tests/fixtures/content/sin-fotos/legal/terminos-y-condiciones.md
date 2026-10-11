@@ -2,7 +2,7 @@
 kind: terms
 title: "Términos y condiciones"
 summary: "Texto de prueba: términos y condiciones de un operador inventado."
-status: draft
+status: sample
 ---
 
 Texto de prueba de la términos y condiciones. No tiene validez legal.
