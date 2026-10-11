@@ -421,8 +421,8 @@ async function build(name, scenario) {
   };
   if (scenario.identifiers) {
     operator.identifiers = {
-      rnt: { value: 'RNT 99871' },
-      nit: { value: 'NIT 900.555.321-7' },
+      rnt: { value: '99871' },
+      nit: { value: '900.555.321-7' },
       legalName: { value: 'Operadora Montes de Niebla S. A. S.' },
     };
   }

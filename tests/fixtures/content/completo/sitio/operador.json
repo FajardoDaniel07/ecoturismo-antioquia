@@ -5,10 +5,10 @@
   "email": "contacto@operadora-fixture.invalid",
   "identifiers": {
     "rnt": {
-      "value": "RNT 99871"
+      "value": "99871"
     },
     "nit": {
-      "value": "NIT 900.555.321-7"
+      "value": "900.555.321-7"
     },
     "legalName": {
       "value": "Operadora Montes de Niebla S. A. S."

@@ -1,9 +1,22 @@
 import { execFileSync, spawn, type ChildProcess } from 'node:child_process';
+import { rmSync } from 'node:fs';
 import path from 'node:path';
 import { contentRootOf, outDirOf, scenarios, urlOf, type Scenario } from './scenarios';
 
 const astroBin = path.join(process.cwd(), 'node_modules', 'astro', 'bin', 'astro.mjs');
 const servers: ChildProcess[] = [];
+
+/**
+ * El almacén de contenido de Astro persiste entre construcciones en `node_modules/.astro/` (la caché de
+ * `astro build`) y `glob()` no retira las entradas de una raíz anterior: tras cambiar `CONTENT_ROOT`
+ * aparecen entradas duplicadas y rutas de otro escenario. Se borra antes de cada construcción y al
+ * terminar, para que el siguiente `npm run build` normal tampoco herede contenido de pruebas.
+ */
+export function clearContentStore(): void {
+  for (const target of ['node_modules/.astro/data-store.json', 'node_modules/.astro/data-store']) {
+    rmSync(path.join(process.cwd(), target), { recursive: true, force: true });
+  }
+}
 
 function envFor(scenario: Scenario): NodeJS.ProcessEnv {
   const env: NodeJS.ProcessEnv = {
@@ -35,9 +48,14 @@ async function waitFor(url: string, timeoutMs = 30_000): Promise<void> {
  */
 export default async function globalSetup(): Promise<() => Promise<void>> {
   for (const scenario of scenarios) {
+    clearContentStore();
     const args = [astroBin, 'build'];
     if (scenario.mode === 'preview') args.push('--mode', 'preview');
-    execFileSync(process.execPath, args, { env: envFor(scenario), stdio: 'inherit' });
+    try {
+      execFileSync(process.execPath, args, { env: envFor(scenario), stdio: 'inherit' });
+    } finally {
+      clearContentStore();
+    }
   }
 
   for (const scenario of scenarios) {
