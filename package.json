@@ -9,10 +9,12 @@
     "dev": "astro dev",
     "build": "astro check && astro build --mode preview",
     "build:release": "astro check && astro build",
+    "build:vercel": "node scripts/vercel-build.mjs",
     "preview": "astro preview",
     "test": "vitest run",
     "test:build": "vitest run --dir tests/build",
     "test:e2e": "playwright test",
+    "test:capturas": "playwright test -c playwright.capturas.config.ts",
     "test:lh": "node scripts/lhci.mjs",
     "lint": "eslint . && prettier --check ."
   },

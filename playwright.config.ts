@@ -5,6 +5,7 @@ import { defaultScenario, urlOf } from './tests/e2e/scenarios';
 // global-setup en su puerto y las pruebas que los necesitan usan su URL (scenarios.ts).
 export default defineConfig({
   testDir: './tests/e2e',
+  testIgnore: 'capturas.spec.ts',
   outputDir: './.tmp/test-results',
   globalSetup: './tests/e2e/global-setup.ts',
   fullyParallel: true,

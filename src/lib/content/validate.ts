@@ -12,6 +12,7 @@
 import { zoneOf, type ZoneId } from '../altitude/zones';
 import { compareByAltitude, resolveFeatured } from '../altitude/sort';
 import { croppedSize } from '../photos/policy';
+import { findCommercialTerms } from './commercial-terms';
 import { isPlaceholder } from './placeholders';
 import type { DestinoData, LegalData, Operator, PhotoData, RutaData, Territory } from './schemas';
 
@@ -651,6 +652,37 @@ export function validateSite(raw: RawSite, mode: BuildMode): ValidationResult {
       );
     }
   }
+
+  // --- Promesas comerciales (CA-137): solo avisos; el curador las revisa a mano ---
+  const scan = (file: string, field: string, text: string | undefined) => {
+    for (const m of findCommercialTerms(text ?? '')) {
+      add(
+        'warning',
+        file,
+        field,
+        'CA-137',
+        'El sitio no debe prometer reservas, cupos, precios ni tarifas',
+        `"${m.text}" en "${m.context.replace(/\s+/g, ' ')}": confirma que no es una promesa comercial.`,
+      );
+    }
+  };
+  for (const e of raw.destinos) {
+    scan(e.file, 'name', e.data.name);
+    scan(e.file, 'summary', e.data.summary);
+    scan(e.file, 'access', e.data.access);
+    scan(e.file, '(cuerpo)', e.body);
+  }
+  for (const e of raw.rutas) {
+    scan(e.file, 'properties.name', e.data.properties.name);
+    scan(e.file, 'properties.access', e.data.properties.access);
+  }
+  for (const e of raw.legal) {
+    scan(e.file, 'title', e.data.title);
+    scan(e.file, 'summary', e.data.summary);
+    scan(e.file, '(cuerpo)', e.body);
+  }
+  scan(opFile, 'name', op.name);
+  scan(opFile, 'hours', op.hours);
 
   const photos = destinos.flatMap((d) => d.photos);
 

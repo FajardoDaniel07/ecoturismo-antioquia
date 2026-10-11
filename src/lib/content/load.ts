@@ -3,7 +3,7 @@
  * `astro:content`: lee las cinco colecciones, delega la validación en `validateSite()`, memoriza
  * el resultado y detiene el build con todos los problemas juntos.
  */
-import { getCollection } from 'astro:content';
+import { getCollection, getEntry, render } from 'astro:content';
 import {
   formatIssues,
   isFatal,
@@ -73,4 +73,20 @@ async function read(): Promise<SiteModel> {
 export function loadSite(): Promise<SiteModel> {
   cached ??= read();
   return cached;
+}
+
+type BodyComponent = Awaited<ReturnType<typeof render>>['Content'];
+
+/**
+ * Componente con el cuerpo Markdown renderizado de un destino o un texto legal. Las páginas lo
+ * pintan con `<Content />` (o lo pasan por `slot`); solo este módulo importa `astro:content`.
+ */
+export async function renderBody(
+  collection: 'destinos' | 'legal',
+  id: string,
+): Promise<BodyComponent> {
+  const entry = await getEntry(collection, id);
+  if (!entry) throw new Error(`No existe la entrada "${id}" en la colección "${collection}".`);
+  const { Content } = await render(entry);
+  return Content;
 }

@@ -423,7 +423,7 @@ avisos de contenido.
   - CA: CA-12 a CA-19, CA-38, CA-42. Depende de: T-052, T-053, T-054, T-055, T-051.
   - Hecho cuando: con `completo` el principal ocupa más área que los menores y con `sin-fotos` cada
     piso muestra su lámina.
-- [ ] **T-057** · `qa-engineer` — Guion de capturas: perfil a 320, 360, 768 y 1280 px (escenario
+- [x] **T-057** · `qa-engineer` — Guion de capturas: perfil a 320, 360, 768 y 1280 px (escenario
   `completo`) y las cuatro láminas en sus tamaños de cifra (escenario `sin-fotos`).
   - Archivos: `tests/e2e/capturas.spec.ts`, `specs/001-landing-completa/capturas/*.png`.
   - CA: CA-124. Depende de: T-056.
@@ -823,14 +823,14 @@ Se intercalan con H4 a H8 según la tabla "Orden recomendado" del final de este 
   - CA: CA-135, CA-136. Depende de: T-121.
   - Hecho cuando: una política que no nombra a OpenStreetMap, WhatsApp o Vercel produce error con
     el nombre que falta.
-- [ ] **T-123** · `astro-developer` [P] — Búsqueda de promesas comerciales: lista de términos,
+- [x] **T-123** · `astro-developer` [P] — Búsqueda de promesas comerciales: lista de términos,
   función pura y aviso en el build.
   - Archivos: `src/lib/content/commercial-terms.ts`, `tests/unit/commercial-terms.test.ts`,
     `src/lib/content/validate.ts`.
   - CA: CA-137. Depende de: T-121.
   - Hecho cuando: las pruebas encuentran "reserva", "Reservar", "cupos", "precio", "tarifa", "COP" y
     "guía incluido", y no encuentran "copa", "preciosa" ni "guías locales".
-- [ ] **T-124** · `astro-developer` [P] — `load.ts`: `renderBody(coleccion, id)` para el cuerpo
+- [x] **T-124** · `astro-developer` [P] — `load.ts`: `renderBody(coleccion, id)` para el cuerpo
   Markdown de destinos y textos legales.
   - Archivos: `src/lib/content/load.ts`.
   - CA: CA-32, CA-134. Depende de: T-117.
@@ -891,7 +891,7 @@ Se intercalan con H4 a H8 según la tabla "Orden recomendado" del final de este 
 
 ### Despliegue
 
-- [ ] **T-128** · `astro-developer` — Preparar el despliegue: `vercel.json`, guion `build:vercel` y
+- [x] **T-128** · `astro-developer` — Preparar el despliegue: `vercel.json`, guion `build:vercel` y
   `scripts/vercel-build.mjs`, y dirección de reserva `https://$VERCEL_URL` en `astro.config.mjs`.
   - Archivos: `vercel.json`, `scripts/vercel-build.mjs`, `package.json`, `astro.config.mjs`.
   - CA: CA-133, CA-139. Depende de: T-117 (**ADR 0012 aprobado**).
