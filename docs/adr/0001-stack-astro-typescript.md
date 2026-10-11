@@ -1,6 +1,6 @@
 # ADR 0001 — Astro + TypeScript como stack base
 
-Estado: Propuesto · Fecha: 2026-10-10
+Estado: Aceptado (2026-10-11, aprobado por el humano) · Fecha: 2026-10-10
 
 ## Contexto
 Landing page de ecoturismo en Antioquia con tres bloques: destinos, galería interactiva y mapa de

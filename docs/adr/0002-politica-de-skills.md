@@ -1,6 +1,6 @@
 # ADR 0002 — Uso de skills en el flujo SDD
 
-Estado: Propuesto · Fecha: 2026-10-10
+Estado: Aceptado (2026-10-11, aprobado por el humano) · Fecha: 2026-10-10
 
 ## Contexto
 Claude Code permite precargar skills en subagentes con el campo `skills:` del frontmatter. Una

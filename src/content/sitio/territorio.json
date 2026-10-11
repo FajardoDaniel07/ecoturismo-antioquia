@@ -1,0 +1,7 @@
+{
+  "minM": 0,
+  "maxM": 4080,
+  "thresholds": { "temperate": 1000, "cold": 2000, "paramo": 3000 },
+  "verified": true,
+  "source": "Máxima, 4080 m: Páramo de Frontino o de Sabanas, en Urrao. Gobernación de Antioquia, Anuario Estadístico 2014, sección 1.2.3 (http://www.antioquia.gov.co/images/pdf/anuario2014/es-CO/capitulos/generalidades/aspectos/geografia/cp-1-1-2-3.html) y Anuario Estadístico 2012, tabla 2.5.1 (https://www.antioquia.gov.co/images/pdf/anuario_2012/data/med_ambiente/_med251.html), ambas leídas el 2026-10-11. Mínima, 0 m (nivel del mar): es una deducción, no una cifra citada textualmente. El Anuario 2014, sección 1.2.3, da como límite norte del departamento a Punta Arboletes, en la costa del mar Caribe, y el Anuario 2012, tabla 1.4.1 (http://www.antioquia.gov.co/images/pdf/anuario_2012/data/generalidades/HI141.html), da 2 m para las cabeceras costeras de Turbo y San Juan de Urabá. Umbrales de 1000, 2000 y 3000 m: Marca País Colombia (https://colombia.co/en/colombia-country/colombia-climates-on-the-mountain), leída el 2026-10-11: cálido hasta 1000 m, templado de 1000 a 2000 m, frío de 2000 a 3000 m y páramo de 3000 m en adelante. Respaldo no leído por el curador: resúmenes de búsqueda de las tablas del IGAC (clasificación de Caldas) dan los mismos cortes. Aviso: la nota técnica IDEAM-METEO/003-2025 propone otros cortes (cálido hasta 800 m, templado hasta 1800 m, frío hasta 2800 m) que el sitio no adopta por decisión editorial aprobada."
+}

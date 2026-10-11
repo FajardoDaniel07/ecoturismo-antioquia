@@ -2,11 +2,19 @@
 
 ## Contexto y objetivo
 
-Ecoturismo Antioquia ofrece salidas de ecoturismo de 1 a 3 días por Antioquia (caminatas,
-avistamiento de aves, fincas cafeteras, ríos y páramo). Quien visita el sitio casi nunca conoce el
-territorio en detalle y planea desde el celular, a veces con señal limitada en zonas rurales.
+Ecoturismo Antioquia es la landing de un servicio de ecoturismo regional: salidas de 1 a 3 días por
+Antioquia (caminatas, avistamiento de aves, fincas cafeteras, ríos y páramo). Quien visita el sitio
+casi nunca conoce el territorio en detalle y planea desde el celular, a veces con señal limitada en
+zonas rurales.
 
 **Objetivo de la página:** ayudar a elegir un destino o una ruta y llevar a la persona al contacto.
+
+**Naturaleza del sitio (decisión del humano, 2026-10-11):** el sitio es un **ejercicio académico**.
+No existe un operador real ni datos legales de un operador; el sitio no ofrece servicios turísticos
+reales. Por eso la spec define un **modo de ejercicio académico**, declarado en los datos del sitio
+(CA-125), que cambia lo que el sitio muestra y exige (sección N). Se conserva también el **modo de
+operador real** (ver "Convenciones" y CA-138) para que las reglas estrictas para un operador real no
+se pierdan; el modo académico es una variante declarada, no el reemplazo de esas reglas.
 
 Esta feature entrega el sitio completo en una sola versión, con estas piezas:
 
@@ -15,8 +23,9 @@ Esta feature entrega el sitio completo en una sola versión, con estas piezas:
 3. Galería interactiva con visor de fotos.
 4. Mapa de rutas.
 5. Contacto por WhatsApp, con correo visible de respaldo.
-6. Páginas de textos legales (política de datos, términos y cancelación) como borradores hasta que
-   el humano o su asesor los revisen.
+6. Páginas de textos legales (política de datos, términos y cancelación): en modo académico, como
+   textos de muestra rotulados; en modo de operador real, como borradores hasta su revisión.
+7. Aviso visible de proyecto académico en todas las páginas (modo académico).
 
 **Principio de organización:** la altitud ordena el sitio. Cada destino tiene una altitud y
 pertenece a un piso térmico (zona de clima que depende de la altura: cálido, templado, frío y
@@ -34,15 +43,17 @@ comparables.
 - Las cifras de altitud y los umbrales entre pisos están **pendientes de verificar** por
   `content-curator`. Esta spec no las da por ciertas; usa "N" como marcador donde haría falta una
   cifra.
+- Los textos de destinos, rutas y contacto describen lugares y recorridos; no prometen servicios,
+  guías, cupos ni precios (CA-137).
 
-**Datos del operador confirmados por el humano (2026-10-10):**
+**Datos de contacto reales, confirmados por el humano (2026-10-10) y mantenidos el 2026-10-11:**
 
-- WhatsApp: +57 312 795 1683 (Colombia).
+- WhatsApp: +57 312 795 1683 (Colombia). Se mantiene real porque el humano quiere probar la
+  conexión con un WhatsApp real.
 - Horario de atención: lunes a viernes, de 10 a. m. a 10 p. m.
 - Correo de contacto: danielfajardog1902@gmail.com.
-- Pendiente (no bloquea el desarrollo): los textos legales se redactan como borrador y los
-  identificadores oficiales (Registro Nacional de Turismo, NIT, razón social) los entrega el
-  operador antes del lanzamiento público.
+- No existe operador real: no hay Registro Nacional de Turismo, NIT ni razón social, y no se
+  inventan (CA-119).
 
 ## Usuarios
 
@@ -53,6 +64,7 @@ comparables.
 | Familia con niños | Saber de entrada si una salida es apta para su grupo (dificultad, duración, edad sugerida) | Celular, comparando varias opciones |
 | Persona que usa lector de pantalla o solo teclado | Poder hacer todo lo anterior sin ratón ni vista | Escritorio o celular |
 | Persona con señal limitada o sin JavaScript | Poder leer y comparar salidas aunque el mapa o el visor no carguen | Zona rural, conexión intermitente |
+| Evaluador del ejercicio académico | Revisar el sitio y probar el contacto sabiendo que no es un servicio real | Escritorio o celular |
 
 ## Historias de usuario
 
@@ -73,17 +85,21 @@ comparables.
   saber por dónde pasan y cuánto exigen.
 - **HU-8:** Como visitante con conexión débil o sin JavaScript quiero seguir viendo las fotos como
   cuadrícula y las rutas como lista con enlaces para no quedarme sin información.
-- **HU-9:** Como visitante decidido quiero contactar al operador por WhatsApp, o por correo si no
-  uso WhatsApp, desde cualquier página para preguntar o reservar mi salida.
+- **HU-9:** Como visitante quiero contactar por WhatsApp, o por correo si no uso WhatsApp, desde
+  cualquier página para hacer mi consulta (en el modo académico, para probar la conexión).
 - **HU-10:** Como persona que usa teclado o lector de pantalla quiero recorrer todo el sitio y usar
   el visor, el mapa y el contacto sin ratón ni vista.
 - **HU-11:** Como visitante desde el celular quiero que el sitio sea legible y usable a 360 px de
   ancho y cargue con rapidez para planear mi salida sin frustración.
 - **HU-12:** Como persona del equipo editorial quiero que el sitio no publique datos incompletos o
-  sin verificar (altitud, licencia de foto, geometría de ruta, identificadores oficiales del
-  operador, textos legales sin revisar) para no mostrar información errónea.
+  sin verificar (altitud, licencia de foto, geometría de ruta, datos de contacto y, en modo de
+  operador real, identificadores oficiales y textos legales sin revisar) para no mostrar información
+  errónea.
 - **HU-13:** Como visitante quiero encontrar en el pie la política de tratamiento de datos, los
-  términos y la política de cancelación para saber qué condiciones aplican antes de contactar.
+  términos y la política de cancelación para saber qué condiciones aplican antes de contactar; en el
+  modo académico, quiero que estén rotulados como textos de muestra sin validez legal.
+- **HU-14:** Como visitante quiero ver en cada página un aviso de que este es un proyecto académico y
+  que no ofrece servicios turísticos reales para no creer que puedo reservar o contratar una salida.
 
 ## Alcance
 
@@ -95,7 +111,11 @@ Dentro de esta feature:
 - Lámina de altitud como presentación de pleno derecho para destinos sin fotos.
 - Créditos de fotos junto a cada imagen y una página que los reúne.
 - Contacto por WhatsApp y correo visible de respaldo.
-- Textos legales redactados como borrador por `content-curator` y páginas para mostrarlos.
+- Modo de ejercicio académico: declaración en los datos, aviso en todas las páginas, sitio no
+  indexable, textos legales de muestra y política de datos veraz.
+- Conservación del modo de operador real y de la puerta estricta de publicación.
+- Textos legales: de muestra en modo académico; borradores de `content-curator` en modo de operador
+  real.
 - Navegación entre secciones, pie de página y página para direcciones inexistentes.
 - Requisitos transversales de accesibilidad, rendimiento, mejora progresiva y lenguaje.
 
@@ -111,6 +131,10 @@ Dentro de esta feature:
   contenido de esta spec.
 - "Compilación de publicación" es la que se destina al sitio público; "compilación de desarrollo o
   vista previa" es la que se usa para trabajar y revisar.
+- **"Modo académico"** es el estado en que los datos del sitio declaran que es un ejercicio
+  académico. **"Modo de operador real"** es el estado en que los datos declaran que hay un operador
+  real. El modo se declara de forma explícita (CA-125). Los criterios sin indicación de modo aplican
+  a ambos.
 - "Móvil" significa 360 px de ancho de ventana.
 - "Piso" es el piso térmico. Su regla de asignación según la altitud es única en todo el sitio y
   sus umbrales salen del contenido verificado (ver Decisiones, PA-12).
@@ -122,7 +146,7 @@ Dentro de esta feature:
 - **CA-1** — Dado que abro la página de inicio, cuando carga, entonces el primer contenido, en este
   orden, es: un titular con el rango de altitud de Antioquia, una línea que explica que en la
   montaña tropical el clima cambia con la altura, un botón "Ver destinos" y el perfil altitudinal.
-  **[e2e]**
+  En modo académico, el aviso de CA-126 puede ir antes del titular. **[e2e]**
 - **CA-2** — Dado el titular del hero, cuando lo leo, entonces tiene la forma "de {mín} a {máx}
   metros de altitud", donde las dos cifras coinciden con los valores mínimo y máximo declarados en
   el contenido verificado; la unidad "metros de altitud" se escribe una sola vez y vale para las dos
@@ -217,7 +241,7 @@ Dentro de esta feature:
   de texto; la dificultad se entiende sin ver colores, y un lector de pantalla anuncia la palabra
   (no las marcas por separado). Cualquier otro valor no es válido. **[unit]** **[axe]**
 - **CA-28** — Dado una edad sugerida, cuando se escribe, entonces tiene la forma "Apta desde los N
-  años" (con "1 año" en singular); si la edad mínima es 0, dice "Apta para todas las edades".
+  años"; con edad mínima de 1 dice "Apta desde 1 año"; si la edad mínima es 0, dice "Apta para todas las edades".
   **[unit]**
 - **CA-29** — Dado una altitud, cuando se calcula su piso, entonces el resultado sale de una única
   regla con los umbrales verificados; una altitud que coincide con un umbral pertenece al piso
@@ -401,8 +425,9 @@ Dentro de esta feature:
 
 ### H. Contacto
 
-Canal confirmado por el humano el 2026-10-10: WhatsApp como principal más correo visible de
-respaldo; no hay formulario en esta feature.
+Canal confirmado por el humano el 2026-10-10 y mantenido el 2026-10-11: WhatsApp como principal más
+correo visible de respaldo; no hay formulario en esta feature. El WhatsApp y el correo son reales
+aunque el sitio sea un ejercicio académico (ver CA-131 y CA-132).
 
 - **CA-81** — Dado cualquier página, cuando busco cómo contactar, entonces hay un enlace "Contacto"
   en la navegación principal y, en la página de inicio, una sección de contacto como última sección
@@ -442,12 +467,15 @@ respaldo; no hay formulario en esta feature.
 - **CA-96** — Dado la página de inicio, cuando examino su cabecera, entonces tiene título y meta
   descripción propios y no vacíos, y datos para compartir en redes con el título y la descripción,
   sin imagen asociada. **[e2e]**
-- **CA-97** — Dado el sitio construido, cuando reviso sus archivos de rastreo, entonces hay un mapa
-  del sitio que lista la página de inicio y todas las páginas de detalle publicadas, y un archivo de
-  instrucciones para buscadores que lo referencia. **[build]**
-- **CA-98** — Dado cualquier página, cuando llego al pie, entonces contiene el nombre del operador,
-  enlace a contacto, enlaces a las páginas de política de tratamiento de datos, términos y
-  condiciones y política de cancelación, y enlace a la página de créditos. **[e2e]**
+- **CA-97** — Dado el sitio construido en modo de operador real, cuando reviso sus archivos de
+  rastreo, entonces hay un mapa del sitio que lista la página de inicio y todas las páginas de
+  detalle publicadas, y un archivo de instrucciones para buscadores que lo referencia. En modo
+  académico no hay mapa del sitio y rige CA-133. **[build]**
+- **CA-98** — Dado cualquier página, cuando llego al pie, entonces contiene el nombre del sitio (en
+  modo de operador real, el nombre del operador; en modo académico, el nombre del proyecto con la
+  indicación "proyecto académico"), enlace a contacto, enlaces a las páginas de política de
+  tratamiento de datos, términos y condiciones y política de cancelación, y enlace a la página de
+  créditos. **[e2e]**
 - **CA-99** — Dado un destino o ruta con datos inválidos según esta spec, cuando se construye el
   sitio, entonces el mensaje de error indica el archivo de contenido, el campo y la regla
   incumplida. **[build]**
@@ -483,9 +511,10 @@ respaldo; no hay formulario en esta feature.
 - **CA-107** — Dado cualquier elemento enfocable, cuando recibe foco, entonces muestra un anillo de
   3 px separado 2 px del elemento, con contraste de al menos 3:1 sobre su fondo. **[e2e]**
   **[manual]**
-- **CA-108** — Dado la página de inicio, una página de detalle con fotos, una sin fotos y la página
-  404, cuando se analizan con axe (también con el visor abierto, el mapa cargado y el mapa fallido),
-  entonces no hay violaciones serious ni critical contra WCAG 2.2 AA. **[axe]**
+- **CA-108** — Dado la página de inicio, una página de detalle con fotos, una sin fotos, las tres
+  páginas legales, la página de créditos y la página 404, cuando se analizan con axe (también con el
+  visor abierto, el mapa cargado y el mapa fallido), entonces no hay violaciones serious ni
+  critical contra WCAG 2.2 AA. **[axe]**
 - **CA-109** — Dado un lector de pantalla (NVDA con navegador de escritorio; TalkBack en Android),
   cuando completo estas tareas sin ver la pantalla: encontrar un destino de piso templado, leer su
   ficha, abrir una foto y volver, elegir una ruta, y encontrar cómo contactar; entonces puedo
@@ -510,7 +539,9 @@ respaldo; no hay formulario en esta feature.
   (texto) o 3:1 (componentes y gráficos). **[axe]** **[manual]**
 - **CA-115** — Dado la página de inicio y dos páginas de detalle (una con fotos, una sin), cuando se
   analizan con Lighthouse en modo móvil, entonces cada una obtiene al menos 90 en Rendimiento,
-  Accesibilidad, Buenas prácticas y SEO. **[e2e]** (Lighthouse)
+  Accesibilidad, Buenas prácticas y SEO. En modo académico, la categoría SEO se calcula sin la
+  auditoría de "la página es indexable", porque falla a propósito por CA-133; todas las demás
+  auditorías de SEO deben pasar y la nota resultante debe ser de al menos 90. **[e2e]** (Lighthouse)
 - **CA-116** — Dado la página de inicio medida en móvil con red 4G lenta simulada, cuando carga,
   entonces el mayor elemento visible aparece en 2.5 s o menos, el desplazamiento acumulado de
   diseño es 0.1 o menos y el tiempo total de bloqueo es 200 ms o menos. **[e2e]** (Lighthouse)
@@ -521,29 +552,36 @@ respaldo; no hay formulario en esta feature.
 ### L. Textos legales e identificación del operador
 
 Los textos legales (política de tratamiento de datos personales, términos y condiciones, política de
-cancelación) los redacta `content-curator` como borradores. Los identificadores oficiales (número de
-Registro Nacional de Turismo, NIT, razón social y cualquier otro identificador oficial) los entrega
-el operador y nunca se inventan. Esta spec no es asesoría legal.
+cancelación) existen siempre. En **modo académico** son textos de muestra (CA-134); en **modo de
+operador real** los redacta `content-curator` como borradores y requieren revisión. Los
+identificadores oficiales (número de Registro Nacional de Turismo, NIT, razón social y cualquier otro
+identificador oficial) nunca se inventan. Esta spec no es asesoría legal.
 
-- **CA-118** — Dado cada texto legal, cuando se redacta, entonces está marcado en el contenido como
-  "borrador pendiente de revisión" hasta que el humano o su asesor lo marquen como revisado; mientras
-  esté en borrador, la compilación de desarrollo o vista previa lo muestra con un aviso visible
-  "Borrador pendiente de revisión" y la compilación de publicación falla indicando cuál texto sigue
-  en borrador. **[build]** **[e2e]**
+- **CA-118** — Dado cada texto legal, cuando se construye el sitio, entonces: (a) en **modo de
+  operador real** está marcado en el contenido como "borrador pendiente de revisión" hasta que el
+  humano o su asesor lo marquen como revisado; mientras esté en borrador, la compilación de
+  desarrollo o vista previa lo muestra con un aviso visible "Borrador pendiente de revisión" y la
+  compilación de publicación falla indicando cuál texto sigue en borrador; (b) en **modo académico**
+  no se exige revisión: se aplica CA-134 en lugar de este criterio. **[build]** **[e2e]**
 - **CA-119** — Dado un identificador oficial del operador (Registro Nacional de Turismo, NIT, razón
-  social u otro), cuando el dato no ha sido entregado, entonces el sitio no lo muestra (ni "N/D", ni
-  un número de ejemplo, ni un texto de relleno) y la compilación de publicación falla indicando cuál
-  identificador falta; la compilación de desarrollo o vista previa sí se genera. **[build]**
-  **[unit]**
+  social u otro): (a) en **modo de operador real**, cuando el dato no ha sido entregado, el sitio no
+  lo muestra (ni "N/D", ni un número de ejemplo, ni un texto de relleno) y la compilación de
+  publicación falla indicando cuál identificador falta; la compilación de desarrollo o vista previa
+  sí se genera; (b) en **modo académico**, ningún identificador oficial se muestra ni se exige para
+  publicar, y la construcción falla si alguno aparece cargado en los datos, de modo que no se
+  adjunte un identificador a un operador que no existe. **[build]** **[unit]**
 - **CA-120** — Dado cualquier identificador oficial o dato de contacto cargado en el contenido, cuando
-  se construye el sitio, entonces la construcción de publicación falla si su valor coincide con un
-  marcador de relleno conocido (por ejemplo "000", "123456", "XXXX", "ejemplo", "pendiente",
-  "NIT 000.000.000-0") o con un valor marcado como "ficticio", de modo que un dato de prueba no
-  llega al sitio público. **[unit]** **[build]**
-- **CA-121** — Dado el pie de cualquier página, cuando los textos legales ya están marcados como
-  revisados, entonces los tres enlaces del pie (CA-98) llevan a páginas con título principal propio,
-  con la fecha de la última revisión escrita, y el identificador oficial del operador figura junto
-  al nombre en el pie o en la política de datos. **[e2e]**
+  se construye el sitio, entonces la construcción de publicación falla (en ambos modos) si su valor
+  coincide con un marcador de relleno conocido (por ejemplo "000", "123456", "XXXX", "ejemplo",
+  "pendiente", "NIT 000.000.000-0") o con un valor marcado como "ficticio", de modo que un dato de
+  prueba no llega al sitio público. El WhatsApp y el correo reales de CA-82 no son relleno.
+  **[unit]** **[build]**
+- **CA-121** — Dado el pie de cualquier página: (a) en **modo de operador real**, cuando los textos
+  legales ya están marcados como revisados, los tres enlaces del pie (CA-98) llevan a páginas con
+  título principal propio, con la fecha de la última revisión escrita, y el identificador oficial del
+  operador figura junto al nombre en el pie o en la política de datos; (b) en **modo académico**, los
+  tres enlaces llevan a páginas con título principal propio y el rótulo de CA-134, sin fecha de
+  revisión legal ni identificador oficial. **[e2e]**
 
 ### M. Adiciones de la revisión del 2026-10-10 (fase 2)
 
@@ -560,30 +598,111 @@ el operador y nunca se inventan. Esta spec no es asesoría legal.
   láminas de altitud, entonces las aprueba por escrito o pide ajustes; la implementación no se da
   por cerrada sin esa aprobación. **[manual]**
 
+### N. Modo de ejercicio académico (revisión del 2026-10-11, aprobada por el humano el 2026-10-11)
+
+Texto propuesto del aviso (el texto exacto y su presentación los fija `ui-designer`):
+**"Proyecto académico. Este sitio no ofrece servicios turísticos reales."**
+
+- **CA-125** — Dado los datos del sitio, cuando se construye (cualquier compilación), entonces
+  declaran de forma explícita si el sitio es un ejercicio académico o tiene un operador real; si la
+  declaración falta o no es válida, la construcción falla indicando el motivo, y el modo nunca se
+  deduce de otros datos. **[build]** **[unit]**
+- **CA-126** — Dado el modo académico, cuando abro cualquier página (inicio, cada página de detalle,
+  las tres páginas legales, créditos y la 404), entonces veo el aviso "Proyecto académico. Este sitio
+  no ofrece servicios turísticos reales." (texto propuesto) dentro de la primera pantalla a 360 px, y
+  el aviso aparece en todas esas páginas sin excepción. **[e2e]**
+- **CA-127** — Dado el aviso, cuando lo examino con un lector de pantalla, entonces es texto real (no
+  una imagen, ni texto generado solo por estilos), está en el árbol de accesibilidad, se lee en el
+  orden de lectura antes del contenido principal, está en una región identificable con nombre, y no
+  se anuncia de forma automática e insistente al cargar. **[axe]** **[e2e]**
+- **CA-128** — Dado que JavaScript está desactivado o que el ancho es de 360 px, cuando veo cualquier
+  página, entonces el aviso se ve completo, sin cortarse ni provocar desplazamiento horizontal, y no
+  tapa ningún control, enlace ni elemento que reciba foco de teclado. **[e2e]**
+- **CA-129** — Dado el aviso, cuando intento quitarlo, entonces no hay ningún control para cerrarlo,
+  minimizarlo ni "no volver a mostrar"; reaparece al recargar la página, al navegar a otra y en una
+  visita nueva, y no depende de ninguna preferencia guardada. **[e2e]**
+- **CA-130** — Dado el aviso, cuando mido su contraste, entonces el texto cumple al menos 4.5:1 sobre
+  su fondo y su tamaño de letra es de al menos 14 px, según los tokens del diseño. **[axe]**
+  **[manual]**
+- **CA-131** — Dado el modo académico, cuando veo la sección de contacto, entonces junto a la acción
+  de WhatsApp y al correo hay una frase que aclara que el contacto es de prueba y que no se reservan
+  ni se venden salidas (texto propuesto: "Este contacto es de prueba: no se reservan ni se venden
+  salidas."), de modo que nadie crea que contrata un servicio. *Recomendación del analista; no se
+  deduce de las decisiones del humano.* **[e2e]**
+- **CA-132** — Dado el modo académico, cuando activo la acción de WhatsApp, entonces el mensaje
+  inicial indica que la consulta viene de un proyecto académico de prueba (además de nombrar el
+  destino si vengo de uno, según CA-83), de modo que quien recibe el mensaje sabe de dónde viene.
+  *Recomendación del analista.* **[e2e]**
+- **CA-133** — Dado el modo académico, cuando examino cualquier página (inicio, detalle, legales,
+  créditos, 404) en la compilación de publicación, entonces declara que no debe indexarse, el archivo
+  de instrucciones para buscadores pide no indexar el sitio, y no existe mapa del sitio. **[build]**
+  **[e2e]**
+- **CA-134** — Dado el modo académico, cuando abro la política de datos, los términos o la política
+  de cancelación, entonces existen como textos de muestra y cada uno lleva, antes del contenido, un
+  rótulo visible que dice que es un texto de muestra de un ejercicio académico y que no tiene
+  validez legal (texto propuesto: "Texto de muestra de un ejercicio académico. No tiene validez
+  legal."); la publicación no exige revisión de un asesor; si a alguno de los tres le falta el
+  rótulo, la construcción falla. **[build]** **[e2e]**
+- **CA-135** — Dado la política de datos de muestra, cuando la leo, entonces dice con veracidad qué
+  hace el sitio con los datos: que el enlace de WhatsApp lleva a una conversación en WhatsApp con el
+  número del sitio y el mensaje que escriba el visitante; que el enlace de correo abre el programa de
+  correo del visitante; que al cargar el mapa el navegador envía la dirección IP y las zonas
+  consultadas al proveedor de las teselas (OpenStreetMap); que el proveedor de alojamiento puede
+  registrar datos técnicos de la conexión; y que el sitio no guarda datos de visitantes, no usa
+  cookies de seguimiento ni analítica. **[e2e]** **[manual]**
+- **CA-136** — Dado cualquier página del sitio, incluida la sección del mapa ya cargada, cuando
+  registro las conexiones del navegador a otros orígenes durante la carga, entonces cada origen
+  externo contactado está nombrado en la política de datos; si una página contacta un origen no
+  nombrado, la prueba falla. **[e2e]**
+- **CA-137** — Dado los textos de destinos, rutas, contacto y legales, cuando se revisan, entonces
+  describen lugares y recorridos y no prometen servicios, guías, cupos, reservas ni precios;
+  una búsqueda automática de "reserva", "reservar", "cupo", "precio", "tarifa", "COP" y "guía
+  incluido" no encuentra ninguna oferta, y cualquier coincidencia se revisa a mano. **[manual]**
+  **[e2e]**
+- **CA-138** — Dado datos que declaran **modo de operador real**, cuando se construye el sitio,
+  entonces el aviso académico no aparece (CA-126 a CA-130 no aplican), las páginas pueden indexarse y
+  hay mapa del sitio (CA-97), los textos legales exigen revisión (CA-118), los identificadores
+  oficiales son obligatorios para publicar (CA-119) y rige CA-121 (a); es decir, las reglas estrictas
+  anteriores a esta revisión siguen vigentes y comprobables en ese modo. **[build]** **[e2e]**
+- **CA-139** — Dado cualquiera de los dos modos, cuando se hace la compilación de publicación,
+  entonces falla si: una altitud o un umbral no está verificado (CA-104, CA-122); una foto no cumple
+  licencia, atribución o texto alternativo (CA-46 a CA-48); una ruta es inválida (CA-77, CA-78); hay
+  dos destinos principales en un piso o ningún destino publicado (CA-15, CA-100); los datos de
+  contacto están incompletos o son de relleno (CA-82, CA-120); o no se ha declarado la dirección
+  pública completa del sitio. **[build]**
+
 ## Requisitos no funcionales
 
 - **Accesibilidad:** WCAG 2.2 AA; teclado completo; lector de pantalla; contraste (CA-106 a
-  CA-109, CA-114).
+  CA-109, CA-114, CA-127, CA-130).
 - **Rendimiento:** Lighthouse móvil ≥ 90 en las cuatro categorías; LCP ≤ 2.5 s, CLS ≤ 0.1, TBT ≤
   200 ms en móvil con 4G lenta simulada (CA-115, CA-116). Las imágenes fuera de pantalla y los
   códigos de galería y mapa no se descargan en la carga inicial (CA-66, CA-79).
-- **Responsive:** usable desde 360 px (CA-110, CA-111).
+- **Responsive:** usable desde 360 px (CA-110, CA-111, CA-128).
 - **Sin JavaScript:** hero, destinos, detalle, galería como cuadrícula, mapa como lista de rutas con
-  enlaces, menú de navegación y contacto (WhatsApp y correo) siguen funcionando (CA-65, CA-80,
-  CA-112, CA-123).
+  enlaces, menú de navegación, aviso académico y contacto (WhatsApp y correo) siguen funcionando
+  (CA-65, CA-80, CA-112, CA-123, CA-128).
 - **Movimiento:** solo el dibujo del perfil y el desvanecido del visor; todo se anula con
   `prefers-reduced-motion` (CA-9, CA-62, CA-113).
-- **SEO:** títulos y descripciones únicos, mapa del sitio, idioma es-CO (CA-33, CA-95 a CA-97).
+- **SEO:** títulos y descripciones únicos e idioma es-CO (CA-33, CA-95, CA-96). En modo de operador
+  real, mapa del sitio e indexación (CA-97); en modo académico, sitio no indexable (CA-133).
 - **Conectividad limitada:** el texto y las fichas son legibles aunque las imágenes, el visor o el
   mapa no carguen (CA-63, CA-75, CA-117).
-- **Datos:** el sitio no publica destinos, rutas, fotos, textos legales ni identificadores oficiales
-  incompletos, de relleno o sin verificar (CA-20, CA-46, CA-47, CA-77, CA-78, CA-104, CA-118 a
-  CA-120, CA-122).
+- **Datos:** el sitio no publica destinos, rutas, fotos, datos de contacto, textos legales ni
+  identificadores oficiales incompletos, de relleno o sin verificar, según el modo (CA-20, CA-46,
+  CA-47, CA-77, CA-78, CA-104, CA-118 a CA-120, CA-122, CA-139).
+- **Transparencia:** el sitio dice qué es (CA-126), con qué datos trabaja y a qué terceros se
+  conecta (CA-135, CA-136).
 
 ## Fuera de alcance
 
 - Formulario de contacto (confirmado el 2026-10-10). Los criterios CA-84 a CA-90 y CA-92 están
   retirados por esto.
+- Operación real del servicio: prestar salidas, atender reservas, cobrar o asignar guías. El sitio es
+  un ejercicio académico (2026-10-11).
+- Obtener o mostrar identificadores oficiales de un operador (Registro Nacional de Turismo, NIT,
+  razón social) mientras el sitio sea un ejercicio académico.
+- Asesoría legal y revisión jurídica de los textos mientras el sitio sea un ejercicio académico.
 - Versión en inglés u otros idiomas.
 - Reservas, pagos, precios, cupos, calendario de salidas y panel de administración.
 - Cuentas de usuario, reseñas o comentarios.
@@ -665,24 +784,70 @@ criterios indicados.
     como control "Menú" que funciona sin JavaScript (CA-123); revisión humana con captura del
     perfil y las láminas construidos (CA-124).
 
+## Decisiones tomadas (2026-10-11): modo de ejercicio académico
+
+Decisión de alcance aprobada por el humano. La redacción de los criterios que la desarrollan (sección
+N y los criterios ajustados) fue **aprobada por el humano el 2026-10-11**, incluidas las confirmaciones de PA-18.
+
+- El sitio es un **ejercicio académico**: no hay operador real ni datos legales; no hay Registro
+  Nacional de Turismo, NIT ni razón social, y no se inventan.
+- Se añade un **modo de ejercicio académico** declarado en los datos del sitio (CA-125).
+- **Aviso visible en todas las páginas**, no cerrable, accesible, con contraste AA y visible sin
+  JavaScript y a 360 px (CA-126 a CA-130). Texto propuesto: "Proyecto académico. Este sitio no
+  ofrece servicios turísticos reales."
+- **Sin indexar** en buscadores, también en la compilación de publicación (CA-133).
+- **Identificadores oficiales:** no se muestran ni se exigen para publicar en modo académico; sigue
+  prohibido inventarlos o publicar relleno (CA-119, CA-120).
+- **Textos legales de muestra:** existen las tres páginas, rotuladas como muestra sin validez legal,
+  sin revisión de asesor (CA-134); la política de datos dice la verdad sobre lo que el sitio hace con
+  los datos (CA-135, CA-136).
+- **El resto de la puerta de publicación sigue estricto** en ambos modos (CA-139).
+- **WhatsApp y correo reales se mantienen**, para probar la conexión; el horario no cambia (CA-82).
+  Se propone aclarar en el contacto que es una prueba (CA-131, CA-132).
+- **Lista de destinos y rutas aprobada** (PA-15 cerrada). Los textos describen lugares y recorridos
+  y no prometen servicios, guías, cupos ni precios (CA-137).
+- El sitio se desplegará en un servicio de alojamiento con dominio por definir; la dirección pública
+  del sitio es un dato obligatorio para publicar (CA-139) y queda como pregunta abierta (PA-17).
+- **El modo de operador real se conserva** en la spec como comportamiento verificable (CA-138). Razón
+  del analista: las reglas estrictas ya están construidas y probadas, y el modo académico es una
+  variante declarada en los datos; así no se pierden. Riesgo señalado: un sitio de operador real que
+  quedara por error declarado como académico mostraría el aviso y no sería indexable (falla
+  visible y segura); un sitio académico declarado por error como real fallaría la publicación por
+  faltar identificadores (falla segura). Por eso la declaración es obligatoria y explícita
+  (CA-125).
+
 ## Preguntas abiertas
 
 Ninguna bloquea el desarrollo.
 
-- **PA-8 (parte legal) — Documentos e identificadores que exige la ley.** Confirmar con asesoría
-  legal qué documentos son obligatorios para un operador de turismo en Colombia, qué identificadores
-  oficiales deben mostrarse y si se necesitan seguros u otros avisos. `content-curator` redacta los
-  textos como borrador (CA-118); los identificadores reales (Registro Nacional de Turismo, NIT, razón
-  social) los entrega el operador antes del lanzamiento público y, mientras tanto, no se muestran
-  (CA-119). Bloquea el lanzamiento público, no el desarrollo.
-- **PA-15 — Aprobación de la lista de contenido del primer lanzamiento.** `content-curator` propone
-  la lista de destinos y rutas dentro de lo autorizado por el humano: entre 6 y 8 destinos con al
-  menos uno por piso, y de 3 a 5 rutas, con al menos una foto con licencia verificada por piso donde
-  exista; los destinos sin fotos salen con lámina de altitud. **El humano aprueba la lista
-  propuesta** antes de publicarse.
+- **PA-8 (parte legal) — reclasificada el 2026-10-11.** En modo académico ya no hay documentos ni
+  identificadores legales pendientes: los textos son de muestra (CA-134) y los identificadores no se
+  muestran (CA-119). La pregunta solo vuelve a aplicar si el sitio pasa a un operador real: confirmar
+  entonces con asesoría legal qué documentos e identificadores son obligatorios (Ley 1581 de 2012,
+  Registro Nacional de Turismo, seguros) y entregar los identificadores reales (CA-118, CA-119,
+  CA-138).
+- **PA-15 — cerrada el 2026-10-11.** El humano aprobó la lista de destinos y rutas.
+- **PA-17 — Dominio y dirección pública del sitio.** El dominio está por definir; es un dato
+  obligatorio para la compilación de publicación (CA-139). Bloquea la publicación, no el desarrollo.
+  Recomendación: definirlo antes de publicar y registrarlo como dato del sitio.
+- **PA-18 — Confirmaciones pedidas al humano sobre la revisión del 2026-10-11 (cerrada: el humano
+  las aceptó todas el 2026-10-11, tal como se proponen):**
+  1. **CA-115 y CA-133:** que el sitio no sea indexable hace fallar a propósito la auditoría de
+     indexación de Lighthouse; se propone medir SEO ≥ 90 sin esa auditoría. Alternativa: aceptar que
+     la categoría SEO quede por debajo de 90 en modo académico.
+  2. **CA-97 y CA-133:** en modo académico no hay mapa del sitio. Alternativa: publicarlo, lo que
+     contradice no indexar.
+  3. **CA-119 (b):** en modo académico la construcción falla si aparece cargado un identificador
+     oficial. Alternativa: simplemente no mostrarlo.
+  4. **CA-131 y CA-132:** aclaración de prueba en el contacto y en el mensaje inicial de WhatsApp,
+     propuestas por el analista; no se dedujeron de las decisiones del humano.
+  5. **Texto del aviso** de CA-126 y presentación (lo fija `ui-designer`); texto de CA-131 y CA-134.
+  6. **Horario** en la sección de contacto: "lunes a viernes, de 10 a. m. a 10 p. m." sugiere un
+     servicio de atención; se mantiene por decisión del humano, y CA-131 aclara que es una prueba.
 
 ---
-Estado: APROBADA (2026-10-10, aprobada por el humano)
+Estado: APROBADA (2026-10-10, aprobada por el humano). Revisión del 2026-10-11 (modo de ejercicio
+académico): APROBADA (2026-10-11, por el humano).
 
 Nota de revisión (2026-10-10, tras la fase 2): se incorporaron los supuestos de diseño aceptados por
 el humano. Criterios cambiados: CA-2, CA-5, CA-7, CA-21, CA-22, CA-23, CA-41, CA-42, CA-44, CA-52,
@@ -690,5 +855,10 @@ CA-68, CA-69, CA-70, CA-103 y CA-110. Criterios añadidos: CA-122, CA-123 y CA-1
 
 Nota de revisión (2026-10-10, tras la fase 3): CA-110 exceptúa también las líneas de ruta del mapa
 del mínimo de 44 px, por decisión del humano.
+
+Nota de revisión (2026-10-11, modo de ejercicio académico; aprobada por el humano el 2026-10-11): el sitio
+pasa a ser un ejercicio académico. Criterios cambiados: CA-1, CA-97, CA-98, CA-108, CA-115, CA-118,
+CA-119, CA-120 y CA-121 (los de modo, con ramas académica y de operador real), y HU-9, HU-12 y HU-13.
+Criterios añadidos: CA-125 a CA-139 (sección N) y HU-14. Ninguno retirado ni renumerado.
 
 Diseño de la fase 2 aprobado (2026-10-10). Lista para continuar con `software-architect` (fase 3).

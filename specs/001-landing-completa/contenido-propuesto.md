@@ -1,6 +1,6 @@
 # Contenido propuesto del primer lanzamiento (T-028)
 
-Estado: **PROPUESTA — pendiente de aprobación humana** (T-029). Redactada el 2026-10-10 por
+Estado: **APROBADA (2026-10-11, por el humano)** (T-029), con las decisiones de la sección 7. Redactada el 2026-10-10 por
 `content-curator`. No se ha escrito nada en `src/content/` ni en `src/assets/`.
 
 Este documento propone qué destinos, rutas y fotos entrarían en el primer lanzamiento. No es una
@@ -413,11 +413,14 @@ Estado: PROPUESTA — pendiente de aprobación humana (T-029)
 ## 7. Decisiones del humano (2026-10-10)
 
 El humano aceptó las recomendaciones del asistente principal sobre las decisiones de la sección 6.
-La lista **no queda aprobada del todo** (T-029 sigue abierta) porque falta su respuesta a la
-primera pregunta.
+**Actualización del 2026-10-11:** el humano aclaró que el sitio es un **ejercicio académico**. No
+existe un operador real que venda estas salidas, así que la pregunta sobre qué salidas se ofrecen
+de verdad no aplica y la lista queda **aprobada** (T-029). Consecuencias para el contenido:
 
-**Pendiente, bloquea el contenido real:** qué salidas ofrece de verdad el servicio. Solo deben
-publicarse los destinos que el operador realmente opera.
+- Los textos describen lugares y recorridos; no prometen servicios, guías, cupos ni precios.
+- No existen datos legales del operador (RNT, NIT, razón social) y no se inventan.
+- Todo dato de destinos, rutas y fotos sigue siendo real y verificado con fuente: que el servicio
+  sea un ejercicio no relaja la veracidad de la información geográfica ni las licencias.
 
 **Aceptado:**
 
@@ -435,3 +438,25 @@ publicarse los destinos que el operador realmente opera.
 - **Fotos:** ampliar la búsqueda en T-034 y aceptar láminas de altitud donde falten.
 - **Titular del hero:** se mantiene el rango del departamento, siempre que la altitud mínima y la
   máxima queden verificadas con fuente.
+
+## 8. Correcciones y verificación de la tanda H3 (2026-10-11)
+
+Resultado de T-030 a T-033, con fuentes leídas el 2026-10-11:
+
+- **Sexto destino:** se conserva **Santa Fe de Antioquia** (sin fotos de naturaleza, con lámina de
+  altitud). Busqué reemplazos de naturaleza en piso cálido en Occidente, Nordeste y Oriente y no hallé
+  ninguno con fuente sólida de acceso: San Luis y San Rafael tienen cabeceras de 1050 y 1000 m
+  (Anuario 2012), es decir, templado o en el umbral; Sopetrán, Olaya, Liborina, San Jerónimo y
+  Sabanalarga (cálidos) no devolvieron atractivos de naturaleza con fuente.
+- **Páramo de Belmira:** la altitud del destino pasa de 3335 o 3350 m a **3270 m** (Alto de Belmira,
+  Anuario Estadístico 2012, tabla 2.5.1, Gobernación de Antioquia). El piso no cambia.
+- **Parque Arví:** la Corporación Parque Arví declara 2340 a 2680 m (no 2409 m de Wikipedia). Se usa
+  el límite inferior, **2340 m**, y su clima frío de 12 a 18 °C.
+- **Piedra del Peñol:** 2137 m sigue viniendo solo de Wikipedia (respaldo enciclopédico). No hallé cota
+  institucional de la cima.
+- **Río Claro:** 150 m es la altura de la cabecera de Puerto Triunfo; la reserva no tiene cota con
+  fuente.
+- **Territorio:** máxima de 4080 m confirmada en la Gobernación (Anuarios 2012 y 2014). La mínima de 0 m
+  es una deducción (costa en el Caribe; cabeceras costeras a 2 m). Umbrales de 1000, 2000 y 3000 m
+  leídos en Marca País Colombia; la nota IDEAM-METEO/003-2025 propone otros cortes (800, 1800, 2800 m).
+- **Sin trazado:** el servicio Overpass sigue sin responder bien; las rutas (T-035) siguen pendientes.
