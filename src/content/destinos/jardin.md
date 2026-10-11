@@ -7,16 +7,13 @@ altitude:
   source: 'Altura de la cabecera municipal. Gobernación de Antioquia, Anuario Estadístico 2012, tabla 1.4.1: http://www.antioquia.gov.co/images/pdf/anuario_2012/data/generalidades/HI141.html (leída el 2026-10-11). Wikipedia en español coincide (1750 m).'
 featured: true
 access: Por carretera, a unos 134 km de Medellín, en el Suroeste antioqueño.
+sources:
+  - 'Distancia de 134 km a Medellín y Cueva del Esplendor (cascada de más de 100 m, caminata por caminos rurales, fincas cafeteras y bosque nativo, de 6 a 8 horas ida y vuelta, solo con guía) (leída el 2026-10-11; publicada el 13 de enero de 2026): https://www.elpais.com.co/turismo/la-imponente-cascada-que-brota-de-una-cueva-y-atrae-a-los-turistas-de-naturaleza-en-el-suroeste-de-antioquia-la-conoce-1256.html'
+  - 'Acceso regulado con guías locales autorizados, ecosistema frágil con murciélagos, rapel solo con guías certificados y equipo especializado, sendero empinado y resbaloso (leída el 2026-10-11; publicada el 10 de enero de 2026): https://www.bluradio.com/turismo/esta-es-una-de-las-cascadas-mas-famosas-de-antioquia-visitarla-requiere-una-caminata-ecologica-rg10'
+  - 'Temperatura media de la cabecera, 19 °C (leída el 2026-10-11): Gobernación de Antioquia, Anuario Estadístico 2012, tabla 1.4.1, http://www.antioquia.gov.co/images/pdf/anuario_2012/data/generalidades/HI141.html'
+  - 'Charco Corazón, Alto de las Flores, trucheras y tres pisos térmicos en el municipio (leída el 2026-10-11): https://es.wikipedia.org/wiki/Jard%C3%ADn_(Antioquia)'
+  - 'Duración, distancia, desnivel, dificultad y edad a nivel del destino: no hay fuente; esos datos irán en las rutas.'
 ---
-
-<!--
-Fuentes de este texto (leídas el 2026-10-11):
-- Distancia de 134 km, Cueva del Esplendor (6 a 8 horas ida y vuelta, solo con guía): https://www.elpais.com.co/turismo/la-imponente-cascada-que-brota-de-una-cueva-y-atrae-a-los-turistas-de-naturaleza-en-el-suroeste-de-antioquia-la-conoce-1256.html (13 de enero de 2026).
-- Acceso regulado, ecosistema frágil con murciélagos, rapel solo con guías certificados: https://www.bluradio.com/turismo/esta-es-una-de-las-cascadas-mas-famosas-de-antioquia-visitarla-requiere-una-caminata-ecologica-rg10 (10 de enero de 2026).
-- Temperatura media de la cabecera (19 °C): Anuario Estadístico 2012 de la Gobernación, tabla 1.4.1.
-- Charco Corazón, Alto de las Flores, trucheras, tres pisos térmicos en el municipio: https://es.wikipedia.org/wiki/Jard%C3%ADn_(Antioquia)
-- Sin fuente de duración, distancia, desnivel, dificultad ni edad a nivel del destino: esos datos irán en las rutas.
--->
 
 Jardín es un pueblo del Suroeste antioqueño, entre montañas cubiertas de fincas cafeteras. Su casco urbano está a 1750 m de altitud y la temperatura media allí es de unos 19 °C: un clima templado, ni caluroso ni frío.
 

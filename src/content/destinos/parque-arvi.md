@@ -8,16 +8,13 @@ altitude:
 featured: true
 climate: { minC: 12, maxC: 18 }
 access: En el Metro de Medellín, Línea K hasta la estación Santo Domingo y, desde allí, el cable aéreo Línea L hasta el parque.
+sources:
+  - 'Rango de altitud de 2340 a 2680 m, clima frío de 12 a 18 °C, bosque húmedo de montaña, robledales y plantaciones forestales de más de 50 años (leída el 2026-10-11): https://parquearvi.org/publicaciones/292/fauna-y-flora-en-arvi/'
+  - 'Horario (miércoles a lunes, de 9:30 a. m. a 5:30 p. m.; cerrado los martes por mantenimiento) y sede cerca de la llegada del Cable Arví (leída el 2026-10-11): https://parquearvi.org/publicaciones/288/donde-esta-el-parque-arvi/'
+  - 'Doce recorridos con nombre (leída el 2026-10-11): https://parquearvi.org/publicaciones/290/senderos/'
+  - 'Cable aéreo Línea L desde la estación Santo Domingo de la Línea K, 54 km de senderos y Camino Cieza de León de más de 1500 años (leída el 2026-10-11; el artículo avisa de que necesita más referencias): https://es.wikipedia.org/wiki/Parque_Arv%C3%AD'
+  - 'Duración, distancia, desnivel, dificultad y edad mínima por recorrido: la página de senderos no los trae, por eso se omiten de la ficha.'
 ---
-
-<!--
-Fuentes de este texto (leídas el 2026-10-11):
-- Rango de altitud (2340 a 2680 m), clima frío de 12 a 18 °C, bosque húmedo de montaña, robledales y plantaciones forestales de más de 50 años: https://parquearvi.org/publicaciones/292/fauna-y-flora-en-arvi/
-- Horario (miércoles a lunes, de 9:30 a. m. a 5:30 p. m.; cerrado los martes), sede cerca de la llegada del Cable Arví: https://parquearvi.org/publicaciones/288/donde-esta-el-parque-arvi/
-- Doce recorridos con nombre: https://parquearvi.org/publicaciones/290/senderos/
-- Cable aéreo Línea L desde la estación Santo Domingo (Línea K), 54 km de senderos, Camino Cieza de León de más de 1500 años: https://es.wikipedia.org/wiki/Parque_Arv%C3%AD (con aviso de que necesita más referencias).
-- Sin datos de duración, distancia, desnivel, dificultad ni edad por recorrido: la página de senderos no los trae; se omiten.
--->
 
 Arví es un parque público de montaña al nororiente de Medellín. Su territorio va de 2340 a 2680 m de altitud y allí predomina el clima frío, con temperaturas de entre 12 y 18 °C. Es un bosque húmedo de montaña con mucha niebla, con bosque natural, robledales y plantaciones forestales de más de 50 años.
 

@@ -8,17 +8,14 @@ altitude:
 featured: true
 access: Bus desde la Terminal del Norte de Medellín hasta Belmira, unas 2 horas según el estado de la vía. La caminata sale del parque principal del pueblo.
 difficulty: demanding
+sources:
+  - 'Travesía de 15 a 18 km, hasta 12 horas de noche, entre 2500 y 3300 m, exigencia de 4,5 sobre 5, bus desde la Terminal del Norte y recomendaciones de conducta (leída el 2026-10-11; publicada el 12 de diciembre de 2025): https://www.elcolombiano.com/entretenimiento/turismo/paramo-de-belmira-nocturno-trekking-experiencia-BB31746465'
+  - 'Corantioquia, estudios de capacidad de carga, usos no previstos como turismo irresponsable, más de 30000 hectáreas y cerca del 60 % del agua del Valle de Aburrá (leída el 2026-10-11; publicada el 8 de noviembre de 2024): https://www.elcolombiano.com/antioquia/alerta-por-turismo-masivo-en-el-paramo-de-belmira-santa-ines-en-antioquia-DN25821561'
+  - 'Dos horas por carretera desde Medellín (leída el 2026-10-11): https://colombia.travel/en/medellin/santa-ines-paramo'
+  - 'Cima de 3335 m (leída el 2026-10-11): https://peakvisor.com/park/paramos-de-belmira-y-santa-ines.html'
+  - 'Estado de acceso al 2026-10-11: no se encontró cierre ni límite de visitantes, pero no se pudo confirmar con Corantioquia. Debe confirmarse antes del lanzamiento.'
+  - 'Duración, distancia y desnivel del destino: se omiten porque las fuentes difieren (de 5 a 6 horas con 600 m de subida según una agencia, 12 horas según El Colombiano); irán en la ruta.'
 ---
-
-<!--
-Fuentes de este texto (leídas el 2026-10-11):
-- Travesía de 15 a 18 km, hasta 12 horas, entre 2500 y 3300 m, exigencia 4,5 sobre 5, bus desde la Terminal del Norte, recomendaciones de conducta: https://www.elcolombiano.com/entretenimiento/turismo/paramo-de-belmira-nocturno-trekking-experiencia-BB31746465 (12 de diciembre de 2025).
-- Corantioquia, estudios de capacidad de carga, uso turístico irresponsable, más de 30000 hectáreas, cerca del 60 % del agua del Valle de Aburrá: https://www.elcolombiano.com/antioquia/alerta-por-turismo-masivo-en-el-paramo-de-belmira-santa-ines-en-antioquia-DN25821561 (8 de noviembre de 2024).
-- Dos horas por carretera desde Medellín: https://colombia.travel/en/medellin/santa-ines-paramo
-- Cima de 3335 m: https://peakvisor.com/park/paramos-de-belmira-y-santa-ines.html
-- Estado de acceso al 2026-10-11: no se encontró cierre ni cupo, pero tampoco se pudo confirmar con Corantioquia. Debe confirmarse antes del lanzamiento.
-- Se omiten duración, distancia y desnivel del destino: las fuentes difieren (5 a 6 horas con 600 m de subida según una agencia, 12 horas según El Colombiano); irán en la ruta.
--->
 
 Un páramo es un ecosistema de alta montaña, por encima del bosque, de clima frío y húmedo, con neblina y mucho viento. Aquí crece el frailejón, una planta de hojas gruesas y peludas que atrapa el agua de la niebla. El páramo de Belmira (también llamado Santa Inés) queda a más de 3000 m de altitud, en el Norte antioqueño, y se llega en unas 2 horas desde Medellín. La Gobernación de Antioquia registra su punto más alto, el Alto de Belmira, en unos 3270 m; otras fuentes dan hasta 3350 m.
 

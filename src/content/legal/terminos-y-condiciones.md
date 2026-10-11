@@ -2,7 +2,7 @@
 kind: terms
 title: Términos y condiciones
 summary: Texto de muestra de un ejercicio académico, sin validez legal. Aclara que el sitio informa sobre lugares y no vende ni reserva salidas.
-status: draft
+status: sample
 ---
 
 Este es un texto de muestra de un ejercicio académico. No tiene validez legal y no lo ha revisado ningún asesor.

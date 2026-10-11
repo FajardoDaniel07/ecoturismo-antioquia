@@ -2,7 +2,7 @@
 kind: privacy
 title: Política de tratamiento de datos
 summary: Texto de muestra de un ejercicio académico, sin validez legal. Explica qué datos toca este sitio y con qué servicios externos se conecta.
-status: draft
+status: sample
 ---
 
 Este es un texto de muestra de un ejercicio académico. No tiene validez legal y no lo ha revisado ningún asesor. Describe lo que hace este sitio con los datos de quien lo visita.

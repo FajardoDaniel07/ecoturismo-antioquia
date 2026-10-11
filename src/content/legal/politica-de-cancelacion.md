@@ -2,7 +2,7 @@
 kind: cancellation
 title: Política de cancelación
 summary: Texto de muestra de un ejercicio académico, sin validez legal. Como el sitio no vende salidas, no hay nada que cancelar ni reembolsar.
-status: draft
+status: sample
 ---
 
 Este es un texto de muestra de un ejercicio académico. No tiene validez legal y no lo ha revisado ningún asesor.
