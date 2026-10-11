@@ -12,7 +12,7 @@ humano".
 con sus remisiones en S2, S3.1, S10 y S11, sus filas en "Estados" y en "Trazabilidad", y una
 línea nueva en la dirección visual (sección 5.7). Todo lo demás conserva su aprobación.
 
-**Revisión con capturas (T-058), pendiente de aprobación humana:** está al final, antes de
+**Revisión con capturas (T-058), ajustes aprobados por el humano el 2026-10-11 (R1 a R18, incluido R11 y R12); la aprobación final de CA-124 se da sobre capturas nuevas:** está al final, antes de
 "Pendiente". Propone ajustes a S2, S3.4, S3.5, S3.7 y S6.3, que no cambian hasta aprobarse.
 
 **Punto de control obligatorio: revisión con captura.** La geometría del perfil del hero (S3) y
@@ -1488,7 +1488,7 @@ de 24 px de las líneas de ruta (S9.5) queda cubierta por la excepción de CA-11
 
 ## Revisión con capturas (T-058)
 
-**Pendiente de aprobación humana** (2026-10-11). Es el paso 2 del punto de control inicial
+**Ajustes R1 a R18 aprobados por el humano el 2026-10-11** (incluidos el opcional R11 y R12). Falta la aprobación final de CA-124 sobre capturas nuevas. Es el paso 2 del punto de control inicial
 (CA-124): comparación de las capturas del perfil y las láminas construidos con S3 y S6.3.
 
 Capturas revisadas: escenarios `completo` (7 destinos de prueba), `sin-fotos` (4) y `real` (6), a

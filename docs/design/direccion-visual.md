@@ -110,7 +110,7 @@ Dos familias, ambas con licencia SIL Open Font License y disponibles en Google F
 | Título de sección | Besley | 700 | 42 px (33 px en móvil) | 1.12 |
 | Título de destino | Besley | 700 | 33 px (27 px en móvil) | 1.2 |
 | Cifra de altitud destacada | Besley | 700 | 52 px (42 px en móvil). En la lámina de altitud, según su ancho: 52, 42, 33 o 21 px (sección 6.5) | 1.08 |
-| Entradilla | Instrument Sans | 400 | 21 px. Propuesto en la revisión con capturas (T-058), pendiente de aprobación: 17 px por debajo de 768 px en la explicación del hero | 1.45 |
+| Entradilla | Instrument Sans | 400 | 21 px; 17 px por debajo de 768 px en la explicación del hero (aprobado por el humano el 2026-10-11, R12 de la revisión con capturas) | 1.45 |
 | Cuerpo | Instrument Sans | 400 | 17 px | 1.55 |
 | Botones | Instrument Sans | 600 | 17 px | 1.2 |
 | Etiquetas de ficha, navegación | Instrument Sans | 500 | 17 px | 1.45 |

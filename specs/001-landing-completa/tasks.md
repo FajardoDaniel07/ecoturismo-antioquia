@@ -457,47 +457,47 @@ avisos de contenido.
 
 Puede empezar al terminar T-056, sin esperar a T-060; no se cierra hasta que T-060 esté hecha.
 
-- [ ] **T-062** · `astro-developer` — Sección y llamada de contacto. En modo académico,
+- [x] **T-062** · `astro-developer` — Sección y llamada de contacto. En modo académico,
   frase de aclaración junto a la acción de WhatsApp y al correo, y mensaje inicial de prueba.
   - Archivos: `src/components/sections/Contacto.astro`, `src/pages/index.astro`.
   - CA: CA-36, CA-81, CA-82, CA-83, CA-91, CA-131, CA-132. Depende de: T-056, T-127.
   - Hecho cuando: el número, el horario y el correo se leen como texto, el enlace funciona sin
     JavaScript y la aclaración aparece con `academico` y no con `completo`.
-- [ ] **T-063** · `astro-developer` — Página de detalle, bloques 1 a 6: volver, título, altitud,
+- [x] **T-063** · `astro-developer` — Página de detalle, bloques 1 a 6: volver, título, altitud,
   imagen o lámina, ficha, descripción (el cuerpo Markdown, con `renderBody()`).
   - Archivos: `src/components/sections/DestinoDetalle.astro`, `src/pages/destinos/[slug].astro`.
   - CA: CA-23, CA-31 a CA-34, CA-38, CA-40, CA-42. Depende de: T-056, T-124.
   - Hecho cuando: hay una página por destino publicado, la primera altitud del documento dice
     "metros de altitud" y una ficha de una sola fila se ve completa.
-- [ ] **T-064** · `astro-developer` [P] — Agrupación de la galería.
+- [x] **T-064** · `astro-developer` [P] — Agrupación de la galería.
   - Archivos: `src/lib/gallery/group.ts`, `tests/unit/gallery-group.test.ts`.
   - CA: CA-52. Depende de: T-055.
   - Hecho cuando: las pruebas cubren piso sin fotos, piso con una o dos, unión en cadena y último
     piso.
-- [ ] **T-065** · `astro-developer` — Cuadrícula de fotos y sección de galería, sin visor.
+- [x] **T-065** · `astro-developer` — Cuadrícula de fotos y sección de galería, sin visor.
   - Archivos: `src/components/sections/PhotoGrid.astro`, `Galeria.astro`, `src/pages/index.astro`.
   - CA: CA-41, CA-51, CA-52, CA-53, CA-65. Depende de: T-064.
   - Hecho cuando: con `sin-fotos` no hay sección ni enlace de navegación; con `completo`, cada foto
     lleva etiqueta de piso y crédito.
-- [ ] **T-066** · `astro-developer` — Página de detalle, bloques 7 a 9: fotos, rutas y contacto.
+- [x] **T-066** · `astro-developer` — Página de detalle, bloques 7 a 9: fotos, rutas y contacto.
   - Archivos: `src/components/sections/DestinoDetalle.astro`.
   - CA: CA-35, CA-36, CA-40, CA-41. Depende de: T-063, T-065, T-062.
   - Hecho cuando: un destino sin rutas no muestra el bloque ni su título, y el mensaje de WhatsApp
     nombra el destino.
-- [ ] **T-067** · `astro-developer` [P] — Utilidades de ruta: elevación por punto, distancia
+- [x] **T-067** · `astro-developer` [P] — Utilidades de ruta: elevación por punto, distancia
   acumulada, mínimos y máximos; orden de la lista, letra clave, patrón y variante; configuración del
   mapa.
   - Archivos: `src/lib/routes/geo.ts`, `style.ts`, `map-config.ts`, y sus pruebas.
   - CA: CA-68, CA-69, CA-76. Depende de: T-027.
   - Hecho cuando: las pruebas cubren los cuatro patrones, las tres variantes y la ruta sin elevación
     por punto.
-- [ ] **T-068** · `astro-developer` — Perfil de elevación: modelo y componente con alternativa en
+- [x] **T-068** · `astro-developer` — Perfil de elevación: modelo y componente con alternativa en
   texto.
   - Archivos: `src/lib/routes/elevation-profile.ts`, su prueba,
     `src/components/ui/ElevationProfile.astro`.
   - CA: CA-76. Depende de: T-067.
   - Hecho cuando: una ruta sin elevación por punto devuelve `null` y no pinta nada.
-- [ ] **T-069** · `astro-developer` — Sección del mapa en su forma estática: lista de rutas con
+- [x] **T-069** · `astro-developer` — Sección del mapa en su forma estática: lista de rutas con
   letra clave siempre visible, ficha completa y enlace al destino; muestra de trazo y botón ocultos
   hasta que el mapa esté activo; contenido del panel por ruta en `<template>`.
   - Archivos: `src/components/sections/MapaRutas.astro`, `RouteList.astro`,
@@ -505,11 +505,11 @@ Puede empezar al terminar T-056, sin esperar a T-060; no se cierra hasta que T-0
   - CA: CA-21, CA-67, CA-68, CA-80. Depende de: T-068, T-054.
   - Hecho cuando: sin JavaScript solo hay título, línea y lista a todo el ancho, con la letra clave
     en cada ruta; con `minimo` la sección y su enlace no existen.
-- [ ] **T-070** · `astro-developer` [P] — Trazados para el mapa como archivo estático.
+- [x] **T-070** · `astro-developer` [P] — Trazados para el mapa como archivo estático.
   - Archivos: `src/pages/data/rutas.json.ts`.
   - CA: CA-79. Depende de: T-067.
   - Hecho cuando: `dist/data/rutas.json` existe y pesa menos de 15 KB en gzip con `completo`.
-- [ ] **T-071** · `astro-developer` [P] — Páginas legales: cuerpo con `renderBody()`; rótulo
+- [x] **T-071** · `astro-developer` [P] — Páginas legales: cuerpo con `renderBody()`; rótulo
   de texto de muestra si el estado es `sample`; banda de borrador o fecha de revisión en modo de
   operador real.
   - Archivos: `src/pages/legal/[slug].astro`, `src/components/ui/DraftBanner.astro`,
@@ -517,16 +517,16 @@ Puede empezar al terminar T-056, sin esperar a T-060; no se cierra hasta que T-0
   - CA: CA-118, CA-119, CA-121, CA-134. Depende de: T-049, T-118, T-121, T-124.
   - Hecho cuando: con `academico` las tres páginas llevan el rótulo antes del contenido, sin fecha;
     con `minimo` se ve la banda; con `completo`, la fecha en letras.
-- [ ] **T-072** · `astro-developer` [P] — Página de créditos.
+- [x] **T-072** · `astro-developer` [P] — Página de créditos.
   - Archivos: `src/pages/creditos.astro`.
   - CA: CA-44, CA-45, CA-50. Depende de: T-055, T-049.
   - Hecho cuando: lista tantas fotos como fotos publicadas, y con `sin-fotos` muestra el mensaje de
     S12.
-- [ ] **T-073** · `astro-developer` [P] — Página 404.
+- [x] **T-073** · `astro-developer` [P] — Página 404.
   - Archivos: `src/pages/404.astro`.
   - CA: CA-37. Depende de: T-049.
   - Hecho cuando: `dist/404.html` existe con los dos enlaces.
-- [ ] **T-074** · `astro-developer` [P] — Mapa del sitio y `robots.txt` según `indexable`.
+- [x] **T-074** · `astro-developer` [P] — Mapa del sitio y `robots.txt` según `indexable`.
   El mapa es una ruta dinámica que no genera archivo cuando el sitio no es indexable.
   - Archivos: `src/pages/[sitemap].xml.ts`, `src/pages/robots.txt.ts`, `src/lib/seo/meta.ts`, su
     prueba.
@@ -557,32 +557,32 @@ Puede empezar al terminar T-056, sin esperar a T-060; no se cierra hasta que T-0
 El bloque del visor (T-079 a T-083) y el del mapa (T-084 a T-090) no comparten archivos y pueden
 ir en paralelo.
 
-- [ ] **T-078** · `astro-developer` — Cargador de islas: `IntersectionObserver` con 300 px de margen
+- [x] **T-078** · `astro-developer` — Cargador de islas: `IntersectionObserver` con 300 px de margen
   e `import()` dinámico.
   - Archivos: `src/components/islands/runtime/when-visible.ts`.
   - CA: CA-66, CA-79. Depende de: T-001 (**ADR 0004 aprobado**), T-077.
   - Hecho cuando: un módulo de prueba se descarga solo al acercar su contenedor a la ventana.
-- [ ] **T-079** · `astro-developer` [P] — Estado del visor como funciones puras.
+- [x] **T-079** · `astro-developer` [P] — Estado del visor como funciones puras.
   - Archivos: `src/lib/gallery/viewer-state.ts`, `tests/unit/viewer-state.test.ts`.
   - CA: CA-57, CA-60, CA-64. Depende de: T-077.
   - Hecho cuando: las pruebas cubren extremos, una sola foto y el umbral de 48 px.
-- [ ] **T-080** · `astro-developer` — Componente del visor: envoltorio, plantilla del diálogo,
+- [x] **T-080** · `astro-developer` — Componente del visor: envoltorio, plantilla del diálogo,
   estilos, desvanecido y bloqueo del desplazamiento; `srcset` de la imagen ampliada en el build.
   - Archivos: `src/components/islands/GalleryLightbox.astro`,
     `src/components/sections/PhotoGrid.astro`.
   - CA: CA-55, CA-59, CA-61, CA-62, CA-65. Depende de: T-078, T-001 (**ADR 0005 aprobado**).
   - Hecho cuando: sin JavaScript no hay diálogo ni botones en el documento.
-- [ ] **T-081** · `astro-developer` — Visor: miniaturas como botones, abrir, cerrar, foco de vuelta.
+- [x] **T-081** · `astro-developer` — Visor: miniaturas como botones, abrir, cerrar, foco de vuelta.
   - Archivos: `src/components/islands/gallery-lightbox.client.ts`.
   - CA: CA-54, CA-55, CA-56, CA-61. Depende de: T-080, T-079.
   - Hecho cuando: Enter y Espacio abren, Esc cierra y el foco vuelve a la miniatura.
-- [ ] **T-082** · `astro-developer` — Visor: anterior y siguiente, flechas, extremos desactivados,
+- [x] **T-082** · `astro-developer` — Visor: anterior y siguiente, flechas, extremos desactivados,
   contador, anuncios, deslizamiento.
   - Archivos: `src/components/islands/gallery-lightbox.client.ts`.
   - CA: CA-57, CA-58, CA-60, CA-64. Depende de: T-081.
   - Hecho cuando: en la primera foto "Anterior" es enfocable y se anuncia desactivado; con una foto
     no hay contador ni botones de cambio.
-- [ ] **T-083** · `astro-developer` — Visor: carga diferida de la imagen ampliada, "Cargando la
+- [x] **T-083** · `astro-developer` — Visor: carga diferida de la imagen ampliada, "Cargando la
   foto…" y "No pudimos cargar esta foto"; conectar el visor en el inicio y en el detalle con tres o
   más fotos.
   - Archivos: `gallery-lightbox.client.ts`, `src/components/sections/Galeria.astro`,
@@ -835,7 +835,7 @@ Se intercalan con H4 a H8 según la tabla "Orden recomendado" del final de este 
   - Archivos: `src/lib/content/load.ts`.
   - CA: CA-32, CA-134. Depende de: T-117.
   - Hecho cuando: una página de prueba pinta el cuerpo de un destino del escenario `completo`.
-- [ ] **T-125** · `qa-engineer` — Escenarios: `siteKind` en todos; nuevo `academico` (publicación,
+- [x] **T-125** · `qa-engineer` — Escenarios: `siteKind` en todos; nuevo `academico` (publicación,
   escenario por defecto); `sin-fotos` pasa a académico; `completo` y `minimo` quedan como operador
   real. Probarlos con `validateSite()` en los dos modos de compilación y aclarar los avisos de
   entradas duplicadas de `minimo`. Corrige el resultado de T-022, ya hecha.
@@ -847,7 +847,7 @@ Se intercalan con H4 a H8 según la tabla "Orden recomendado" del final de este 
 
 ### Contenido real
 
-- [ ] **T-126** · `content-curator` — Declarar el contenido real como académico: `siteKind:
+- [x] **T-126** · `content-curator` — Declarar el contenido real como académico: `siteKind:
   "academic"` en `operador.json`; mover las citas de los comentarios HTML de cada destino al campo
   `sources` y retirar los comentarios.
   - Archivos: `src/content/sitio/operador.json`, `src/content/destinos/*.md`.
