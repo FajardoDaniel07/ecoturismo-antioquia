@@ -499,13 +499,12 @@ const BASE_SLUGS = [
   'laguna-espejo-gris',
 ];
 
-/** Cuatro destinos (uno por piso, solo el primero con una foto grande) y una ruta. */
-function baseOf(kind) {
-  const operator = kind === 'operator';
+/** Sitio académico mínimo y publicable: cuatro destinos (uno por piso, solo el primero con una foto) y una ruta. */
+function baseOf() {
   return {
-    siteKind: kind,
-    legalStatus: operator ? 'reviewed' : 'sample',
-    identifiers: operator,
+    siteKind: 'academic',
+    legalStatus: 'sample',
+    identifiers: false,
     destinos: structuredClone(completo.destinos)
       .filter((d) => BASE_SLUGS.includes(d.slug))
       .map((d) => ({ ...d, photos: d.slug === BASE_SLUGS[0] ? [L32] : [] })),
@@ -513,135 +512,46 @@ function baseOf(kind) {
   };
 }
 
-const PHOTO_FILE = () => `destinos/${BASE_SLUGS[0]}.md`;
+const PHOTO_FILE = `destinos/${BASE_SLUGS[0]}.md`;
 
 /**
- * Defectos. `kinds` dice en qué tipos de sitio se genera: los que pide CA-139 para los dos, y el resto
- * solo en académico (plan, R8). Cada defecto lleva `change(scenario)` y, si hace falta, `post(dir)`.
+ * Defectos de los escenarios `invalido-<nombre>` que prueba tests/build/gates.test.ts. Cada uno añade un
+ * solo defecto a la base: `change(scenario)` edita los datos y `post(dir)` los archivos ya escritos.
  */
 const DEFECTS = {
-  // --- error en ambas compilaciones ---
-  'sin-modo': { kinds: ['academic'], change: (s) => (s.operator = { siteKind: undefined }) },
-  'modo-desconocido': { kinds: ['academic'], change: (s) => (s.operator = { siteKind: 'otro' }) },
+  // CA-125: el tipo de sitio no se declara.
+  'sin-modo': { change: (s) => (s.operator = { siteKind: undefined }) },
+  // CA-119 (b): un sitio académico no carga identificadores.
   'identificador-en-academico': {
-    kinds: ['academic'],
     change: (s) => (s.operator = { identifiers: { rnt: { value: '99871' } } }),
   },
+  // CA-134: un texto legal que no es de muestra.
   'legal-sin-rotulo': {
-    kinds: ['academic'],
     change: () => {},
     post: (dir) =>
       edit(dir, 'legal/politica-de-cancelacion.md', (t) =>
         t.replace('status: sample', 'status: draft'),
       ),
   },
-  'muestra-en-operador': {
-    kinds: ['operator'],
-    change: () => {},
-    post: (dir) =>
-      edit(dir, 'legal/politica-de-cancelacion.md', (t) =>
-        t.replace('status: reviewed', 'status: sample').replace('reviewedOn: 2026-10-10\n', ''),
-      ),
-  },
-  'muestra-con-fecha': {
-    kinds: ['academic'],
-    change: () => {},
-    post: (dir) =>
-      edit(dir, 'legal/politica-de-cancelacion.md', (t) =>
-        t.replace('status: sample', 'status: sample\nreviewedOn: 2026-10-10'),
-      ),
-  },
+  // CA-135: la política de datos no nombra a Vercel.
   'politica-sin-terceros': {
-    kinds: ['academic'],
     change: () => {},
     post: (dir) =>
       edit(dir, 'legal/politica-de-datos.md', (t) => t.replace('Vercel', 'el proveedor')),
   },
-  'altitud-ausente': { kinds: ['academic'], change: (s) => (s.destinos[1].meters = null) },
-  'altitud-cero': { kinds: ['academic'], change: (s) => (s.destinos[1].meters = 0) },
-  'clima-invertido': {
-    kinds: ['academic'],
-    change: (s) => (s.destinos[1].climate = { minC: 30, maxC: 10 }),
-  },
-  'dificultad-invalida': {
-    kinds: ['academic'],
-    change: (s) => (s.destinos[1].difficulty = 'extrema'),
-  },
-  'slug-con-tilde': {
-    kinds: ['academic'],
-    change: (s) => {
-      s.destinos[0].slug = 'cañón-del-sol-quieto';
-      s.rutas[0].destino = 'cañón-del-sol-quieto';
-    },
-  },
-  'nombre-largo': {
-    kinds: ['academic'],
-    change: (s) => (s.destinos[1].name = 'Cafetal de la Loma Alta de Nunca Acabar'),
-  },
-  'nombre-repetido': {
-    kinds: ['academic'],
-    change: (s) => (s.destinos[1].name = s.destinos[0].name),
-  },
-  'foto-pequena': {
-    kinds: ['academic', 'operator'],
-    change: (s) => (s.destinos[0].photos = [[1000, 667, '3:2', 'center']]),
-  },
-  'foto-sin-autor': {
-    kinds: ['academic'],
-    change: () => {},
-    post: (dir) => edit(dir, PHOTO_FILE(), (t) => t.replace(/ {4}author: .*\n/, '')),
-  },
-  'licencia-tipo-nc': {
-    kinds: ['academic'],
-    change: () => {},
-    post: (dir) => edit(dir, PHOTO_FILE(), (t) => t.replace('kind: cc0', 'kind: cc-by-nc')),
-  },
-  'licencia-nombre-nc': {
-    kinds: ['academic', 'operator'],
-    change: () => {},
-    post: (dir) =>
-      edit(dir, PHOTO_FILE(), (t) =>
-        t.replace('kind: cc0', 'kind: cc-by').replace('name: "CC0 1.0"', 'name: "CC BY-NC 4.0"'),
-      ),
-  },
+  // CA-104: una altitud sin la marca de verificada (solo detiene la publicación).
+  'altitud-sin-verificar': { change: (s) => (s.destinos[1].verified = false) },
+  // CA-122: un destino fuera del rango declarado.
+  'fuera-de-rango': { change: (s) => (s.destinos[3].meters = 4200) },
+  // CA-48: una foto con el texto alternativo vacío.
   'alt-vacio': {
-    kinds: ['academic'],
     change: () => {},
-    post: (dir) => edit(dir, PHOTO_FILE(), (t) => t.replace(/ {4}alt: .*\n/, '    alt: ""\n')),
+    post: (dir) => edit(dir, PHOTO_FILE, (t) => t.replace(/ {4}alt: .*\n/, '    alt: ""\n')),
   },
-  'alt-con-autor': {
-    kinds: ['academic', 'operator'],
-    change: () => {},
-    post: (dir) =>
-      edit(dir, PHOTO_FILE(), (t) =>
-        t.replace(/ {4}alt: "(.*)"\n/, '    alt: "$1 de Generador de fixtures"\n'),
-      ),
-  },
-  'ruta-sin-trazado': { kinds: ['academic', 'operator'], change: (s) => (s.rutas[0].points = []) },
-  'ruta-un-punto': {
-    kinds: ['academic'],
-    change: (s) => (s.rutas[0].points = [[-75.5, 6.2, 250]]),
-  },
-  'ruta-elevacion-parcial': {
-    kinds: ['academic', 'operator'],
-    change: (s) =>
-      (s.rutas[0].points = [
-        [-75.5, 6.2, 250],
-        [-75.49, 6.21],
-        [-75.48, 6.22, 400],
-      ]),
-  },
-  'ruta-sin-destino': {
-    kinds: ['academic', 'operator'],
-    change: (s) => (s.rutas[0].destino = 'no-existe'),
-  },
-  'ruta-sin-elevacion': { kinds: ['academic'], change: (s) => (s.rutas[0].elevation = undefined) },
-  'ruta-elevacion-invertida': {
-    kinds: ['academic'],
-    change: (s) => (s.rutas[0].elevation = { minM: 500, maxM: 100 }),
-  },
+  // CA-20: una altitud de cero metros.
+  'altitud-cero': { change: (s) => (s.destinos[1].meters = 0) },
+  // CA-15: dos destinos principales en un mismo piso.
   'dos-principales': {
-    kinds: ['academic', 'operator'],
     change: (s) =>
       s.destinos.push({
         ...structuredClone(s.destinos[0]),
@@ -652,66 +562,17 @@ const DEFECTS = {
         photos: [],
       }),
   },
-  'sin-destinos': {
-    kinds: ['academic', 'operator'],
-    change: (s) => {
-      s.destinos = [];
-      s.rutas = [];
-    },
-  },
-  'fuera-de-rango': { kinds: ['academic'], change: (s) => (s.destinos[3].meters = 4200) },
-  'umbrales-desordenados': {
-    kinds: ['academic'],
-    change: (s) => (s.territory = { thresholds: { temperate: 2000, cold: 1000, paramo: 3000 } }),
-  },
-  // --- error solo en publicación ---
-  'altitud-sin-verificar': {
-    kinds: ['academic', 'operator'],
-    change: (s) => (s.destinos[1].verified = false),
-  },
-  'territorio-sin-verificar': {
-    kinds: ['academic', 'operator'],
-    change: (s) => (s.territory = { verified: false }),
-  },
-  'contacto-de-relleno': {
-    kinds: ['academic', 'operator'],
-    change: (s) => (s.operator = { hours: 'Por definir' }),
-  },
-  'identificador-de-relleno': {
-    kinds: ['operator'],
-    change: (s) =>
-      (s.operator = {
-        identifiers: {
-          rnt: { value: '000' },
-          nit: { value: '123456' },
-          legalName: { value: 'Operadora Montes de Niebla S. A. S.' },
-        },
-      }),
-  },
-  'identificador-ficticio': {
-    kinds: ['operator'],
-    change: (s) =>
-      (s.operator = {
-        identifiers: {
-          rnt: { value: '99871', fictitious: true },
-          nit: { value: '900.555.321-7' },
-          legalName: { value: 'Operadora Montes de Niebla S. A. S.' },
-        },
-      }),
-  },
 };
 
-/** Nombre del escenario: `invalido-<defecto>`; con sufijo `-operador` cuando el sitio es de operador y el defecto existe en los dos tipos. */
-const invalid = Object.entries(DEFECTS).flatMap(([name, defect]) =>
-  defect.kinds.map((kind) => {
-    const both = defect.kinds.length === 2;
-    const scenario = baseOf(kind);
-    defect.change(scenario);
-    if (defect.post) scenario.post = defect.post;
-    return [`invalido-${name}${both && kind === 'operator' ? '-operador' : ''}`, scenario];
-  }),
-);
+const invalid = Object.entries(DEFECTS).map(([name, defect]) => {
+  const scenario = baseOf();
+  defect.change(scenario);
+  if (defect.post) scenario.post = defect.post;
+  return [`invalido-${name}`, scenario];
+});
 
+// `completo` y `minimo` son de operador real, modo fuera de alcance: solo los leen las pruebas
+// unitarias del perfil (tests/unit/helpers/fixture-profile.ts); ni e2e ni build los usan.
 for (const dir of readdirSync(root)) {
   if (dir.startsWith('invalido-')) rmSync(path.join(root, dir), { recursive: true, force: true });
 }

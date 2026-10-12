@@ -18,15 +18,14 @@ const root = process.cwd();
  * Escenarios de prueba (plan, "Escenarios de prueba"). Cada uno se construye en su propia carpeta y se
  * sirve en su propio puerto. `academico` (el primero) es el que usan los proyectos de Playwright por defecto.
  * Su contenido sale de `tests/fixtures/content/<nombre>/`, que genera `scripts/make-fixtures.mjs`.
- * Los `invalido-*` (T-027) se añaden aquí cuando existan.
+ * Los `invalido-*` no están aquí: solo los construye tests/build/gates.test.ts.
  */
 export const scenarios: Scenario[] = [
   // Sitio académico publicable: el escenario por defecto de los proyectos de Playwright (R8).
   { name: 'academico', mode: 'release', port: 4401 },
-  // Operador real: publicación con textos revisados e identificadores.
-  { name: 'completo', mode: 'release', port: 4402 },
-  { name: 'minimo', mode: 'preview', port: 4403 },
-  { name: 'sin-fotos', mode: 'preview', port: 4404 },
+  { name: 'sin-fotos', mode: 'preview', port: 4402 },
+  // Contenido real (src/content), publicado: lo que verá el público.
+  { name: 'real', mode: 'release', port: 4403, contentRoot: 'src/content' },
 ];
 
 export function outDirOf(scenario: Scenario): string {
@@ -57,12 +56,6 @@ export const capturaScenarios: Scenario[] = [
     mode: 'preview',
     port: 4414,
     outDir: path.join(root, '.tmp', 'capturas', 'sitio', 'academico'),
-  },
-  {
-    name: 'completo',
-    mode: 'preview',
-    port: 4411,
-    outDir: path.join(root, '.tmp', 'capturas', 'sitio', 'completo'),
   },
   {
     name: 'sin-fotos',

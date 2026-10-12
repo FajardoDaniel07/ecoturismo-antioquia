@@ -48,9 +48,12 @@ ejecutan aunque sigan sin marcar.
 
 **Avance del plan corto**
 
-- Hechos: C-1 (2026-10-12), C-3 (2026-10-12), C-4 (2026-10-12) y **C-5: el humano aprobó las
-  capturas del perfil y las láminas el 2026-10-12 (CA-124)**.
-- En curso: C-2 y la base de C-7 (`qa-engineer`); C-6 (`astro-developer`).
+- Hechos (2026-10-12): C-1, C-2, C-3, C-4, **C-5 (el humano aprobó las capturas del perfil y las
+  láminas, CA-124)**, C-6, C-7 y C-8. La tabla de cobertura está en
+  [cobertura.md](./cobertura.md): 77 criterios comprobados y 52 sin verificación automática.
+- Suites al cierre de C-8: `lint` en verde; 390 pruebas unitarias; 24 de build; 35 e2e; Lighthouse
+  móvil entre 0,99 y 1 en las cuatro categorías sobre inicio, un detalle con fotos y una legal.
+- Siguiente: C-9 (`quality-reviewer`).
 
 **Retiradas sin sustituto:** T-038 (no aplica en modo académico), T-061 y T-077 (cierres de hito,
 absorbidos por C-5 y C-9), T-075 (prueba de tokens), T-109 (contraste de rutas sobre teselas),
@@ -255,7 +258,7 @@ Al terminar T-021 y T-023, `content-curator` puede empezar H3.
   - Hecho cuando: con `completo` y `SITE_URL` definida, `npm run build:release` pasa; sin
     `SITE_URL`, falla con el mensaje "Falta SITE_URL…"; con `minimo`, `npm run build` pasa y
     `build:release` falla nombrando los tres textos y los tres identificadores.
-- [ ] **T-027** · `qa-engineer` — Escenarios `invalido-*` y pruebas de build que comprueban código
+- [x] **T-027** · `qa-engineer` — Escenarios `invalido-*` y pruebas de build que comprueban código
   de salida y mensaje, en los dos tipos de sitio. Incluye los nuevos: `invalido-sin-modo`,
   `invalido-identificador-en-academico`, `invalido-legal-sin-rotulo` e
   `invalido-muestra-en-operador`. **Cierre de H2. Va después de T-051.**

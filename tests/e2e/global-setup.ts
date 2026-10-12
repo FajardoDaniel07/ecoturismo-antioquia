@@ -21,13 +21,16 @@ function cacheDirOf(scenario: Scenario): string {
 }
 
 function envFor(scenario: Scenario): NodeJS.ProcessEnv {
-  return {
+  const env: NodeJS.ProcessEnv = {
     ...process.env,
     OUT_DIR: outDirOf(scenario),
     CACHE_DIR: cacheDirOf(scenario),
     SITE_URL: urlOf(scenario),
     CONTENT_ROOT: contentRootOf(scenario),
   };
+  // Un NODE_ENV heredado (p. ej. `test`) sacaría a `astro build` del modo de publicación.
+  delete env.NODE_ENV;
+  return env;
 }
 
 const MIME: Record<string, string> = {

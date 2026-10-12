@@ -56,10 +56,21 @@ function once(
   rmSync(cacheDir, { recursive: true, force: true });
   const env: NodeJS.ProcessEnv = {
     ...process.env,
-    CONTENT_ROOT: `tests/fixtures/content/${scenario}`,
+    CONTENT_ROOT: scenario === 'real' ? 'src/content' : `tests/fixtures/content/${scenario}`,
     OUT_DIR: outDir,
     CACHE_DIR: cacheDir,
   };
+  // Vitest fija NODE_ENV=test y MODE: con eso `astro build` ya no compila en modo de publicación.
+  for (const name of [
+    'NODE_ENV',
+    'MODE',
+    'VITEST',
+    'VITEST_MODE',
+    'VITEST_POOL_ID',
+    'VITEST_WORKER_ID',
+  ]) {
+    delete env[name];
+  }
   if (options.siteUrl === null) delete env.SITE_URL;
   else env.SITE_URL = options.siteUrl ?? 'https://fixtures.example';
 
