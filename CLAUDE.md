@@ -179,7 +179,8 @@ primero y luego el código (la spec nunca queda desactualizada).
 - [ ] Sin violaciones axe de nivel serious/critical (WCAG 2.2 AA).
 - [ ] Funciona sin JavaScript (mejora progresiva) y a 360 px de ancho.
 - [ ] La UI respeta `docs/design/direccion-visual.md` y `design.md` (sin estilos fuera de los tokens).
-- [ ] `tasks.md` con todas las tareas marcadas.
+- [ ] `tasks.md` con todas las tareas marcadas, o retiradas de forma explícita (en la feature 001,
+      las que lista su "Plan corto").
 
 ## Convenciones
 

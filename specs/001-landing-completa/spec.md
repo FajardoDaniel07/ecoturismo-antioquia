@@ -956,9 +956,10 @@ Ninguna bloquea el desarrollo.
      el mapa con flechas por atajos propios.
   6. **Perfil de elevación (CA-76):** pasa de mostrarse al seleccionar la ruta a mostrarse siempre en
      su entrada de la lista, porque ya no hay panel.
-  7. **Consecuencia aceptada al retirar el gesto de dos dedos:** en móvil, arrastrar con un dedo
-     sobre el mapa mueve el mapa y no desplaza la página; la sección queda con una zona donde el
-     desplazamiento puede atascarse. Se anota para que el humano lo confirme como aceptable.
+  7. **Desplazamiento en móvil:** resuelto como dice el encabezado de esta pregunta: en pantallas
+     táctiles el mapa no se arrastra con un dedo, así que deslizar sobre él desplaza la página; el
+     mapa se mueve con dos dedos y con los botones. (La redacción anterior de este punto decía lo
+     contrario y quedó superada el 2026-10-12.)
   8. **CA-125 y CA-139:** el valor "operador real" sigue siendo válido en los datos, pero no se
      verifica. La alternativa es rechazarlo en la construcción.
 

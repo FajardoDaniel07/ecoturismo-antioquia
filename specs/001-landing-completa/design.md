@@ -780,6 +780,14 @@ Un diálogo a pantalla completa sobre fondo tinta opaco. Nombre accesible: "Viso
 
 ### S9. Mapa y lista de rutas
 
+> **Superado por el recorte de alcance del 2026-10-11.** Lo construido es el mapa simple: Leaflet
+> con sus controles por defecto, rutas como líneas (y un marcador) del color de su piso, un rótulo
+> con el nombre y un enlace a la lista, y la lista de rutas siempre visible. La letra clave, los
+> patrones de trazo, el halo, el panel de ruta, el encuadre, los controles y el orden de tabulación
+> propios, el gesto de dos dedos y los estados de fallo de esta sección **no se construyeron**.
+> Manda la sección G de la spec y la revisión del ADR 0006. El texto siguiente queda como registro
+> del diseño completo, por si se retoma.
+
 **Jerarquía de contenido:** título, mapa, ruta seleccionada, lista de todas las rutas.
 
 - Título (h2): "Mapa de rutas". Línea: "Cada ruta parte de un destino. Aquí ves cuánto dura y

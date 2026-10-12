@@ -154,6 +154,12 @@ posición y texto alternativo, pie con enlaces de crédito dentro del ciclo de f
 
 ### D4. Mapa con Leaflet 1.9.4 (ADR 0006)
 
+> **Superado en parte por el recorte de alcance del 2026-10-11:** se construyó el mapa simple
+> (revisión al final del ADR 0006 y sección G de la spec). Lo que este plan dice sobre patrones de
+> trazo, halo, letra clave, panel, controles propios, gesto de dos dedos y estados de fallo del
+> mapa no se construyó. Tampoco se ejecutaron las tareas de prueba por criterio: ver "Plan corto"
+> en `tasks.md` y `cobertura.md`.
+
 Última versión estable (la 2.0 sigue en alfa). 42.3 KB de JS y 3.5 KB de CSS en gzip, medidos. Se
 detalla en "Mapa: cómo se resuelve cada punto".
 

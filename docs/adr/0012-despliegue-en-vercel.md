@@ -43,9 +43,11 @@ Tres hechos condicionan la decisión:
    - `robots.txt` **no bloquea el rastreo**: `User-agent: *` con `Disallow:` vacío, sin línea
      `Sitemap` y con un comentario que dice que el sitio no debe indexarse. No existe mapa del
      sitio.
-8. **Coherencia vigilada.** `vercel.json` no conoce el contenido. Una prueba de `tests/build/`
-   falla si el contenido real declara `academic` y la cabecera falta, o si declara `operator` y la
-   cabecera está.
+8. **Coherencia sin vigilancia automática.** `vercel.json` no conoce el contenido. Se previó una
+   prueba de `tests/build/` que fallara si el contenido real declara `academic` y la cabecera
+   falta, o si declara `operator` y la cabecera está; **esa prueba se retiró con el recorte de
+   alcance del 2026-10-11 y no existe**. La coherencia se comprueba a mano en el primer despliegue
+   (cabecera `X-Robots-Tag` en la respuesta) y al cambiar el tipo de sitio.
 9. **Caché.** `Cache-Control: public, max-age=31536000, immutable` para `/_astro/`, cuyos archivos
    llevan huella en el nombre.
 10. **No se define `Referrer-Policy`**: la política de teselas de OpenStreetMap exige que el
@@ -71,8 +73,8 @@ Tres hechos condicionan la decisión:
   sigue en línea.
 - (+) Las ramas se pueden ver en Vercel sin dominio ni datos completos.
 - (+) El sitio no se indexa por ninguna vía conocida, incluido el subdominio `*.vercel.app`.
-- (−) Si el sitio pasa a operador real, hay que retirar la cabecera de `vercel.json`; la prueba lo
-  recuerda fallando.
+- (−) Si el sitio pasa a operador real, hay que retirar la cabecera de `vercel.json` a mano; ninguna
+  prueba lo recuerda.
 - (−) La redacción de CA-133 sobre el archivo de instrucciones no describe lo construido; conviene
   que `spec-writer` la ajuste.
 - (−) El comportamiento de Vercel con `404.html`, las redirecciones y las cabeceras solo se puede
