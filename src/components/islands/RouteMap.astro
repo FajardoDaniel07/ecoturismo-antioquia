@@ -97,8 +97,25 @@ const { dataUrl } = Astro.props;
     stroke: var(--color-zone-paramo);
   }
 
-  .route-map-box .leaflet-container {
-    height: 100%;
+  .route-map-box .route-dot {
+    fill-opacity: 1;
+    stroke: var(--color-bg);
+    stroke-width: 3px;
+  }
+  .route-map-box .route-dot--warm {
+    fill: var(--color-zone-warm);
+  }
+  .route-map-box .route-dot--temperate {
+    fill: var(--color-zone-temperate);
+  }
+  .route-map-box .route-dot--cold {
+    fill: var(--color-zone-cold);
+  }
+  .route-map-box .route-dot--paramo {
+    fill: var(--color-zone-paramo);
+  }
+
+  .route-map-box.leaflet-container {
     background: var(--color-bg);
     font-family: var(--font-sans);
     font-size: var(--text-sm);

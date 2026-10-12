@@ -5,6 +5,7 @@
  */
 import type { APIRoute } from 'astro';
 import { loadSite } from '../../lib/content/load';
+import { ATTRIBUTION_HREF, ATTRIBUTION_TEXT } from '../../lib/routes/map-config';
 import { orderRoutes } from '../../lib/routes/style';
 
 export const GET: APIRoute = async () => {
@@ -18,7 +19,8 @@ export const GET: APIRoute = async () => {
       Math.round(lat * 1e5) / 1e5,
     ]),
   }));
-  return new Response(JSON.stringify({ routes }), {
+  const attribution = { text: ATTRIBUTION_TEXT, href: ATTRIBUTION_HREF };
+  return new Response(JSON.stringify({ attribution, routes }), {
     headers: { 'Content-Type': 'application/json; charset=utf-8' },
   });
 };

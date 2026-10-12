@@ -48,12 +48,15 @@ ejecutan aunque sigan sin marcar.
 
 **Avance del plan corto**
 
-- Hechos (2026-10-12): C-1, C-2, C-3, C-4, **C-5 (el humano aprobó las capturas del perfil y las
-  láminas, CA-124)**, C-6, C-7 y C-8. La tabla de cobertura está en
-  [cobertura.md](./cobertura.md): 77 criterios comprobados y 52 sin verificación automática.
-- Suites al cierre de C-8: `lint` en verde; 390 pruebas unitarias; 24 de build; 35 e2e; Lighthouse
-  móvil entre 0,99 y 1 en las cuatro categorías sobre inicio, un detalle con fotos y una legal.
-- Siguiente: C-9 (`quality-reviewer`).
+- Hechos (2026-10-12): C-1 a C-10. El humano aprobó las capturas del perfil y las láminas
+  (C-5, CA-124). La revisión final (C-9) dio un bloqueante, la atribución de OpenStreetMap en las
+  rutas cuando no hay mapa, ya corregido junto con los hallazgos importantes del mapa (C-10).
+- Suites tras C-10: `lint` en verde; 390 pruebas unitarias; 24 de build; 35 e2e; Lighthouse móvil
+  con todas sus aserciones cumplidas. Cobertura en [cobertura.md](./cobertura.md).
+- Corregido además: `CLAUDE.md` estaba registrado en Git como enlace simbólico y Vercel no podía
+  clonar el repositorio ("filename too long"); ahora es un archivo normal.
+- Siguiente: C-11 (aprobación del humano), C-12 (`SITE_URL` en Vercel) y C-13 (fusionar en
+  `master` y comprobar el despliegue).
 
 **Retiradas sin sustituto:** T-038 (no aplica en modo académico), T-061 y T-077 (cierres de hito,
 absorbidos por C-5 y C-9), T-075 (prueba de tokens), T-109 (contraste de rutas sobre teselas),

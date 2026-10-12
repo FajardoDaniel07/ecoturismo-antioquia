@@ -27,14 +27,15 @@ const plateZones = blocks
   .map((b) => b.zone);
 ---
 
-<section id={SECTION_IDS.destinos} aria-labelledby="destinos-titulo" class="pb-16 lg:pb-24">
+<section
+  id={SECTION_IDS.destinos}
+  aria-labelledby="destinos-titulo"
+  tabindex="-1"
+  class="pb-16 focus:outline-none lg:pb-24"
+>
   <ContourDefs zones={plateZones} />
   <div class="mx-auto w-full max-w-page px-5 md:px-8 lg:px-12">
-    <h2
-      id="destinos-titulo"
-      tabindex="-1"
-      class="font-display text-2xl font-bold text-ink focus:outline-none md:text-3xl"
-    >
+    <h2 id="destinos-titulo" class="font-display text-2xl font-bold text-ink md:text-3xl">
       Destinos
     </h2>
     <p class="mt-2 text-ink-muted">Del valle al páramo, de menor a mayor altura.</p>

@@ -3,6 +3,7 @@
  * vertical. Solo existe si la ruta tiene elevación por punto; si no, devuelve `null` (sin gráfico
  * ni hueco). Devuelve trazados y textos; el componente los pinta.
  */
+import { formatDistanceAscent } from '../format/units';
 import { cumulativeKm, elevationStats, hasPointElevation, type Coordinate } from './geo';
 
 export interface ElevationProfileModel {
@@ -56,6 +57,8 @@ export function buildElevationProfile(coords: readonly Coordinate[]): ElevationP
     minM: stats.minM,
     maxM: stats.maxM,
     totalKm: Math.round(totalKm * 10) / 10,
-    altText: `Elevación mínima ${stats.minM} m, máxima ${stats.maxM} m, ${stats.ascentM} m de subida.`,
+    altText: `Elevación mínima ${stats.minM} m, máxima ${stats.maxM} m. Aproximado, calculado sobre el trazado: ${
+      formatDistanceAscent(Math.round(totalKm * 10) / 10, stats.ascentM)?.value ?? ''
+    }.`,
   };
 }

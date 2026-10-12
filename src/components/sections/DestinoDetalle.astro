@@ -19,6 +19,7 @@ import type { Destino, PublishedOperator, Ruta } from '../../lib/content/validat
 import { buildFicha } from '../../lib/ficha/build';
 import { formatAltitude, formatElevationRange } from '../../lib/format/units';
 import { SECTION_IDS } from '../../lib/nav';
+import { ATTRIBUTION_HREF, ATTRIBUTION_TEXT } from '../../lib/routes/map-config';
 import { detailLayout, mainPhoto } from '../../lib/photos/policy';
 
 interface Props {
@@ -59,13 +60,20 @@ const SMALL_SIZES = '(min-width: 1024px) 440px, (min-width: 768px) 480px, calc(1
     <div class="mt-6 grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-10">
       <div class:list={[beside ? 'lg:col-span-5' : 'lg:col-span-7']}>
         {beside ? (
-          <div class="max-w-[30rem] space-y-6">
+          <div class="max-w-(--size-photo-small) space-y-6">
             {destino.photos.map((photo) => (
               <Photo photo={photo} slot="small" sizes={SMALL_SIZES} loading="lazy" credit />
             ))}
           </div>
         ) : main ? (
-          <Photo photo={main} slot="large" sizes={MAIN_SIZES} loading="eager" credit />
+          <Photo
+            photo={main}
+            slot="large"
+            sizes={MAIN_SIZES}
+            loading="eager"
+            fetchpriority="high"
+            credit
+          />
         ) : (
           <AltitudePlate zone={destino.zone} altitudeM={destino.altitude.meters} ratio="3:2" />
         )}
@@ -91,7 +99,7 @@ const SMALL_SIZES = '(min-width: 1024px) 440px, (min-width: 768px) 480px, calc(1
           </h2>
           <div class="mt-4">
             {layout === 'plate-and-small' ? (
-              <ul class="m-0 grid max-w-[30rem] list-none gap-6 p-0 md:max-w-none md:grid-cols-2">
+              <ul class="m-0 grid max-w-(--size-photo-small) list-none gap-6 p-0 md:max-w-none md:grid-cols-2">
                 {destino.photos.map((photo) => (
                   <li>
                     <Photo photo={photo} slot="small" sizes={SMALL_SIZES} loading="lazy" credit />
@@ -112,6 +120,9 @@ const SMALL_SIZES = '(min-width: 1024px) 440px, (min-width: 768px) 480px, calc(1
           <h2 id="rutas-titulo" class="font-display text-xl font-bold text-ink md:text-2xl">
             Rutas de {destino.name}
           </h2>
+          <p class="mt-2 text-sm text-ink-muted">
+            Trazados: <TextLink href={ATTRIBUTION_HREF}>{ATTRIBUTION_TEXT}</TextLink>
+          </p>
           <ul class="m-0 mt-4 grid list-none gap-8 p-0 lg:grid-cols-2">
             {rutas.map((ruta) => (
               <li>

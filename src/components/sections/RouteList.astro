@@ -13,6 +13,7 @@ import { buildFicha } from '../../lib/ficha/build';
 import { formatElevationRange } from '../../lib/format/units';
 import type { Ruta } from '../../lib/content/validate';
 import { buildElevationProfile } from '../../lib/routes/elevation-profile';
+import { ATTRIBUTION_HREF, ATTRIBUTION_TEXT } from '../../lib/routes/map-config';
 
 interface Props {
   rutas: Ruta[];
@@ -23,6 +24,9 @@ const { rutas } = Astro.props;
 
 <div>
   <h3 class="font-display text-xl font-bold text-ink">Todas las rutas</h3>
+  <p class="mt-2 text-sm text-ink-muted">
+    Trazados: <TextLink href={ATTRIBUTION_HREF}>{ATTRIBUTION_TEXT}</TextLink>
+  </p>
   <ul class="m-0 mt-4 grid list-none gap-8 p-0">
     {rutas.map((ruta) => {
       const profile = buildElevationProfile(ruta.geometry.coordinates);

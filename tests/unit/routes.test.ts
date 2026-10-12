@@ -64,7 +64,9 @@ describe('perfil de elevación (CA-76)', () => {
     expect(m).toMatchObject({ minM: 1500, maxM: 1700, width: 300, height: 120 });
     expect(m?.linePath.startsWith('M0 ')).toBe(true);
     expect(m?.areaPath.endsWith('L300 120L0 120Z')).toBe(true);
-    expect(m?.altText).toBe('Elevación mínima 1500 m, máxima 1700 m, 250 m de subida.');
+    expect(m?.altText).toMatch(
+      /^Elevación mínima 1500 m, máxima 1700 m\. Aproximado, calculado sobre el trazado: [\d.,]+ km, 250 m de subida\.$/,
+    );
     expect(m?.totalKm).toBeGreaterThan(0);
   });
 

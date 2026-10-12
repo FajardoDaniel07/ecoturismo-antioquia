@@ -26,6 +26,22 @@ interface RouteData {
 }
 
 const LINE_WEIGHT = 5;
+/** Radio del marcador de inicio: 24 px de diámetro, cómodo de pulsar. */
+const MARKER_RADIUS = 12;
+
+/** Contenido del popup de una ruta: su nombre y el enlace a su entrada en la lista. */
+function buildPopup(route: RouteData): HTMLElement {
+  const popup = document.createElement('div');
+  const title = document.createElement('strong');
+  title.textContent = route.name;
+  const paragraph = document.createElement('p');
+  const link = document.createElement('a');
+  link.href = `#ruta-${route.id}`;
+  link.textContent = 'Ver en la lista';
+  paragraph.append(link);
+  popup.append(title, paragraph);
+  return popup;
+}
 /** Sin ninguna tesela tras este tiempo, el mapa se considera caído. */
 const TILES_TIMEOUT_MS = 10_000;
 
@@ -54,8 +70,13 @@ export async function initRouteMap(box: HTMLElement): Promise<void> {
 
     // En pantallas táctiles un dedo desplaza la página (opción de Leaflet) y dos mueven el mapa.
     const touch = L.Browser.mobile || window.matchMedia('(pointer: coarse)').matches;
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const map = L.map(box, {
       attributionControl: false,
+      zoomControl: false,
+      ...(reduceMotion
+        ? { zoomAnimation: false, fadeAnimation: false, markerZoomAnimation: false }
+        : {}),
       dragging: !touch,
       scrollWheelZoom: false,
       minZoom: MIN_ZOOM,
@@ -65,6 +86,8 @@ export async function initRouteMap(box: HTMLElement): Promise<void> {
         L.latLng(MAX_BOUNDS[1][0], MAX_BOUNDS[1][1]),
       ),
     });
+
+    L.control.zoom({ zoomInTitle: 'Acercar', zoomOutTitle: 'Alejar' }).addTo(map);
 
     // La rueda solo amplía después de hacer clic en el mapa (si no, atrapa el desplazamiento).
     map.on('click', () => map.scrollWheelZoom.enable());
@@ -101,18 +124,27 @@ export async function initRouteMap(box: HTMLElement): Promise<void> {
         route.coordinates.map(([lon, lat]) => L.latLng(lat, lon)),
         { weight: LINE_WEIGHT, className: `route-line route-line--${route.zone}` },
       ).addTo(map);
+      line.bindPopup(buildPopup(route));
 
-      const popup = document.createElement('div');
-      const title = document.createElement('strong');
-      title.textContent = route.name;
-      const paragraph = document.createElement('p');
-      const link = document.createElement('a');
-      link.href = `#ruta-${route.id}`;
-      link.textContent = 'Ver en la lista';
-      paragraph.append(link);
-      popup.append(title, paragraph);
-      line.bindPopup(popup);
+      // Marcador en el primer punto: a escala de región las rutas son motas, el punto se ve y se pulsa.
+      const start = route.coordinates[0];
+      if (start) {
+        L.circleMarker(L.latLng(start[1], start[0]), {
+          radius: MARKER_RADIUS,
+          className: `route-dot route-dot--${route.zone}`,
+        })
+          .addTo(map)
+          .bindPopup(buildPopup(route));
+      }
       return line;
+    });
+
+    // El botón de cerrar del popup trae su nombre en inglés: se traduce al abrirlo.
+    map.on('popupopen', (event: L.PopupEvent) => {
+      event.popup
+        .getElement()
+        ?.querySelector('.leaflet-popup-close-button')
+        ?.setAttribute('aria-label', 'Cerrar');
     });
 
     map.fitBounds(L.featureGroup(lines).getBounds(), { padding: [FIT_PADDING, FIT_PADDING] });
