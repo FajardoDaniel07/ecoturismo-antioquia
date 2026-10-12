@@ -1587,6 +1587,57 @@ de cifra (21, 33, 42 y 52 px) coinciden con S6.3.
 
 Con R17 la página no debe desbordar a 320 px. El perfil no causa desbordamiento en ningún ancho.
 
+### Ajustes R19 y R20, tras aplicar R1 a R18
+
+**Aprobados por el humano el 2026-10-11.** S3.6 y S3.7 se leen con R19 y R20 aplicados.
+
+Con R1 a R18 aplicados, el contenido real no da avisos y la variante amplia tampoco en ningún
+escenario. Quedan cinco avisos en los escenarios de prueba, de dos patrones. No hay capturas
+nuevas: estas dos reglas salen de la geometría, y su efecto debe confirmarse con las pruebas del
+perfil y con las capturas siguientes.
+
+| N.º | Qué cambia | Antes | Ahora | Por qué |
+|---|---|---|---|---|
+| R19 | Rótulo al margen (R2): franjas que se prueban | Solo la franja de la posición preferida: la del cielo o la de la base | Primero la franja preferida y, si no hay sitio, la contraria | En la variante media, "Salto Cinta de Plata" no cabe en la base junto a otro rótulo; en la franja del cielo sí |
+| R20 | Cifra de altitud máxima (S3.6): posición | Fija: en el cielo, a la izquierda de la cumbre, terminando 8 px antes de ella | Dos posiciones, en este orden: a la izquierda de la cumbre (la de siempre) o a su derecha, sobre el lado lejano, empezando 8 px después de la cumbre y con la misma línea base. Se usa la primera con la que todas las etiquetas de destino encuentran sitio | En la variante compacta, el destino más alto queda justo debajo de la cifra y ninguna posición del cielo le sirve |
+
+**R19: la guía hacia la franja contraria**
+
+- La guía sigue siendo vertical y sale del punto. Hacia arriba solo hay cielo; hacia abajo solo hay
+  roca. Por eso **nunca cruza la línea de cumbres**, vaya a la franja que vaya.
+- Hacia la base sí cruza límites entre pisos y curvas de eco. Es aceptable: son líneas de 1 px
+  que cruza en perpendicular, y no cambian de significado.
+- No es aceptable que cruce un texto (etiqueta, cifra de altitud o nombre de piso), un disco de
+  otro destino u otra guía. Una opción que lo haga se descarta, como ya fija R3.
+- Es general: no depende de los datos; solo amplía dónde buscar antes de avisar.
+
+**R20: la cifra cede ante el destino**
+
+- Regla general: las etiquetas de destino son contenido y enlaces; la cifra de la cumbre es una
+  anotación que repite el titular. Cuando compiten por el mismo sitio, cede la anotación.
+- Procedimiento: se colocan todas las etiquetas con la cifra a la izquierda. Si no queda ningún
+  aviso, ese es el resultado. Si queda alguno, se repite todo con la cifra a la derecha. Se elige
+  la disposición con menos avisos y, a igualdad, la de la izquierda.
+- La posición de la derecha siempre está en el cielo, porque el lado lejano baja desde la cumbre.
+  Cabe en las tres variantes: la cifra mide unos 50 px y el lado lejano, 80 px o más.
+- La cifra no se oculta nunca y la geometría de la montaña no cambia.
+- Se aplica a las tres variantes, no solo a la compacta.
+
+**Opciones descartadas para el segundo patrón**
+
+| Opción | Por qué no |
+|---|---|
+| Quitar las cifras de la figura en la variante compacta | Cambia también el contenido real, que hoy no da avisos, y rompe el lazo entre el titular y el dibujo |
+| Reservar una columna que ningún punto pueda ocupar | Desplaza la cumbre y estrecha la ladera con cualquier contenido, justo en la variante con menos ancho |
+| Aplicar el respaldo S3.10 en la variante compacta | Quita la montaña en el dispositivo principal para resolver un choque entre dos textos |
+
+**Efecto con el contenido real.** Ninguno: hoy no da avisos, así que R19 no llega a probarse y
+R20 se queda en la primera posición. Las dos reglas solo actúan cuando, sin ellas, habría un
+aviso.
+
+**Si R20 no elimina los avisos de la variante compacta** en las pruebas, el caso vuelve a diseño
+antes de regenerar las capturas; no se debe forzar con otra excepción.
+
 ## Pendiente
 
 - La aprobación humana de la revisión con capturas (T-058) y las capturas nuevas con sus ajustes.
@@ -1596,5 +1647,5 @@ Con R17 la página no debe desbordar a 320 px. El perfil no causa desbordamiento
 
 ---
 Estado: APROBADO (2026-10-10, aprobado por el humano). Adición del 2026-10-11 (modo de ejercicio
-académico, S14): aprobada por el humano el 2026-10-11. Revisión con capturas (T-058): pendiente de
-aprobación humana
+académico, S14): aprobada por el humano el 2026-10-11. Revisión con capturas (T-058): ajustes R1 a R20 aprobados por el humano el 2026-10-11; falta su aprobación final de CA-124 sobre capturas
+nuevas
