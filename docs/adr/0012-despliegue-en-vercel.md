@@ -81,3 +81,13 @@ Tres hechos condicionan la decisión:
   comprobar con un despliegue real; queda como tarea de verificación.
 - (−) `CLAUDE.md` necesita un guion más (`build:vercel`) y una línea de despliegue.
 - (−) El dominio sigue sin definir: `SITE_URL` es un paso humano que bloquea la publicación.
+
+## Revisión del 2026-10-12: dirección pública por defecto
+
+Estado de esta revisión: Aceptada (2026-10-12), como decisión menor delegada por el humano.
+
+En el despliegue de producción, si `SITE_URL` no está definida en el proyecto, `scripts/vercel-build.mjs`
+la toma del dominio de producción que Vercel expone como variable de sistema
+(`VERCEL_PROJECT_PRODUCTION_URL`). Así el primer despliegue no depende de un paso manual. Si se
+define `SITE_URL`, manda sobre ese valor; hay que hacerlo al conectar un dominio propio. Sin
+ninguna de las dos, la compilación de publicación sigue fallando con su mensaje (CA-139).
