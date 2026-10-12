@@ -46,17 +46,23 @@ ejecutan aunque sigan sin marcar.
 | C-12 | **Subir el repositorio a GitHub, crear el proyecto en Vercel (Node.js 24) y definir `SITE_URL`** | humano | T-039, T-139 |
 | C-13 | Fusionar en la rama principal y comprobar el primer despliegue | asistente principal, `qa-engineer` | T-116, T-140 |
 
-**Avance del plan corto**
+**Avance del plan corto: completo (2026-10-12)**
 
-- Hechos (2026-10-12): C-1 a C-10. El humano aprobó las capturas del perfil y las láminas
-  (C-5, CA-124). La revisión final (C-9) dio un bloqueante, la atribución de OpenStreetMap en las
-  rutas cuando no hay mapa, ya corregido junto con los hallazgos importantes del mapa (C-10).
-- Suites tras C-10: `lint` en verde; 390 pruebas unitarias; 24 de build; 35 e2e; Lighthouse móvil
-  con todas sus aserciones cumplidas. Cobertura en [cobertura.md](./cobertura.md).
-- Corregido además: `CLAUDE.md` estaba registrado en Git como enlace simbólico y Vercel no podía
-  clonar el repositorio ("filename too long"); ahora es un archivo normal.
-- Siguiente: C-11 (aprobación del humano), C-12 (`SITE_URL` en Vercel) y C-13 (fusionar en
-  `master` y comprobar el despliegue).
+- C-1 a C-10 hechos. El humano aprobó las capturas del perfil y las láminas (C-5, CA-124) y la
+  revisión final (C-11).
+- C-12 y C-13: el repositorio está en GitHub (`FajardoDaniel07/ecoturismo-antioquia`), `master`
+  contiene toda la feature y el sitio está publicado en
+  <https://ecoturismo-antioqueno.vercel.app>. `SITE_URL` no se definió a mano: el guion de build
+  toma el dominio de producción del proyecto (revisión del ADR 0012).
+- Comprobado sobre producción el 2026-10-12: inicio, detalle, legal y créditos responden 200;
+  aviso académico presente; metaetiqueta y cabecera `X-Robots-Tag: noindex, nofollow`; canónica
+  con el dominio de producción; redirección 308 a la barra final; 404 con la página propia;
+  `robots.txt` sin bloqueo; sin `sitemap.xml`; `rutas.json` con la atribución de OpenStreetMap; y
+  caché inmutable en `/_astro/`.
+- Suites al cierre: `lint` en verde; 390 pruebas unitarias; 24 de build; 35 e2e; Lighthouse móvil
+  con sus aserciones cumplidas. Cobertura en [cobertura.md](./cobertura.md).
+- **Sin comprobar:** el mapa con teselas reales de OpenStreetMap y el desplazamiento con un dedo
+  sobre el mapa en un celular; lector de pantalla; Safari y Firefox.
 
 **Retiradas sin sustituto:** T-038 (no aplica en modo académico), T-061 y T-077 (cierres de hito,
 absorbidos por C-5 y C-9), T-075 (prueba de tokens), T-109 (contraste de rutas sobre teselas),
