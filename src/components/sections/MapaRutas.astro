@@ -1,21 +1,21 @@
 ---
 /**
- * Mapa de rutas, forma estática (S9, CA-67, CA-68, CA-80): título, línea y lista de rutas a todo el
- * ancho, con la letra clave de cada una. La caja del mapa y el panel los añade la isla del mapa
- * (H6), solo con JavaScript. Si no hay rutas publicadas, la página no incluye la sección.
+ * Mapa de rutas (S9, CA-67, CA-80; mapa simple): título, línea, el mapa (solo con JavaScript,
+ * cargado al acercarse la sección) y la lista de rutas, siempre visible. Si no hay rutas
+ * publicadas, la página no incluye la sección.
  */
-import RoutePanelTemplates from './RoutePanelTemplates.astro';
+import RouteMap from '../islands/RouteMap.astro';
 import RouteList from './RouteList.astro';
 import type { Ruta } from '../../lib/content/validate';
 import { SECTION_IDS } from '../../lib/nav';
-import { styleRoutes } from '../../lib/routes/style';
+import { orderRoutes } from '../../lib/routes/style';
 
 interface Props {
   rutas: Ruta[];
 }
 
 const { rutas } = Astro.props;
-const styled = styleRoutes(rutas);
+const ordered = orderRoutes(rutas);
 ---
 
 <section id={SECTION_IDS.mapa} aria-labelledby="mapa-titulo" class="pb-16 lg:pb-24">
@@ -30,9 +30,9 @@ const styled = styleRoutes(rutas);
     <p class="mt-2 max-w-prose text-ink-muted">
       Cada ruta parte de un destino. Aquí ves cuánto dura y cuánto sube cada una.
     </p>
-    <div class="mt-8">
-      <RouteList rutas={styled} />
+    <div class="route-map-layout mt-8">
+      <RouteMap dataUrl="/data/rutas.json" />
+      <RouteList rutas={ordered} />
     </div>
   </div>
-  <RoutePanelTemplates rutas={styled} />
 </section>

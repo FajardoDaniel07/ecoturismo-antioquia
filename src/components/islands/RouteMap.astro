@@ -1,0 +1,112 @@
+---
+/**
+ * Isla del mapa de rutas (ADR 0004 y 0006, mapa simple). Un contenedor reservado solo cuando hay
+ * JavaScript (clase `js`) y un guion cargador mínimo que, cuando el contenedor se acerca a la
+ * ventana, importa el módulo del mapa. Ni Leaflet, ni su CSS, ni ninguna tesela se piden antes
+ * (CA-79). Si algo falla, el contenedor se marca `data-failed` y deja de mostrarse: queda la lista.
+ */
+interface Props {
+  /** Dirección del archivo con los trazados. */
+  dataUrl: string;
+}
+
+const { dataUrl } = Astro.props;
+---
+
+<div
+  class="route-map-box"
+  data-route-map
+  data-url={dataUrl}
+  role="region"
+  aria-label="Mapa de las rutas. Todas las rutas están también en la lista."
+></div>
+
+<script>
+  import { whenVisible } from './runtime/when-visible';
+
+  document.querySelectorAll<HTMLElement>('[data-route-map]').forEach((box) => {
+    whenVisible(box, () => {
+      import('./route-map.client')
+        .then((m) => m.initRouteMap(box))
+        .catch(() => box.setAttribute('data-failed', ''));
+    });
+  });
+</script>
+
+<style is:global>
+  /* Sin JavaScript no hay caja. Con JavaScript queda reservada desde el primer pintado. */
+  .route-map-box {
+    display: none;
+  }
+  .js .route-map-box {
+    position: relative;
+    z-index: 0;
+    display: block;
+    height: calc(var(--space-16) * 5);
+    border: 1px solid var(--color-ink-muted);
+    border-radius: var(--radius-md);
+    background: var(--color-bg);
+    overflow: hidden;
+  }
+  .js .route-map-box[data-failed] {
+    display: none;
+  }
+
+  /* Mapa y lista: dos columnas desde 1024 px; por debajo, el mapa encima de la lista. */
+  .route-map-layout > * + * {
+    margin-top: var(--space-8);
+  }
+  @media (min-width: 1024px) {
+    .js .route-map-layout:has(.route-map-box:not([data-failed])) {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-6);
+      align-items: start;
+    }
+    .js .route-map-layout:has(.route-map-box:not([data-failed])) > * + * {
+      margin-top: 0;
+    }
+    .js .route-map-box {
+      position: sticky;
+      top: var(--space-6);
+      height: calc(var(--space-16) * 8);
+    }
+  }
+
+  /* Teselas: filtro y opacidad por tokens, solo sobre el panel de teselas (CA-73). */
+  .route-map-box .leaflet-tile-pane {
+    filter: var(--map-tiles-filter);
+    opacity: var(--map-tiles-opacity);
+  }
+
+  /* Rutas: el color fuerte de su piso. El JavaScript solo pone la clase. */
+  .route-map-box .route-line {
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .route-map-box .route-line--warm {
+    stroke: var(--color-zone-warm);
+  }
+  .route-map-box .route-line--temperate {
+    stroke: var(--color-zone-temperate);
+  }
+  .route-map-box .route-line--cold {
+    stroke: var(--color-zone-cold);
+  }
+  .route-map-box .route-line--paramo {
+    stroke: var(--color-zone-paramo);
+  }
+
+  .route-map-box .leaflet-container {
+    height: 100%;
+    background: var(--color-bg);
+    font-family: var(--font-sans);
+    font-size: var(--text-sm);
+  }
+  .route-map-box .leaflet-popup-content a {
+    color: var(--color-primary);
+  }
+  .route-map-box .leaflet-popup-content p {
+    margin: var(--space-1) 0;
+  }
+</style>

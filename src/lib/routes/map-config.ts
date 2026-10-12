@@ -14,8 +14,6 @@ export const MAX_ZOOM = 16;
 export const DETECT_RETINA = false;
 /** Margen en px al encuadrar una o todas las rutas. */
 export const FIT_PADDING = 32;
-/** Pasos de las flechas del teclado, en px. */
-export const KEYBOARD_PAN_DELTA = 80;
 
 /** Caja de Antioquia con un margen: [[sur, oeste], [norte, este]]. */
 export const MAX_BOUNDS: readonly [readonly [number, number], readonly [number, number]] = [

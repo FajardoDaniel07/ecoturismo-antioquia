@@ -1,22 +1,21 @@
 ---
 /**
- * Lista de rutas (S9.1, CA-21, CA-68, CA-80): siempre visible, con o sin JavaScript. Cada ruta lleva
- * una franja de 6 px del color de su piso, su letra clave en un disco de 28 px (la misma de su
- * marcador en el mapa), su nombre, la elevación, la ficha completa y el enlace a su destino. Solo
- * cuando el mapa está activo ganan la muestra de trazo y el botón "Ver en el mapa" (`data-map-only`).
+ * Lista de rutas (S9.1, CA-21, CA-76, CA-80): siempre visible, con o sin JavaScript. Cada ruta lleva
+ * una franja de 6 px del color de su piso, su nombre, la elevación, el perfil de elevación (si tiene
+ * elevación por punto), la ficha completa y el enlace a su destino. Cada elemento tiene un `id`
+ * al que apunta el popup del mapa.
  */
-import Button from '../ui/Button.astro';
+import ElevationProfile from '../ui/ElevationProfile.astro';
 import Ficha from '../ui/Ficha.astro';
-import RouteStrokeSample from '../ui/RouteStrokeSample.astro';
 import TextLink from '../ui/TextLink.astro';
 import { SWATCH } from '../ui/zone-swatch';
 import { buildFicha } from '../../lib/ficha/build';
 import { formatElevationRange } from '../../lib/format/units';
 import type { Ruta } from '../../lib/content/validate';
-import type { RouteStyle } from '../../lib/routes/style';
+import { buildElevationProfile } from '../../lib/routes/elevation-profile';
 
 interface Props {
-  rutas: (Ruta & { key: string; style: RouteStyle })[];
+  rutas: Ruta[];
 }
 
 const { rutas } = Astro.props;
@@ -24,42 +23,26 @@ const { rutas } = Astro.props;
 
 <div>
   <h3 class="font-display text-xl font-bold text-ink">Todas las rutas</h3>
-  <ul class="m-0 mt-4 grid list-none gap-8 p-0 md:grid-cols-2">
-    {rutas.map((ruta) => (
-      <li class="relative pl-4" data-route={ruta.id}>
-        <span
-          aria-hidden="true"
-          class:list={['absolute inset-y-0 left-0 w-1.5', SWATCH[ruta.zone]]}
-        />
-        <div class="flex flex-wrap items-center gap-3">
+  <ul class="m-0 mt-4 grid list-none gap-8 p-0">
+    {rutas.map((ruta) => {
+      const profile = buildElevationProfile(ruta.geometry.coordinates);
+      return (
+        <li class="relative scroll-mt-6 pl-4" id={`ruta-${ruta.id}`}>
           <span
             aria-hidden="true"
-            class:list={[
-              'inline-flex size-7 shrink-0 items-center justify-center rounded-full text-sm font-semibold text-white',
-              SWATCH[ruta.zone],
-            ]}
-          >
-            {ruta.key}
-          </span>
-          <h4 class="m-0 font-display text-lg font-bold text-ink">
-            <span class="sr-only">Ruta {ruta.key}, </span>
-            {ruta.properties.name}
-          </h4>
-          <RouteStrokeSample style={ruta.style} />
-        </div>
-        <p class="mt-2 text-ink-muted">
-          {formatElevationRange(ruta.properties.elevation.minM, ruta.properties.elevation.maxM)}
-        </p>
-        <Ficha rows={buildFicha(ruta, 'full')} variant="full" class="mt-3" />
-        <p class="mt-3 flex flex-wrap items-center gap-x-6">
-          <TextLink href={ruta.destino.href}>Ir a {ruta.destino.name}</TextLink>
-          <span data-map-only hidden>
-            <Button variant="secondary" pressed={false}>
-              Ver en el mapa
-            </Button>
-          </span>
-        </p>
-      </li>
-    ))}
+            class:list={['absolute inset-y-0 left-0 w-1.5', SWATCH[ruta.zone]]}
+          />
+          <h4 class="m-0 font-display text-lg font-bold text-ink">{ruta.properties.name}</h4>
+          <p class="mt-1 text-ink-muted">
+            {formatElevationRange(ruta.properties.elevation.minM, ruta.properties.elevation.maxM)}
+          </p>
+          {profile && <ElevationProfile model={profile} zone={ruta.zone} />}
+          <Ficha rows={buildFicha(ruta, 'full')} variant="full" class="mt-3" />
+          <p class="mt-3">
+            <TextLink href={ruta.destino.href}>Ir a {ruta.destino.name}</TextLink>
+          </p>
+        </li>
+      );
+    })}
   </ul>
 </div>

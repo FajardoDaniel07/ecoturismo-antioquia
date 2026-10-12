@@ -37,7 +37,7 @@ ejecutan aunque sigan sin marcar.
 | C-3 | Actualizar la spec con el recorte | `spec-writer` | — |
 | C-4 | Regenerar las capturas del perfil y las láminas | `qa-engineer` | T-057 (repetición) |
 | C-5 | **Aprobar las capturas (CA-124)** | humano | T-060 |
-| C-6 | Mapa simple: instalar Leaflet, isla con carga diferida, rutas como líneas, lista al lado | `astro-developer` | T-084 a T-091 |
+| C-6 | **Hecho (2026-10-12).** Mapa simple: instalar Leaflet, isla con carga diferida, rutas como líneas, lista al lado | `astro-developer` | T-084 a T-091 |
 | C-7 | Suite e2e esencial: una prueba por tipo de página con axe; sin JavaScript; 360 px; teclado en el visor; aviso académico y `noindex`; mapa simple con teselas interceptadas; Lighthouse móvil en una pasada | `qa-engineer` | T-092 a T-110, T-133 a T-138 |
 | C-8 | Tabla de cobertura: qué criterios comprueba la suite esencial | `qa-engineer` | T-110 |
 | C-9 | Revisión final del sitio construido con el contenido real | `quality-reviewer` | T-111 |

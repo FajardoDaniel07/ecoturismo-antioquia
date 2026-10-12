@@ -7,7 +7,7 @@ import {
   haversineKm,
 } from '../../src/lib/routes/geo';
 import { TILE_URL, tileOrigin } from '../../src/lib/routes/map-config';
-import { orderRoutes, routeKey, routeStyle, styleRoutes } from '../../src/lib/routes/style';
+import { orderRoutes } from '../../src/lib/routes/style';
 import { isDeclaredOrigin } from '../../src/lib/privacy/third-parties';
 
 const withEle = [
@@ -83,35 +83,14 @@ describe('perfil de elevación (CA-76)', () => {
   });
 });
 
-describe('estilo de las rutas (CA-68, CA-69)', () => {
-  it('los cuatro patrones por piso', () => {
-    expect(routeStyle('warm', 0)).toMatchObject({ pattern: 'solid', dashArray: null });
-    expect(routeStyle('temperate', 0)).toMatchObject({ pattern: 'long-dash', dashArray: '14 8' });
-    expect(routeStyle('cold', 0)).toMatchObject({ pattern: 'dash-dot', dashArray: '14 6 2 6' });
-    expect(routeStyle('paramo', 0)).toMatchObject({ pattern: 'dots', dashArray: '1 9' });
-  });
-
-  it('las tres variantes dentro de un piso, y se repiten con la cuarta', () => {
-    expect(routeStyle('cold', 0)).toMatchObject({ variant: 'regular', weight: 5 });
-    expect(routeStyle('cold', 1)).toMatchObject({ variant: 'double', weight: 7 });
-    expect(routeStyle('cold', 2)).toMatchObject({ variant: 'thin', weight: 3 });
-    expect(routeStyle('cold', 3)).toMatchObject({ variant: 'regular' });
-  });
-
-  it('letra clave: A, B, C… y AA tras la Z', () => {
-    expect([0, 1, 2, 25, 26, 27].map(routeKey)).toEqual(['A', 'B', 'C', 'Z', 'AA', 'AB']);
-  });
-
-  it('orden de la lista por elevación mínima y luego nombre; la variante cuenta por piso', () => {
+describe('orden de la lista de rutas', () => {
+  it('por elevación mínima y, a igualdad, por nombre', () => {
     const rutas = [
       { zone: 'cold' as const, properties: { name: 'Zeta', elevation: { minM: 2100 } } },
       { zone: 'warm' as const, properties: { name: 'Beta', elevation: { minM: 300 } } },
       { zone: 'cold' as const, properties: { name: 'Alfa', elevation: { minM: 2100 } } },
     ];
     expect(orderRoutes(rutas).map((r) => r.properties.name)).toEqual(['Beta', 'Alfa', 'Zeta']);
-    const styled = styleRoutes(rutas);
-    expect(styled.map((r) => r.key)).toEqual(['A', 'B', 'C']);
-    expect(styled.map((r) => r.style.variant)).toEqual(['regular', 'regular', 'double']);
   });
 });
 
