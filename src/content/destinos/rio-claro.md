@@ -13,6 +13,40 @@ sources:
   - 'Actividades (rafting, canopy, vía ferrata, caverna de Los Guácharos, senderismo, aves) y ubicación sobre la autopista Medellín-Bogotá (leída el 2026-10-11): https://www.cafam.com.co/convenios/turismo-reserva-natural-canon-del-rio-claro'
   - 'Propiedad privada con un cañón en lecho de mármol; caverna solo con guía, con chaleco salvavidas y cruzando el río; linterna frontal y calzado impermeable recomendados (resumen de búsqueda, página no abierta): https://www.lonelyplanet.com/points-of-interest/reserva-natural-canon-del-rio-claro/1167787'
   - 'Duración, distancia, desnivel y edad mínima: no se encontró fuente, por eso se omiten de la ficha.'
+photos:
+  - file: ../../assets/photos/rio-claro/rio-claro-rio-con-balsas.jpg
+    alt: Río de aguas verdes con rocas grandes en el cauce y balsas azules amarradas a la orilla, entre árboles de bosque húmedo
+    author: Motero colombia
+    license:
+      kind: cc-by-sa
+      name: CC BY-SA 4.0
+      url: https://creativecommons.org/licenses/by-sa/4.0/
+    sourceUrl: https://commons.wikimedia.org/wiki/File:Reserva_Natural_R%C3%ADo_Claro_128.jpg
+    modification: cropped
+    ratio: '3:2'
+    focus: center
+  - file: ../../assets/photos/rio-claro/rio-claro-pasarela-y-poza.jpg
+    alt: Pasarela de piedra junto a una poza de agua verde, con árboles que se cierran sobre el camino
+    author: Motero colombia
+    license:
+      kind: cc-by-sa
+      name: CC BY-SA 4.0
+      url: https://creativecommons.org/licenses/by-sa/4.0/
+    sourceUrl: https://commons.wikimedia.org/wiki/File:Reserva_Natural_R%C3%ADo_Claro_129.jpg
+    modification: cropped
+    ratio: '3:2'
+    focus: right
+  - file: ../../assets/photos/rio-claro/rio-claro-rocas-de-marmol.jpg
+    alt: Rocas claras de superficie ondulada en la orilla de un río verde, bajo árboles de ramas largas
+    author: Motero colombia
+    license:
+      kind: cc-by-sa
+      name: CC BY-SA 4.0
+      url: https://creativecommons.org/licenses/by-sa/4.0/
+    sourceUrl: https://commons.wikimedia.org/wiki/File:Reserva_Natural_R%C3%ADo_Claro_104.jpg
+    modification: cropped
+    ratio: '3:2'
+    focus: right
 ---
 
 Aquí el río Claro ha tallado un cañón en un lecho de mármol, dentro de la Reserva Natural Cañón del Río Claro, un terreno privado. Queda en el corregimiento de Doradal, municipio de Puerto Triunfo, en el Magdalena Medio: la región baja y calurosa que acompaña al río Magdalena, el más grande del país.

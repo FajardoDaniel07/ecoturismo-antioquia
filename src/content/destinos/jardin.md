@@ -13,6 +13,40 @@ sources:
   - 'Temperatura media de la cabecera, 19 °C (leída el 2026-10-11): Gobernación de Antioquia, Anuario Estadístico 2012, tabla 1.4.1, http://www.antioquia.gov.co/images/pdf/anuario_2012/data/generalidades/HI141.html'
   - 'Charco Corazón, Alto de las Flores, trucheras y tres pisos térmicos en el municipio (leída el 2026-10-11): https://es.wikipedia.org/wiki/Jard%C3%ADn_(Antioquia)'
   - 'Duración, distancia, desnivel, dificultad y edad a nivel del destino: no hay fuente; esos datos irán en las rutas.'
+photos:
+  - file: ../../assets/photos/jardin/jardin-canon-quebrada-volcanes.jpg
+    alt: Puente amarillo sobre un cañón de bosque, con laderas de cultivos y montañas bajo nubes al fondo
+    author: XalD
+    license:
+      kind: cc-by-sa
+      name: CC BY-SA 4.0
+      url: https://creativecommons.org/licenses/by-sa/4.0/
+    sourceUrl: https://commons.wikimedia.org/wiki/File:Ca%C3%B1%C3%B3n_de_la_Quebrada_Volcanes,_Jard%C3%ADn_-_02.jpg
+    modification: cropped
+    ratio: '3:2'
+    focus: center
+  - file: ../../assets/photos/jardin/jardin-panoramica-del-pueblo.jpg
+    alt: Casco urbano de Jardín con techos de teja y la basílica de dos torres, rodeado de laderas verdes
+    author: Gary Leavens
+    license:
+      kind: cc-by-sa
+      name: CC BY-SA 2.0
+      url: https://creativecommons.org/licenses/by-sa/2.0/
+    sourceUrl: https://commons.wikimedia.org/wiki/File:Panor%C3%A1mica_de_Jard%C3%ADn,_Antioquia,_2022.jpg
+    modification: cropped
+    ratio: '3:2'
+    focus: right
+  - file: ../../assets/photos/jardin/jardin-casa-de-balcones.jpg
+    alt: Casa de tres pisos con fachada amarilla y balcones fucsia en una calle del pueblo, con una montaña cubierta de nubes al fondo
+    author: XalD
+    license:
+      kind: cc-by-sa
+      name: CC BY-SA 4.0
+      url: https://creativecommons.org/licenses/by-sa/4.0/
+    sourceUrl: https://commons.wikimedia.org/wiki/File:Casas_en_Jard%C3%ADn_(Antioquia)_-_01.jpg
+    modification: cropped
+    ratio: '3:2'
+    focus: center
 ---
 
 Jardín es un pueblo del Suroeste antioqueño, entre montañas cubiertas de fincas cafeteras. Su casco urbano está a 1750 m de altitud y la temperatura media allí es de unos 19 °C: un clima templado, ni caluroso ni frío.

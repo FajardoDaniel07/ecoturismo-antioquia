@@ -15,6 +15,40 @@ sources:
   - 'Cima de 3335 m (leída el 2026-10-11): https://peakvisor.com/park/paramos-de-belmira-y-santa-ines.html'
   - 'Estado de acceso al 2026-10-11: no se encontró cierre ni límite de visitantes, pero no se pudo confirmar con Corantioquia. Debe confirmarse antes del lanzamiento.'
   - 'Duración, distancia y desnivel del destino: se omiten porque las fuentes difieren (de 5 a 6 horas con 600 m de subida según una agencia, 12 horas según El Colombiano); irán en la ruta.'
+photos:
+  - file: ../../assets/photos/paramo-de-belmira/belmira-frailejon-al-amanecer.jpg
+    alt: Frailejón a contraluz sobre una ladera con cordilleras envueltas en niebla y un cielo amarillo y naranja al amanecer
+    author: Sandramirezgiraldo
+    license:
+      kind: cc-by-sa
+      name: CC BY-SA 4.0
+      url: https://creativecommons.org/licenses/by-sa/4.0/
+    sourceUrl: https://commons.wikimedia.org/wiki/File:Frailej%C3%B3n_P%C3%A1ramo_de_Belmira_Sandra_Ram%C3%ADrez_Giraldo.jpg
+    modification: cropped
+    ratio: '3:2'
+    focus: left
+  - file: ../../assets/photos/paramo-de-belmira/belmira-laguna-de-paramo.jpg
+    alt: Laguna tranquila de páramo con frailejones en la orilla y un cerro cubierto de vegetación al fondo, con luz suave de amanecer
+    author: Elcrespodeloscuentos
+    license:
+      kind: cc-by-sa
+      name: CC BY-SA 4.0
+      url: https://creativecommons.org/licenses/by-sa/4.0/
+    sourceUrl: https://commons.wikimedia.org/wiki/File:Laguna_p%C3%A1ramo_de_Belmira_amanecer_28,6,26.jpg
+    modification: cropped
+    ratio: '3:2'
+    focus: center
+  - file: ../../assets/photos/paramo-de-belmira/belmira-orquidea-y-frailejon.jpg
+    alt: Flor rosada de una orquídea de páramo sobre un tallo delgado, con las hojas de un frailejón desenfocadas al fondo
+    author: Elcrespodeloscuentos
+    license:
+      kind: cc-by-sa
+      name: CC BY-SA 4.0
+      url: https://creativecommons.org/licenses/by-sa/4.0/
+    sourceUrl: https://commons.wikimedia.org/wiki/File:Epidendrum_arachnoglossum_28,06,26_P%C3%A1ramo_de_Belmira.jpg
+    modification: cropped
+    ratio: '3:2'
+    focus: center
 ---
 
 Un páramo es un ecosistema de alta montaña, por encima del bosque, de clima frío y húmedo, con neblina y mucho viento. Aquí crece el frailejón, una planta de hojas gruesas y peludas que atrapa el agua de la niebla. El páramo de Belmira (también llamado Santa Inés) queda a más de 3000 m de altitud, en el Norte antioqueño, y se llega en unas 2 horas desde Medellín. La Gobernación de Antioquia registra su punto más alto, el Alto de Belmira, en unos 3270 m; otras fuentes dan hasta 3350 m.

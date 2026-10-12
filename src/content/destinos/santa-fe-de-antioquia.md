@@ -12,6 +12,40 @@ sources:
   - 'Distancia de unos 55 km por el Túnel de Occidente y subregión Occidente (leída el 2026-10-11; el artículo no cita fuente para la distancia): https://es.wikipedia.org/wiki/Santa_Fe_de_Antioquia'
   - 'Puente de Occidente, puente colgante sobre el río Cauca entre Santa Fe de Antioquia y Olaya (descripciones de las fotos en Wikimedia Commons, leídas el 2026-10-11): https://commons.wikimedia.org/wiki/File:Puente_de_Occidente,_enero_de_2022_-_puente_01.jpg y https://commons.wikimedia.org/wiki/File:Puente_de_occidente_(3147370781).jpg'
   - 'Senderos, áreas protegidas o atractivos de naturaleza propios del municipio: no se encontró fuente; por eso la ficha no trae duración, dificultad ni edad.'
+photos:
+  - file: ../../assets/photos/santa-fe-de-antioquia/santa-fe-puente-sobre-el-cauca.jpg
+    alt: Puente colgante que cruza un río ancho y de aguas pardas, con bancos de arena y montañas cubiertas de bosque al fondo
+    author: Edgar Jiménez
+    license:
+      kind: cc-by-sa
+      name: CC BY-SA 2.0
+      url: https://creativecommons.org/licenses/by-sa/2.0/
+    sourceUrl: https://commons.wikimedia.org/wiki/File:Puente_de_occidente_(3147370781).jpg
+    modification: cropped
+    ratio: '3:2'
+    focus: center
+  - file: ../../assets/photos/santa-fe-de-antioquia/santa-fe-puente-colgante-pasarela.jpg
+    alt: Pasarela de madera de un puente colgante con torres blancas al fondo, bajo un cielo azul con nubes y colinas secas a un lado
+    author: XalD
+    license:
+      kind: cc-by-sa
+      name: CC BY-SA 4.0
+      url: https://creativecommons.org/licenses/by-sa/4.0/
+    sourceUrl: https://commons.wikimedia.org/wiki/File:Puente_de_Occidente,_enero_de_2022_-_puente_01.jpg
+    modification: cropped
+    ratio: '3:2'
+    focus: center
+  - file: ../../assets/photos/santa-fe-de-antioquia/santa-fe-puente-y-colinas.jpg
+    alt: Pasarela de madera de un puente colgante frente a una ladera verde, con torres blancas y una persona caminando a lo lejos
+    author: Xemenendura
+    license:
+      kind: cc-by-sa
+      name: CC BY-SA 4.0
+      url: https://creativecommons.org/licenses/by-sa/4.0/
+    sourceUrl: https://commons.wikimedia.org/wiki/File:Puente_de_Occidente_0.jpg
+    modification: cropped
+    ratio: '3:2'
+    focus: center
 ---
 
 Santa Fe de Antioquia queda en el Occidente del departamento, a 550 m de altitud. Es un destino de clima cálido: la temperatura media en el casco urbano es de unos 27 °C, lo que lo hace muy distinto de Medellín, aunque esté a solo unos 55 km.

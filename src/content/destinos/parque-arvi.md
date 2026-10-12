@@ -14,6 +14,40 @@ sources:
   - 'Doce recorridos con nombre (leída el 2026-10-11): https://parquearvi.org/publicaciones/290/senderos/'
   - 'Cable aéreo Línea L desde la estación Santo Domingo de la Línea K, 54 km de senderos y Camino Cieza de León de más de 1500 años (leída el 2026-10-11; el artículo avisa de que necesita más referencias): https://es.wikipedia.org/wiki/Parque_Arv%C3%AD'
   - 'Duración, distancia, desnivel, dificultad y edad mínima por recorrido: la página de senderos no los trae, por eso se omiten de la ficha.'
+photos:
+  - file: ../../assets/photos/parque-arvi/arvi-cable-aereo-sobre-el-bosque.jpg
+    alt: Cabina del cable aéreo suspendida sobre un bosque extenso, con nubes en el cielo abierto
+    author: Alejandro Rojas (SajoR)
+    license:
+      kind: cc-by-sa
+      name: CC BY-SA 4.0
+      url: https://creativecommons.org/licenses/by-sa/4.0/
+    sourceUrl: https://commons.wikimedia.org/wiki/File:Metrocable_del_Parque_Arv%C3%AD_-_Medell%C3%ADn.jpg
+    modification: cropped
+    ratio: '3:2'
+    focus: center
+  - file: ../../assets/photos/parque-arvi/arvi-camino-empedrado.jpg
+    alt: Tres caminantes de espaldas avanzan por un camino empedrado junto a un talud de musgo y árboles altos
+    author: Paco Godoy
+    license:
+      kind: cc-by-sa
+      name: CC BY-SA 3.0
+      url: https://creativecommons.org/licenses/by-sa/3.0/
+    sourceUrl: https://commons.wikimedia.org/wiki/File:Caminata_en_Parque_Arv%C3%AD.JPG
+    modification: cropped
+    ratio: '4:5'
+    focus: bottom
+  - file: ../../assets/photos/parque-arvi/arvi-sendero-entre-arboles.jpg
+    alt: Sendero de tierra rojiza entre árboles altos y delgados con helechos y niebla entre el follaje
+    author: Paco Godoy
+    license:
+      kind: cc-by-sa
+      name: CC BY-SA 3.0
+      url: https://creativecommons.org/licenses/by-sa/3.0/
+    sourceUrl: https://commons.wikimedia.org/wiki/File:Bosque_Parque_Arv%C3%AD.JPG
+    modification: cropped
+    ratio: '3:2'
+    focus: center
 ---
 
 Arví es un parque público de montaña al nororiente de Medellín. Su territorio va de 2340 a 2680 m de altitud y allí predomina el clima frío, con temperaturas de entre 12 y 18 °C. Es un bosque húmedo de montaña con mucha niebla, con bosque natural, robledales y plantaciones forestales de más de 50 años.
