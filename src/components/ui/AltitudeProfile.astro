@@ -156,7 +156,7 @@ function knockoutMask(m: ProfileModel): string {
         </span>
         <span
           class="absolute text-sm leading-5 text-ink-muted"
-          style={`right:calc(100% - ${m.maxLabel.xFraction * 100}%);top:${m.maxLabel.y - ASCENT}px`}
+          style={`${m.maxLabel.side === 'left' ? `right:calc(100% - ${m.maxLabel.xFraction * 100}%)` : `left:${m.maxLabel.xFraction * 100}%`};top:${m.maxLabel.y - ASCENT}px`}
         >
           {m.maxLabel.text}
         </span>

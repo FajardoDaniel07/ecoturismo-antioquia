@@ -368,7 +368,7 @@ avisos de contenido.
   - CA: CA-4, CA-5, CA-7. Depende de: T-041.
   - Hecho cuando: las pruebas comprueban un punto por destino, que subir una altitud sube solo su
     punto, la selección de S3.8 y los casos límite de S3.7.
-- [ ] **T-044** · `astro-developer` — Etiquetas del perfil: lado, partición en dos líneas, búsqueda
+- [x] **T-044** · `astro-developer` — Etiquetas del perfil: lado, partición en dos líneas, búsqueda
   de sitio sin colisiones, línea guía y avisos.
   - Archivos: `src/lib/altitude/profile.ts`, `tests/unit/profile-labels.test.ts`.
   - CA: CA-5, CA-6. Depende de: T-043.
@@ -452,7 +452,7 @@ avisos de contenido.
     `specs/001-landing-completa/revision-capturas.md`.
   - CA: CA-124, CA-111. Depende de: T-057.
   - Hecho cuando: `revision-capturas.md` dice, por cada captura, si cumple y qué se ajustó.
-- [ ] **T-059** · `astro-developer` — Aplicar los ajustes de parámetros pedidos en T-058 y regenerar
+- [x] **T-059** · `astro-developer` — Aplicar los ajustes de parámetros pedidos en T-058 y regenerar
   las capturas.
   - Archivos: `src/lib/altitude/profile.ts`, `src/lib/altitude/contours.ts`, capturas.
   - CA: CA-124. Depende de: T-058.

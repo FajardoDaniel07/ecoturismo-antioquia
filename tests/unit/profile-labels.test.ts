@@ -45,20 +45,18 @@ function fixedTexts(m: ProfileModel): Rect[] {
       r: m.minLabel.x + m.minLabel.text.length * CHAR,
       b: m.minLabel.y + 5,
     },
-    text(m.maxLabel.right, m.maxLabel.y, m.maxLabel.text),
+    m.maxLabel.side === 'left'
+      ? text(m.maxLabel.x, m.maxLabel.y, m.maxLabel.text)
+      : {
+          l: m.maxLabel.x,
+          t: m.maxLabel.y - 15,
+          r: m.maxLabel.x + m.maxLabel.text.length * CHAR,
+          b: m.maxLabel.y + 5,
+        },
   ];
 }
 
 const warned = (m: ProfileModel, name: string) => m.warnings.some((w) => w.includes(`"${name}"`));
-
-/** Casos que aún no tienen sitio con las reglas aprobadas R1 a R8 (ver el informe de T-059). */
-const OPEN_CASES: Record<string, string[]> = {
-  'academico/compact': ['Laguna Espejo Gris'],
-  'academico/medium': ['Salto Cinta de Plata'],
-  'completo/compact': ['Laguna Espejo Gris'],
-  'completo/medium': ['Salto Cinta de Plata'],
-  'sin-fotos/compact': ['Páramo de la Bruma Larga'],
-};
 
 describe.each(SCENARIOS)('etiquetas del perfil: escenario %s', (scenario) => {
   const { territory, destinos } = loadScenario(scenario);
@@ -135,12 +133,8 @@ describe.each(SCENARIOS)('etiquetas del perfil: escenario %s', (scenario) => {
     );
   });
 
-  it.each(VARIANT_IDS)('variante %s: los avisos son solo los casos abiertos', (variant) => {
-    const m = buildAltitudeProfile(territory, destinos, variant);
-    const open = OPEN_CASES[`${scenario}/${variant}`] ?? [];
-    const names = destinos.map((d) => d.name).filter((n) => warned(m, n));
-    expect(names.sort()).toEqual([...open].sort());
-    expect(m.warnings).toHaveLength(open.length);
+  it.each(VARIANT_IDS)('variante %s: ningún aviso del perfil (R10)', (variant) => {
+    expect(buildAltitudeProfile(territory, destinos, variant).warnings).toEqual([]);
   });
 });
 
@@ -271,5 +265,50 @@ describe('reglas de colocación', () => {
     const name = 'Un nombre larguísimo sin sitio posible en la variante compacta del perfil';
     const m = buildAltitudeProfile(territory, [make('x', name, 1950)], 'compact');
     expect(m.warnings.some((w) => w.includes(`"${name}"`))).toBe(true);
+  });
+
+  it('R19: el rótulo al margen prueba primero la franja preferida y, si no cabe, la contraria', () => {
+    // Variante media del escenario completo: "Salto Cinta de Plata" no cabe en la base.
+    const m = buildAltitudeProfile(territory, destinos, 'medium');
+    const salto = m.points.find((p) => p.name === 'Salto Cinta de Plata')!;
+    expect(salto.label.margin).toBe(true);
+    const pref = salto.x < m.width / 2 ? 'rock' : 'sky';
+    expect(salto.label.side).not.toBe(pref);
+    // La guía es vertical, sale del punto y no cruza la línea de cumbres (arriba solo hay cielo).
+    expect(salto.label.guide).not.toBeNull();
+    const g = salto.label.guide!;
+    const samples = m.ridgeSamples.filter(([x]) => Math.abs(x - salto.x) < 1);
+    for (const [, y] of samples) {
+      if (salto.label.side === 'sky') expect(Math.min(g.y1, g.y2)).toBeLessThanOrEqual(y);
+    }
+  });
+
+  it('R20: la cifra de la cumbre cede: va a la derecha solo si así todas las etiquetas encuentran sitio', () => {
+    // Con el contenido real y con minimo la cifra se queda a la izquierda (nada cambia).
+    for (const name of ['@real', 'minimo'] as const) {
+      const loaded = loadScenario(name);
+      for (const v of VARIANT_IDS) {
+        const m = buildAltitudeProfile(loaded.territory, loaded.destinos, v);
+        expect(m.maxLabel.side).toBe('left');
+      }
+    }
+    // En la compacta de completo, el destino más alto queda bajo la cifra: la cifra pasa a la derecha.
+    const compact = buildAltitudeProfile(territory, destinos, 'compact');
+    expect(compact.maxLabel.side).toBe('right');
+    expect(compact.warnings).toEqual([]);
+    const p = VARIANTS.compact;
+    // Empieza 8 px después de la cumbre y con la misma línea base.
+    expect(compact.maxLabel.x).toBeCloseTo(p.W - p.F + 8, 1);
+    expect(compact.maxLabel.y).toBe(p.Pt - 6);
+    // Sigue en el cielo, dentro de la figura, sobre el lado lejano.
+    const w = compact.maxLabel.text.length * CHAR;
+    expect(compact.maxLabel.x + w).toBeLessThanOrEqual(compact.width);
+  });
+
+  it('R20: si ninguna posición de la cifra resuelve algo, se queda a la izquierda (gana la de menos avisos)', () => {
+    const name = 'Un nombre larguísimo sin sitio posible en la variante compacta del perfil';
+    const m = buildAltitudeProfile(territory, [make('x', name, 1950)], 'compact');
+    expect(m.warnings.length).toBeGreaterThan(0);
+    expect(m.maxLabel.side).toBe('left');
   });
 });

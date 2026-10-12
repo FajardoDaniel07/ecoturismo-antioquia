@@ -1,6 +1,50 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
+import { readdirSync, readFileSync, rmSync, statSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import tailwindcss from '@tailwindcss/vite';
+
+/**
+ * Quita de la salida las imágenes de `_astro/` que ninguna página, hoja de estilos ni guion
+ * referencia. Astro emite como archivo el original de cada foto que el contenido importa con
+ * `image()` aunque las páginas solo usen sus variantes (`<Picture>`); en el contenido real eran 18
+ * originales y casi 15 MB. Solo toca imágenes rasterizadas: nada que se cargue por nombre se pierde.
+ */
+const pruneUnusedImages = {
+  name: 'prune-unused-images',
+  hooks: {
+    /** @param {{ dir: URL }} options */
+    'astro:build:done': ({ dir }) => {
+      const root = fileURLToPath(dir);
+      const assets = `${root}/_astro`;
+      /** @type {string[]} */
+      const texts = [];
+      /** @param {string} folder */
+      const walk = (folder) => {
+        for (const name of readdirSync(folder)) {
+          const path = `${folder}/${name}`;
+          if (statSync(path).isDirectory()) walk(path);
+          else if (/\.(html|css|js|mjs|json|xml|txt|webmanifest)$/.test(name)) {
+            texts.push(readFileSync(path, 'utf8'));
+          }
+        }
+      };
+      walk(root.endsWith('/') ? root.slice(0, -1) : root);
+      const referenced = texts.join(' ');
+      let removed = 0;
+      for (const name of readdirSync(assets)) {
+        if (/\.(avif|webp|jpe?g|png)$/.test(name) && !referenced.includes(name)) {
+          rmSync(`${assets}/${name}`);
+          removed++;
+        }
+      }
+      if (removed > 0)
+        console.log(
+          `[prune-unused-images] ${removed} imágenes sin referencia retiradas de _astro/`,
+        );
+    },
+  },
+};
 
 // En Vercel, las vistas previas no tienen SITE_URL: se usa su propia dirección (https://$VERCEL_URL).
 // La publicación sigue exigiendo SITE_URL (la comprueba loadSite(), que solo lee esa variable).
@@ -18,6 +62,7 @@ export default defineConfig({
   trailingSlash: 'always',
   outDir: process.env.OUT_DIR ?? 'dist',
   cacheDir: process.env.CACHE_DIR ?? './node_modules/.astro',
+  integrations: [pruneUnusedImages],
   vite: {
     plugins: [tailwindcss()],
   },

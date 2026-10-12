@@ -112,8 +112,6 @@ const ZONE_NAME_GAP = 8;
 const MIN_LABEL_DROP = 20;
 const MAX_LABEL_RISE = 6;
 const MAX_LABEL_GAP = 8;
-/** Solo la franja preferida (R2). Con `true` probaría también la otra: no está aprobado. */
-const TRY_OTHER_STRIP = false;
 const RIDGE_SAMPLES = 24; // puntos por curva al muestrear la línea de cumbres
 
 /** Una posición horizontal: `f` × ancho de la figura + `px`. */
@@ -185,7 +183,11 @@ export interface ProfileModel {
   farEndY: number;
   zoneLabels: { zone: ZoneId; text: string; baselineY: number }[];
   minLabel: { text: string; x: number; y: number };
-  maxLabel: { text: string; xFraction: number; right: number; y: number };
+  /**
+   * Cifra de la altitud máxima. R20: a la izquierda de la cumbre (borde derecho en `x`) o, si así
+   * las etiquetas de destino no caben, a su derecha (borde izquierdo en `x`).
+   */
+  maxLabel: { text: string; side: 'left' | 'right'; xFraction: number; x: number; y: number };
   points: ProfilePoint[];
   /** R7: zonas donde se interrumpen las curvas de eco y los límites (cada texto, más 3 px). */
   knockouts: Knockout[];
@@ -371,10 +373,11 @@ interface Candidate {
 
 // --- Construcción --------------------------------------------------------------------------
 
-export function buildAltitudeProfile(
+function layoutProfile(
   territory: Territory,
   destinos: readonly ProfileDestino[],
   variant: ProfileVariantId,
+  maxSide: 'left' | 'right',
 ): ProfileModel {
   const p = VARIANTS[variant];
   const { W, H, Pt, Pb, V, F } = p;
@@ -458,11 +461,14 @@ export function buildAltitudeProfile(
   const minText = formatAltitude(aMin, 'short');
   const maxText = formatAltitude(aMax, 'short');
   const minLabel = { text: minText, x: 8, y: r(yValle + MIN_LABEL_DROP) };
-  const maxRight = xCumbre - MAX_LABEL_GAP;
+  // R20: a la izquierda de la cumbre (borde derecho 8 px antes de ella) o a su derecha, sobre el
+  // lado lejano (borde izquierdo 8 px después), con la misma línea base.
+  const maxX = maxSide === 'left' ? xCumbre - MAX_LABEL_GAP : xCumbre + MAX_LABEL_GAP;
   const maxLabel = {
     text: maxText,
-    right: r(maxRight),
-    xFraction: maxRight / W,
+    side: maxSide,
+    x: r(maxX),
+    xFraction: maxX / W,
     y: r(yCumbre - MAX_LABEL_RISE),
   };
 
@@ -488,9 +494,9 @@ export function buildAltitudeProfile(
       b: minLabel.y + DESCENT,
     },
     {
-      f: maxRight / W,
-      l: -textWidth(maxText),
-      r: 0,
+      f: maxX / W,
+      l: maxSide === 'left' ? -textWidth(maxText) : 0,
+      r: maxSide === 'left' ? 0 : textWidth(maxText),
       t: maxLabel.y - ASCENT,
       b: maxLabel.y + DESCENT,
     },
@@ -615,7 +621,7 @@ export function buildAltitudeProfile(
     }
 
     // Paso 5 (R2): rótulo al margen, en la franja del cielo o de la base, con guía vertical.
-    for (const strip of TRY_OTHER_STRIP ? [pref, other] : [pref]) {
+    for (const strip of [pref, other]) {
       if (chosen) break;
       const stripTop = strip === 'sky' ? STRIP_INSET : yValle + STRIP_INSET;
       const stripBottom = strip === 'sky' ? Pt - STRIP_INSET : H - STRIP_INSET;
@@ -755,4 +761,21 @@ export function buildAltitudeProfile(
     omitted: all.length - shown.length,
     warnings,
   };
+}
+
+/**
+ * Construye el perfil de una variante. R20: las etiquetas de destino son contenido y la cifra de la
+ * cumbre una anotación que repite el titular, así que cede. Se colocan todas las etiquetas con la
+ * cifra a la izquierda de la cumbre; si queda algún aviso, se repite todo con la cifra a su derecha.
+ * Gana la disposición con menos avisos y, a igualdad, la de la izquierda.
+ */
+export function buildAltitudeProfile(
+  territory: Territory,
+  destinos: readonly ProfileDestino[],
+  variant: ProfileVariantId,
+): ProfileModel {
+  const left = layoutProfile(territory, destinos, variant, 'left');
+  if (left.warnings.length === 0) return left;
+  const right = layoutProfile(territory, destinos, variant, 'right');
+  return right.warnings.length < left.warnings.length ? right : left;
 }
