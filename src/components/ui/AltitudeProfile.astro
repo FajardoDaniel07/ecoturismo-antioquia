@@ -44,6 +44,29 @@ const ZONE_RAIL: Record<ZoneId, string> = {
 const ASCENT = 15;
 const HALF_TARGET = 22; // el área táctil de 44 px, centrada en el disco
 const NO_SCALE = '[vector-effect:non-scaling-stroke]';
+
+/**
+ * R7: las curvas de eco y los límites se interrumpen a 3 px de cada texto. Como la figura se estira
+ * solo a lo ancho y los textos conservan su tamaño, la zona interrumpida se expresa como máscara CSS
+ * con degradados de paradas duras: cada zona es `fracción × ancho + px`. Todas las capas se combinan
+ * con `exclude` sobre una base opaca (solo cuenta el canal alfa).
+ */
+function knockoutMask(m: ProfileModel): string {
+  const base = 'linear-gradient(currentcolor, currentcolor)';
+  const at = (a: { f: number; px: number }) => `calc(${a.f * 100}% + ${a.px}px)`;
+  const images = m.knockouts.map((k) => {
+    const l = at(k.left);
+    const r = at(k.right);
+    return `linear-gradient(to right, transparent 0, transparent ${l}, currentcolor ${l}, currentcolor ${r}, transparent ${r}, transparent 100%)`;
+  });
+  const sizes = m.knockouts.map((k) => `100% ${k.bottom - k.top}px`);
+  const positions = m.knockouts.map((k) => `0 ${k.top}px`);
+  const list = (items: string[], last: string) => [...items, last].join(',');
+  const image = list(images, base);
+  const size = list(sizes, '100% 100%');
+  const position = list(positions, '0 0');
+  return `mask-image:${image};mask-size:${size};mask-position:${position};mask-repeat:no-repeat;mask-composite:exclude;-webkit-mask-image:${image};-webkit-mask-size:${size};-webkit-mask-position:${position};-webkit-mask-repeat:no-repeat;-webkit-mask-composite:xor`;
+}
 ---
 
 <figure aria-label="Perfil de altitud de Antioquia" class="relative m-0 overflow-hidden">
@@ -75,6 +98,25 @@ const NO_SCALE = '[vector-effect:non-scaling-stroke]';
             {m.strata.map((s) => (
               <rect x="0" y={s.y} width={m.width} height={s.height} class={ZONE_TINT[s.zone]} />
             ))}
+          </g>
+          <path
+            d={m.ridgePath}
+            fill="none"
+            stroke-linejoin="round"
+            stroke-linecap="round"
+            class={`stroke-ink stroke-2 ${NO_SCALE}`}
+          />
+        </svg>
+
+        <svg
+          class="absolute inset-0 h-full w-full"
+          viewBox={`0 0 ${m.width} ${m.height}`}
+          preserveAspectRatio="none"
+          aria-hidden="true"
+          focusable="false"
+          style={knockoutMask(m)}
+        >
+          <g clip-path={`url(#${clipId})`}>
             {m.echoPaths.map((d) => (
               <path d={d} fill="none" class={`stroke-line stroke-1 ${NO_SCALE}`} />
             ))}
@@ -88,13 +130,6 @@ const NO_SCALE = '[vector-effect:non-scaling-stroke]';
               />
             ))}
           </g>
-          <path
-            d={m.ridgePath}
-            fill="none"
-            stroke-linejoin="round"
-            stroke-linecap="round"
-            class={`stroke-ink stroke-2 ${NO_SCALE}`}
-          />
         </svg>
 
         {m.rails.map((rail) => (
@@ -132,8 +167,9 @@ const NO_SCALE = '[vector-effect:non-scaling-stroke]';
             const top = l.top - p.y + HALF_TARGET;
             const edge =
               l.align === 'left' ? `left:${HALF_TARGET + l.dx}px` : `right:${HALF_TARGET - l.dx}px`;
-            const guideTop = l.side === 'rock' ? HALF_TARGET : l.top + l.height - p.y + HALF_TARGET;
-            const guideHeight = l.side === 'rock' ? l.top - p.y : p.y - (l.top + l.height);
+            const guide = l.guide;
+            const guideTop = guide ? Math.min(guide.y1, guide.y2) - p.y + HALF_TARGET : 0;
+            const guideHeight = guide ? Math.abs(guide.y2 - guide.y1) : 0;
             return (
               <li
                 class="absolute size-11 -translate-x-1/2 -translate-y-1/2"
@@ -147,7 +183,7 @@ const NO_SCALE = '[vector-effect:non-scaling-stroke]';
                     aria-hidden="true"
                     class="absolute top-1/2 left-1/2 size-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-ink ring-2 ring-bg transition-colors duration-(--duration-fast) group-hover:size-4 group-hover:bg-accent group-hover:ring-ink group-active:bg-ink-muted"
                   />
-                  {l.leader && guideHeight > 0 && (
+                  {guide && guideHeight > 0 && (
                     <span
                       aria-hidden="true"
                       class="absolute w-px bg-ink-muted"

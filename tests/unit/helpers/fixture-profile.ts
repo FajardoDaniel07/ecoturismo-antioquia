@@ -19,7 +19,11 @@ export function loadScenario(name: string): {
   territory: Territory;
   destinos: ProfileFixtureDestino[];
 } {
-  const root = path.join(process.cwd(), 'tests', 'fixtures', 'content', name);
+  // '@real' es el contenido real (`src/content`); cualquier otro nombre, un escenario de pruebas.
+  const root =
+    name === '@real'
+      ? path.join(process.cwd(), 'src', 'content')
+      : path.join(process.cwd(), 'tests', 'fixtures', 'content', name);
   const territory = JSON.parse(
     readFileSync(path.join(root, 'sitio', 'territorio.json'), 'utf8'),
   ) as Territory;

@@ -8,8 +8,8 @@ import {
 import { zoneOf } from '../../src/lib/altitude/zones';
 import { loadScenario } from './helpers/fixture-profile';
 
-const { territory, destinos } = loadScenario('completo');
 const VARIANT_IDS: ProfileVariantId[] = ['compact', 'medium', 'wide'];
+const SCENARIOS = ['academico', 'completo', 'sin-fotos', 'minimo', '@real'] as const;
 const CHAR = 0.58 * 14;
 
 interface Rect {
@@ -30,7 +30,7 @@ function labelRect(m: ProfileModel, i: number): Rect {
 }
 
 /** Obstáculos fijos reconstruidos del modelo: nombres de piso y cifras de altitud. */
-function obstacles(m: ProfileModel): Rect[] {
+function fixedTexts(m: ProfileModel): Rect[] {
   const text = (right: number, baseline: number, s: string): Rect => ({
     l: right - s.length * CHAR,
     t: baseline - 15,
@@ -49,26 +49,29 @@ function obstacles(m: ProfileModel): Rect[] {
   ];
 }
 
-const make = (id: string, name: string, meters: number) => ({
-  id,
-  name,
-  href: `/destinos/${id}/`,
-  altitude: { meters, verified: true, source: 'x' },
-  zone: zoneOf(meters, territory.thresholds),
-  isFeatured: false,
-});
-
 const warned = (m: ProfileModel, name: string) => m.warnings.some((w) => w.includes(`"${name}"`));
 
-describe('etiquetas del perfil con el escenario completo (S3.7, CA-5, CA-6)', () => {
+/** Casos que aún no tienen sitio con las reglas aprobadas R1 a R8 (ver el informe de T-059). */
+const OPEN_CASES: Record<string, string[]> = {
+  'academico/compact': ['Laguna Espejo Gris'],
+  'academico/medium': ['Salto Cinta de Plata'],
+  'completo/compact': ['Laguna Espejo Gris'],
+  'completo/medium': ['Salto Cinta de Plata'],
+  'sin-fotos/compact': ['Páramo de la Bruma Larga'],
+};
+
+describe.each(SCENARIOS)('etiquetas del perfil: escenario %s', (scenario) => {
+  const { territory, destinos } = loadScenario(scenario);
+
   it.each(VARIANT_IDS)(
-    'variante %s: las etiquetas colocadas no se solapan entre sí ni con un obstáculo',
+    'variante %s: ninguna etiqueta colocada sale de la figura (R1) ni toca otra, un obstáculo o la línea de cumbres (R8)',
     (variant) => {
       const m = buildAltitudeProfile(territory, destinos, variant);
-      const fixed = obstacles(m);
+      const fixed = fixedTexts(m);
       m.points.forEach((pt, i) => {
         if (warned(m, pt.name)) return;
         const rect = labelRect(m, i);
+        // R1
         expect(rect.l).toBeGreaterThanOrEqual(0);
         expect(rect.r).toBeLessThanOrEqual(m.width);
         expect(rect.t).toBeGreaterThanOrEqual(0);
@@ -79,39 +82,87 @@ describe('etiquetas del perfil con el escenario completo (S3.7, CA-5, CA-6)', ()
             expect(overlaps(rect, labelRect(m, k))).toBe(false);
           }
         });
+        // R8: a 4 px o más de la línea de cumbres (los rótulos al margen están lejos de ella).
+        if (!pt.label.margin) {
+          const samples = m.ridgeSamples.filter(([x]) => x >= rect.l - 4 && x <= rect.r + 4);
+          expect(samples.length).toBeGreaterThan(0);
+          for (const [, y] of samples) {
+            if (pt.label.side === 'rock') expect(y).toBeLessThanOrEqual(rect.t - 4 + 0.01);
+            else expect(y).toBeGreaterThanOrEqual(rect.b + 4 - 0.01);
+          }
+        }
       });
     },
   );
 
-  it('los avisos del escenario completo son los de la lectura literal de S3.7', () => {
-    // Hallazgo para la revisión (CA-124): con estos datos el procedimiento literal no encuentra
-    // sitio para algunas etiquetas de las variantes compacta y media; la amplia no avisa.
-    const names = (v: ProfileVariantId) =>
-      destinos
-        .map((d) => d.name)
-        .filter((n) => warned(buildAltitudeProfile(territory, destinos, v), n))
-        .sort();
-    expect(names('compact')).toEqual(['Cañón del Sol Quieto', 'Laguna Espejo Gris']);
-    expect(names('medium')).toEqual(['Salto Cinta de Plata']);
-    expect(names('wide')).toEqual([]);
+  it.each(VARIANT_IDS)(
+    'variante %s: una guía solo existe con su rótulo completo dentro de la figura y termina tocándolo (R3)',
+    (variant) => {
+      const m = buildAltitudeProfile(territory, destinos, variant);
+      m.points.forEach((pt, i) => {
+        const { label } = pt;
+        expect(label.leader).toBe(label.guide !== null);
+        if (!label.guide) return;
+        const rect = labelRect(m, i);
+        // El rótulo está completo dentro de la figura.
+        expect(rect.l).toBeGreaterThanOrEqual(0);
+        expect(rect.r).toBeLessThanOrEqual(m.width);
+        expect(rect.t).toBeGreaterThanOrEqual(0);
+        expect(rect.b).toBeLessThanOrEqual(m.height);
+        // La guía es vertical, a la altura del punto, y su extremo toca el borde del rótulo.
+        expect(pt.x).toBeGreaterThanOrEqual(rect.l);
+        expect(pt.x).toBeLessThanOrEqual(rect.r);
+        const end = label.side === 'rock' ? label.guide.y2 : label.guide.y1;
+        const edge = label.side === 'rock' ? rect.t : rect.b;
+        expect(end).toBeCloseTo(edge, 1);
+        // Una guía nunca atraviesa otra etiqueta.
+        const g = {
+          l: pt.x - 0.5,
+          r: pt.x + 0.5,
+          t: Math.min(label.guide.y1, label.guide.y2),
+          b: Math.max(label.guide.y1, label.guide.y2),
+        };
+        m.points.forEach((other, k) => {
+          if (k !== i && !warned(m, other.name)) expect(overlaps(g, labelRect(m, k))).toBe(false);
+        });
+      });
+    },
+  );
+
+  it.each(VARIANT_IDS)('variante %s: es determinista', (variant) => {
+    expect(buildAltitudeProfile(territory, destinos, variant)).toEqual(
+      buildAltitudeProfile(territory, destinos, variant),
+    );
   });
 
-  it('un nombre sin sitio no se trunca ni se oculta: queda y avisa con el nombre del destino', () => {
-    const m = buildAltitudeProfile(territory, destinos, 'compact');
-    const point = m.points.find((p) => p.name === 'Cañón del Sol Quieto');
-    expect(point?.label.lines.join(' ')).toBe('Cañón del Sol Quieto');
-    expect(m.warnings.some((w) => w.includes('"Cañón del Sol Quieto"'))).toBe(true);
+  it.each(VARIANT_IDS)('variante %s: los avisos son solo los casos abiertos', (variant) => {
+    const m = buildAltitudeProfile(territory, destinos, variant);
+    const open = OPEN_CASES[`${scenario}/${variant}`] ?? [];
+    const names = destinos.map((d) => d.name).filter((n) => warned(m, n));
+    expect(names.sort()).toEqual([...open].sort());
+    expect(m.warnings).toHaveLength(open.length);
   });
 });
 
-describe('reglas de colocación (S3.7)', () => {
+describe('reglas de colocación', () => {
+  const { territory, destinos } = loadScenario('completo');
+  const make = (id: string, name: string, meters: number) => ({
+    id,
+    name,
+    href: `/destinos/${id}/`,
+    altitude: { meters, verified: true, source: 'x' },
+    zone: zoneOf(meters, territory.thresholds),
+    isFeatured: false,
+  });
+
   it('lado preferido: en la roca a la izquierda de la mitad, en el cielo desde la mitad', () => {
     const short = [make('a', 'Alfa', 300), make('b', 'Beta', 1200), make('c', 'Gama', 2400)];
     const m = buildAltitudeProfile(territory, short, 'wide');
     expect(m.points.map((p) => p.label.side)).toEqual(['rock', 'rock', 'sky']);
     for (const pt of m.points) {
-      expect(pt.label.side).toBe(pt.x < m.width / 2 ? 'rock' : 'sky');
       expect(pt.label.offsetY).toBe(0);
+      expect(pt.label.margin).toBe(false);
+      expect(pt.label.guide).toBeNull();
     }
   });
 
@@ -134,46 +185,81 @@ describe('reglas de colocación (S3.7)', () => {
     expect(m.points[0]?.label.width).toBeCloseTo(7 * CHAR, 1);
   });
 
-  it('opción 2: parte el nombre en dos líneas por un espacio cuando en una no cabe', () => {
-    // Cinco puntos pegados en la compacta obligan a partir los nombres largos.
+  it('R4: la variante compacta parte un nombre largo en hasta tres líneas', () => {
     const m = buildAltitudeProfile(territory, destinos, 'compact');
-    const split = m.points.find((p) => p.label.lines.length === 2);
-    expect(split).toBeDefined();
-    expect(split?.label.lines.join(' ')).toBe(split?.name);
-  });
-
-  it('opción 3: prueba la otra posición antes de alejar la etiqueta', () => {
-    const m = buildAltitudeProfile(territory, destinos, 'medium');
-    const flipped = m.points.filter((p) => p.label.side !== (p.x < m.width / 2 ? 'rock' : 'sky'));
-    expect(flipped.length).toBeGreaterThan(0);
-    flipped.forEach((p) => expect(p.label.offsetY).toBe(0));
-  });
-
-  it('opción 4: se aleja de 4 en 4 px hasta 48 y pone línea guía si pasa de 12', () => {
-    const crowded = [
-      'Mirador del Frailejón Perdido',
-      'Laguna Espejo Gris',
-      'Bosque de Niebla Serena',
-      'Cafetal de la Loma Alta',
-      'Salto Cinta de Plata',
-    ].map((name, i) => make(`d${i}`, name, 1500));
-    const m = buildAltitudeProfile(territory, crowded, 'medium');
-    const shifted = m.points.filter((p) => p.label.offsetY > 0);
-    expect(shifted.length).toBeGreaterThan(0);
-    expect(shifted.some((p) => p.label.leader)).toBe(true);
-    for (const p of m.points) {
-      expect(p.label.offsetY % 4).toBe(0);
-      expect(p.label.offsetY).toBeLessThanOrEqual(48);
-      expect(p.label.leader).toBe(p.label.offsetY > 12);
+    const lines = m.points.map((p) => p.label.lines.length);
+    expect(Math.max(...lines)).toBe(3);
+    for (const p of m.points) expect(p.label.lines.join(' ')).toBe(p.name);
+    // Las otras variantes no pasan de dos líneas.
+    for (const v of ['medium', 'wide'] as const) {
+      const mm = buildAltitudeProfile(territory, destinos, v);
+      expect(Math.max(...mm.points.map((p) => p.label.lines.length))).toBeLessThanOrEqual(2);
     }
   });
 
-  it('caso forzado: sin sitio posible produce un aviso con el nombre del destino', () => {
-    const name = 'Un nombre larguísimo que no cabe en ninguna posición del perfil compacto';
-    const m = buildAltitudeProfile(territory, [make('x', name, 1950)], 'compact');
-    expect(m.warnings).toHaveLength(1);
-    expect(m.warnings[0]).toContain(`"${name}"`);
-    expect(m.points[0]?.label.lines.join(' ')).toBe(name);
+  it('opción de alejarse: de 4 en 4 px hasta 48, sin salir de la figura (R1)', () => {
+    for (const scenario of SCENARIOS) {
+      const loaded = loadScenario(scenario);
+      for (const v of VARIANT_IDS) {
+        const m = buildAltitudeProfile(loaded.territory, loaded.destinos, v);
+        for (const p of m.points) {
+          expect(p.label.offsetY % 4).toBe(0);
+          expect(p.label.offsetY).toBeLessThanOrEqual(48);
+        }
+      }
+    }
+  });
+
+  it('R2: un rótulo al margen va en la franja del cielo o de la base y cubre la vertical de su punto', () => {
+    // Ocho destinos con nombres largos: los rótulos normales no caben y algunos van al margen.
+    const crowded = [
+      ['Piedra del Peñol y Guatapé', 298],
+      ['Santa Fe de Antioquia Vieja', 832],
+      ['Mirador del Frailejón Perdido', 1374],
+      ['Cañón del Río Claro Grande', 1924],
+      ['Laguna de los Tres Espejos Grises', 2482],
+      ['Bosque de Niebla Serena Alta', 3048],
+      ['Piedra del Peñol y Guatapé 2', 3622],
+      ['Santa Fe de Antioquia Vieja 2', 704],
+    ].map(([name, meters], i) => make(`d${i}`, String(name), Number(meters)));
+    const m = buildAltitudeProfile(territory, crowded, 'medium');
+    const { Pt, H, Pb } = VARIANTS.medium;
+    expect(m.warnings).toEqual([]);
+    const margins = m.points.filter((pt) => pt.label.margin);
+    expect(margins.length).toBeGreaterThan(0);
+    m.points.forEach((pt, i) => {
+      if (!pt.label.margin) return;
+      const rect = labelRect(m, i);
+      if (pt.label.side === 'sky') {
+        expect(rect.t).toBeGreaterThanOrEqual(4);
+        expect(rect.b).toBeLessThanOrEqual(Pt - 4);
+      } else {
+        expect(rect.t).toBeGreaterThanOrEqual(H - Pb + 4);
+        expect(rect.b).toBeLessThanOrEqual(H - 4);
+      }
+      expect(pt.x).toBeGreaterThanOrEqual(rect.l);
+      expect(pt.x).toBeLessThanOrEqual(rect.r);
+      expect(pt.label.guide).not.toBeNull();
+    });
+  });
+
+  it('R7: cada texto de la figura tiene su zona interrumpida, a 3 px de su caja', () => {
+    const m = buildAltitudeProfile(territory, destinos, 'wide');
+    // 4 nombres de piso + 2 cifras + 1 etiqueta por destino.
+    expect(m.knockouts).toHaveLength(4 + 2 + m.points.length);
+    m.points.forEach((pt, i) => {
+      const rect = labelRect(m, i);
+      const k = m.knockouts[6 + i]!;
+      expect(k.top).toBeCloseTo(rect.t - 3, 1);
+      expect(k.bottom).toBeCloseTo(rect.b + 3, 1);
+      expect(k.left.f * m.width + k.left.px).toBeCloseTo(rect.l - 3, 1);
+      expect(k.right.f * m.width + k.right.px).toBeCloseTo(rect.r + 3, 1);
+    });
+  });
+
+  it('R9: los nombres de piso van con mayúscula inicial', () => {
+    const m = buildAltitudeProfile(territory, destinos, 'medium');
+    for (const z of m.zoneLabels) expect(z.text[0]).toBe(z.text[0]!.toUpperCase());
   });
 
   it('un nombre sin espacios no se parte', () => {
@@ -181,10 +267,9 @@ describe('reglas de colocación (S3.7)', () => {
     expect(m.points[0]?.label.lines).toEqual(['Anchicayá']);
   });
 
-  it('cada variante usa su propio alto de línea sin salirse de la figura', () => {
-    for (const v of VARIANT_IDS) {
-      const m = buildAltitudeProfile(territory, destinos, v);
-      expect(m.height).toBe(VARIANTS[v].H);
-    }
+  it('caso forzado: sin sitio posible produce un aviso con el nombre del destino', () => {
+    const name = 'Un nombre larguísimo sin sitio posible en la variante compacta del perfil';
+    const m = buildAltitudeProfile(territory, [make('x', name, 1950)], 'compact');
+    expect(m.warnings.some((w) => w.includes(`"${name}"`))).toBe(true);
   });
 });

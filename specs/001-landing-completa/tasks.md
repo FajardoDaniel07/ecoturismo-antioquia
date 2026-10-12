@@ -247,7 +247,7 @@ Al terminar T-021 y T-023, `content-curator` puede empezar H3.
 
 Corre en paralelo con H4, H5 y H6: el desarrollo trabaja sobre los escenarios de prueba.
 
-- [ ] **T-028** · `content-curator` — Proponer la lista del primer lanzamiento: de 6 a 8 destinos con
+- [x] **T-028** · `content-curator` — Proponer la lista del primer lanzamiento: de 6 a 8 destinos con
   al menos uno por piso y de 3 a 5 rutas, con la fuente prevista de cada altitud y de cada foto
   (PA-15).
   - Archivos: `specs/001-landing-completa/contenido-propuesto.md`.
@@ -256,39 +256,39 @@ Corre en paralelo con H4, H5 y H6: el desarrollo trabaja sobre los escenarios de
 - [x] **T-029** · humano — Aprobar la lista propuesta (PA-15).
   - Depende de: T-028.
   - Hecho cuando: el documento dice "APROBADA (fecha, quién)".
-- [ ] **T-030** · `content-curator` — Verificar con fuente citada la altitud mínima y máxima de
+- [x] **T-030** · `content-curator` — Verificar con fuente citada la altitud mínima y máxima de
   Antioquia y los tres umbrales entre pisos; escribir `territorio.json`.
   - Archivos: `src/content/sitio/territorio.json`.
   - CA: CA-2, CA-29, CA-104, CA-122. Depende de: T-029.
   - Hecho cuando: `verified` es verdadero, `source` cita la fuente y `astro sync` pasa.
-- [ ] **T-031** · `content-curator` [P] — Escribir `operador.json` con nombre, WhatsApp, horario y
+- [x] **T-031** · `content-curator` [P] — Escribir `operador.json` con nombre, WhatsApp, horario y
   correo confirmados, sin identificadores oficiales.
   - Archivos: `src/content/sitio/operador.json`.
   - CA: CA-82, CA-119. Depende de: T-029.
   - Hecho cuando: los datos coinciden con PA-2 de la spec y no hay ningún identificador inventado.
-- [ ] **T-032** · `content-curator` — Escribir los destinos del piso cálido y templado: nombre,
+- [x] **T-032** · `content-curator` — Escribir los destinos del piso cálido y templado: nombre,
   descripción corta y larga, altitud verificada con fuente, ficha y destino principal.
   - Archivos: `src/content/destinos/*.md`.
   - CA: CA-17, CA-20 a CA-28, CA-33, CA-101, CA-102, CA-104. Depende de: T-030.
   - Hecho cuando: cada destino tiene `altitude.verified` verdadero con fuente y `npm run build` no
     da errores ni avisos sobre ellos.
-- [ ] **T-033** · `content-curator` [P] — Lo mismo para los destinos del piso frío y del páramo.
+- [x] **T-033** · `content-curator` [P] — Lo mismo para los destinos del piso frío y del páramo.
   - Archivos: `src/content/destinos/*.md`.
   - CA: los de T-032. Depende de: T-030.
   - Hecho cuando: igual que T-032.
-- [ ] **T-034** · `content-curator` — Seleccionar las fotos: comprobar licencia y lugar en la
+- [x] **T-034** · `content-curator` — Seleccionar las fotos: comprobar licencia y lugar en la
   página de la fuente y redactar el texto alternativo. **Sin descargar archivos:** el curador no
   puede. La descarga y el frontmatter pasan a T-130, T-131 y T-132.
   - Archivos: `specs/001-landing-completa/contenido-propuesto.md` (sección de fotos).
   - CA: CA-46, CA-47, CA-48. Depende de: T-032, T-033.
   - Hecho cuando: cada foto elegida tiene autor, licencia, enlace de la fuente, dimensiones
     declaradas y texto alternativo.
-- [ ] **T-035** · `content-curator` [P] — Escribir las rutas en GeoJSON: trazado de 400 puntos como
+- [x] **T-035** · `content-curator` [P] — Escribir las rutas en GeoJSON: trazado de 400 puntos como
   máximo, elevación mínima y máxima, elevación por punto si existe, ficha y destino.
   - Archivos: `src/content/rutas/*.json`.
   - CA: CA-21, CA-76, CA-77, CA-78. Depende de: T-032, T-033.
   - Hecho cuando: `npm run build` no da errores ni avisos de rutas.
-- [ ] **T-036** · `content-curator` [P] — Redactar la política de tratamiento de datos de
+- [x] **T-036** · `content-curator` [P] — Redactar la política de tratamiento de datos de
   muestra, con `status: sample`. Debe decir con veracidad: que el enlace de WhatsApp abre una
   conversación con el número del sitio; que el enlace de correo abre el programa de correo del
   visitante; que al cargar el mapa el navegador envía la dirección IP y las zonas consultadas a
@@ -298,7 +298,7 @@ Corre en paralelo con H4, H5 y H6: el desarrollo trabaja sobre los escenarios de
   - CA: CA-134, CA-135, CA-137. Depende de: T-120, T-122.
   - Hecho cuando: `npm run build` no da el error de tercero sin nombrar y el texto cubre los cinco
     puntos.
-- [ ] **T-037** · `content-curator` [P] — Redactar los textos de muestra de términos y
+- [x] **T-037** · `content-curator` [P] — Redactar los textos de muestra de términos y
   condiciones y de política de cancelación, con `status: sample`. Describen que el sitio es un
   ejercicio académico y no prometen servicios, reservas, cupos ni precios.
   - Archivos: `src/content/legal/terminos-y-condiciones.md`,
@@ -428,7 +428,7 @@ avisos de contenido.
   - Archivos: `tests/e2e/capturas.spec.ts`, `specs/001-landing-completa/capturas/*.png`.
   - CA: CA-124. Depende de: T-056.
   - Hecho cuando: el guion deja las capturas en la carpeta, con nombre de variante y ancho.
-- [ ] **T-058** · `ui-designer` — Comparar las capturas con S3.3 y con la tabla "Qué debe verse" de
+- [x] **T-058** · `ui-designer` — Comparar las capturas con S3.3 y con la tabla "Qué debe verse" de
   S6.3; pedir ajustes de parámetros y anotarlos en `design.md`; decidir qué pasa a 320 px (C6).
   - Archivos: `specs/001-landing-completa/design.md`,
     `specs/001-landing-completa/revision-capturas.md`.
@@ -540,7 +540,7 @@ Puede empezar al terminar T-056, sin esperar a T-060; no se cierra hasta que T-0
   - CA: CA-105. Depende de: T-056.
   - Hecho cuando: pasa sobre el código actual y falla al añadir un color hexadecimal en un
     componente.
-- [ ] **T-076** · `astro-developer` — Repasar el inicio completo a 360, 768 y 1280 px sin
+- [x] **T-076** · `astro-developer` — Repasar el inicio completo a 360, 768 y 1280 px sin
   JavaScript contra S1 a S13 y corregir desajustes de layout.
   - Archivos: los de `src/components/` que haga falta.
   - CA: CA-110, CA-112. Depende de: T-062 a T-074.
@@ -771,7 +771,7 @@ Se intercalan con H4 a H8 según la tabla "Orden recomendado" del final de este 
   - Depende de: —
   - Hecho cuando: el plan y los dos ADR dicen "aprobado (fecha, quién)". **Bloquea T-120 a T-140**,
     salvo T-119, ya encargada.
-- [ ] **T-118** · `ui-designer` [P] — Completar `design.md` con el modo académico: aviso (texto
+- [x] **T-118** · `ui-designer` [P] — Completar `design.md` con el modo académico: aviso (texto
   exacto, lugar, aspecto a 360 px), aclaración del contacto, mensaje inicial de WhatsApp de prueba,
   rótulo de las páginas legales y pie con "proyecto académico". En curso.
   - Archivos: `specs/001-landing-completa/design.md`; `src/styles/tokens.css` y
@@ -794,7 +794,7 @@ Se intercalan con H4 a H8 según la tabla "Orden recomendado" del final de este 
 
 ### Esquema y puerta de publicación
 
-- [ ] **T-119** · `astro-developer` — Corrección: `territorySchema.minM` admite 0. Comprobar además
+- [x] **T-119** · `astro-developer` — Corrección: `territorySchema.minM` admite 0. Comprobar además
   que el titular ("de 0 a 4080 metros de altitud"), el rango del piso cálido ("De 0 a 1000 m") y la
   escala del perfil funcionan con mínima 0, y actualizar la guía de contenido. Ya encargada.
   - Archivos: `src/lib/content/schemas.ts`, `tests/unit/schemas.test.ts`, `tests/unit/units.test.ts`,
@@ -853,7 +853,7 @@ Se intercalan con H4 a H8 según la tabla "Orden recomendado" del final de este 
   - Archivos: `src/content/sitio/operador.json`, `src/content/destinos/*.md`.
   - CA: CA-125, CA-137. Depende de: T-120.
   - Hecho cuando: `npm run build` no da errores ni el aviso de comentarios HTML.
-- [ ] **T-130** · `content-curator` — Manifiesto de fotos: por cada foto elegida, destino, nombre de
+- [x] **T-130** · `content-curator` — Manifiesto de fotos: por cada foto elegida, destino, nombre de
   archivo de destino, URL de descarga directa (original o reducción a 2560 px), página de la
   fuente, autor, licencia y dimensiones declaradas por la fuente. Sustituye la parte de descarga
   de T-034.
@@ -870,7 +870,7 @@ Se intercalan con H4 a H8 según la tabla "Orden recomendado" del final de este 
   - CA: CA-42, CA-43. Depende de: T-130.
   - Hecho cuando: `--check` confirma que cada archivo del manifiesto existe, mide 1200 px o más de
     lado mayor y pesa 1.5 MB o menos; el informe marca cuáles llegan a 2000 px.
-- [ ] **T-132** · `content-curator` — Añadir las fotos descargadas al frontmatter de cada destino,
+- [x] **T-132** · `content-curator` — Añadir las fotos descargadas al frontmatter de cada destino,
   con proporción y punto de interés elegidos a partir del informe de T-131.
   - Archivos: `src/content/destinos/*.md`.
   - CA: CA-43, CA-45 a CA-49. Depende de: T-131.

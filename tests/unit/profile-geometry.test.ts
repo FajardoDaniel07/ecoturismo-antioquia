@@ -122,7 +122,7 @@ describe('buildAltitudeProfile: geometría (S3.4, S3.5)', () => {
       const st = m.strata[i]!;
       expect(z.baselineY).toBeCloseTo(st.y + st.height - 8, 1);
     });
-    expect(m.zoneLabels.map((z) => z.text)).toEqual(['cálido', 'templado', 'frío', 'páramo']);
+    expect(m.zoneLabels.map((z) => z.text)).toEqual(['Cálido', 'Templado', 'Frío', 'Páramo']); // R9
   });
 
   it('rotula la altitud mínima y la máxima', () => {
@@ -136,8 +136,9 @@ describe('buildAltitudeProfile: geometría (S3.4, S3.5)', () => {
   it('la silueta es la línea de cumbres cerrada por (W, H) y (0, H)', () => {
     const m = buildAltitudeProfile(territory, destinos, 'medium');
     expect(m.silhouettePath.startsWith(m.ridgePath)).toBe(true);
-    expect(m.silhouettePath.endsWith('L704 340L0 340Z')).toBe(true);
-    expect(m.ridgePath.startsWith('M0 291.')).toBe(false);
+    expect(m.silhouettePath.endsWith(`L704 ${VARIANTS.medium.H}L0 ${VARIANTS.medium.H}Z`)).toBe(
+      true,
+    );
     expect(m.ridgePath).toMatch(/^M0 [\d.]+L24 /);
   });
 
@@ -215,5 +216,32 @@ describe('territorio con mínima en el nivel del mar (0 m)', () => {
     expect(m.points[0]!.y).toBeLessThan(p.H - p.Pb);
     expect(m.points[0]!.y).toBeGreaterThan(p.H - p.Pb - 2);
     expect(Number.isFinite(m.strata[0]!.height)).toBe(true);
+  });
+});
+
+describe('constantes de la revisión con capturas (R5, R6)', () => {
+  it('R5: márgenes y altos nuevos', () => {
+    expect(VARIANTS.compact).toMatchObject({ Pt: 56, Pb: 56, H: 340 });
+    expect(VARIANTS.medium).toMatchObject({ Pb: 56, H: 348 });
+    expect(VARIANTS.wide).toMatchObject({ Pt: 32, Pb: 48, H: 380 });
+  });
+
+  it('R6: ningún rellano de la variante compacta mide más de 12 px', () => {
+    expect(VARIANTS.compact.maxTerrace).toBe(12);
+    const m = buildAltitudeProfile(territory, destinos, 'compact');
+    // Cada rellano es el tramo recto `L` que sigue a una subida `C`.
+    const terraces = [
+      ...m.ridgePath.matchAll(/C[\d.]+ [\d.]+ [\d.]+ [\d.]+ ([\d.]+) [\d.]+L([\d.]+) /g),
+    ].map((t) => Number(t[2]) - Number(t[1]));
+    expect(terraces).toHaveLength(5);
+    for (const length of terraces) expect(length).toBeLessThanOrEqual(12.01);
+  });
+
+  it('R11: la subida llega al rellano con pendiente (el segundo punto de control no está a la altura del rellano)', () => {
+    const m = buildAltitudeProfile(territory, [make('solo', 1500)], 'wide');
+    const first = /C([\d.]+) ([\d.]+) ([\d.]+) ([\d.]+) ([\d.]+) ([\d.]+)/.exec(m.ridgePath);
+    expect(first).not.toBeNull();
+    const [c2y, toY] = [Number(first![4]), Number(first![6])];
+    expect(c2y).toBeGreaterThan(toY); // el control queda por debajo del rellano: hombro
   });
 });

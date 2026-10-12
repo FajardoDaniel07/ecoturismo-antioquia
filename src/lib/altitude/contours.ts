@@ -10,7 +10,7 @@ import type { ZoneId } from './zones';
 
 export const PLATE_WIDTH = 300;
 export const PLATE_HEIGHT = 200;
-export const GRID_STEP = 4;
+export const GRID_STEP = 2; // R13: retícula de 2 unidades
 
 export interface ContourCurve {
   /** Trazado SVG de todas las líneas de este nivel. */
@@ -54,18 +54,19 @@ const warmAxis = (x: number): number =>
 const HILLS: readonly (readonly [number, number, number, number, number])[] = [
   [78, 128, 52, 40, 70],
   [196, 74, 44, 34, 60],
-  [262, 150, 30, 26, 42],
+  [262, 150, 30, 26, 55], // R15: tercera colina con A = 55
 ];
 
 // --- Frío: ladera con quebradas -----------------------------------------------------------
 const COLD = {
   slopeY: 0.45,
   slopeX: 0.03,
-  amp1: 7,
-  period1: 70,
+  // R14: ondas más largas (la de periodo 23 era demasiado corta para la retícula).
+  amp1: 6,
+  period1: 90,
   phase1: 0.3,
-  amp2: 3,
-  period2: 23,
+  amp2: 2.5,
+  period2: 41,
   phase2: 1.1,
 };
 
@@ -99,8 +100,9 @@ const RELIEFS: Record<ZoneId, Relief> = {
           sum + a * Math.exp(-((x - cx) ** 2 / (2 * sx ** 2) + (y - cy) ** 2 / (2 * sy ** 2))),
         0,
       ),
-    levels: range(10, 80, 10),
-    masters: [50],
+    // R15: más anillos por loma y más curvas maestras en color fuerte.
+    levels: range(6, 84, 6),
+    masters: [18, 36, 54, 72],
   },
   cold: {
     h: (x, y) =>
@@ -202,7 +204,66 @@ function levelSegments(grid: number[][], level: number): Segment[] {
 
 const key = (p: Point) => `${round1(p[0])},${round1(p[1])}`;
 
-/** Une los segmentos que comparten extremo en líneas continuas, y devuelve el trazado SVG. */
+/** Distancia de un punto a la recta que une `a` y `b`. */
+function distanceToLine(p: Point, a: Point, b: Point): number {
+  const dx = b[0] - a[0];
+  const dy = b[1] - a[1];
+  const len = Math.hypot(dx, dy);
+  if (len === 0) return Math.hypot(p[0] - a[0], p[1] - a[1]);
+  return Math.abs(dy * p[0] - dx * p[1] + b[0] * a[1] - b[1] * a[0]) / len;
+}
+
+/** Douglas-Peucker: quita los puntos que no cambian la forma más de `epsilon` unidades. */
+function simplify(points: Point[], epsilon: number): Point[] {
+  if (points.length < 3) return points;
+  const first = points[0]!;
+  const last = points[points.length - 1]!;
+  let index = 0;
+  let max = 0;
+  for (let i = 1; i < points.length - 1; i++) {
+    const d = distanceToLine(points[i]!, first, last);
+    if (d > max) {
+      max = d;
+      index = i;
+    }
+  }
+  if (max <= epsilon) return [first, last];
+  return [
+    ...simplify(points.slice(0, index + 1), epsilon).slice(0, -1),
+    ...simplify(points.slice(index), epsilon),
+  ];
+}
+
+const SIMPLIFY_EPSILON = 0.7;
+const mid = (a: Point, b: Point): Point => [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+const fmt = (p: Point) => `${round1(p[0])} ${round1(p[1])}`;
+
+/**
+ * R13: curva suave que pasa cerca de los puntos, sin esquinas. Cada punto es el punto de control
+ * de una curva cuadrática que va de un punto medio al siguiente; las curvas cerradas se cierran.
+ */
+function smoothLine(line: Point[]): string {
+  const closed = line.length > 3 && key(line[0]!) === key(line[line.length - 1]!);
+  const pts = simplify(closed ? line.slice(0, -1).concat([line[0]!]) : line, SIMPLIFY_EPSILON);
+  if (pts.length < 3) return pts.map((p, n) => `${n === 0 ? 'M' : 'L'}${fmt(p)}`).join('');
+  if (closed) {
+    const ring = pts.slice(0, -1);
+    const m = ring.length;
+    const parts = [`M${fmt(mid(ring[m - 1]!, ring[0]!))}`];
+    for (let i = 0; i < m; i++) {
+      parts.push(`Q${fmt(ring[i]!)} ${fmt(mid(ring[i]!, ring[(i + 1) % m]!))}`);
+    }
+    return `${parts.join('')}Z`;
+  }
+  const parts = [`M${fmt(pts[0]!)}`, `L${fmt(mid(pts[0]!, pts[1]!))}`];
+  for (let i = 1; i < pts.length - 1; i++) {
+    parts.push(`Q${fmt(pts[i]!)} ${fmt(mid(pts[i]!, pts[i + 1]!))}`);
+  }
+  parts.push(`L${fmt(pts[pts.length - 1]!)}`);
+  return parts.join('');
+}
+
+/** Une los segmentos que comparten extremo en líneas continuas, y devuelve el trazado SVG suavizado. */
 function toPath(segments: Segment[]): string {
   const byEnd = new Map<string, number[]>();
   segments.forEach((s, idx) => {
@@ -232,9 +293,7 @@ function toPath(segments: Segment[]): string {
         else line.unshift(other);
       }
     }
-    commands.push(
-      line.map((p, n) => `${n === 0 ? 'M' : 'L'}${round1(p[0])} ${round1(p[1])}`).join(''),
-    );
+    commands.push(smoothLine(line));
   }
   return commands.join('');
 }
