@@ -1647,5 +1647,5 @@ antes de regenerar las capturas; no se debe forzar con otra excepción.
 
 ---
 Estado: APROBADO (2026-10-10, aprobado por el humano). Adición del 2026-10-11 (modo de ejercicio
-académico, S14): aprobada por el humano el 2026-10-11. Revisión con capturas (T-058): ajustes R1 a R20 aprobados por el humano el 2026-10-11; falta su aprobación final de CA-124 sobre capturas
-nuevas
+académico, S14): aprobada por el humano el 2026-10-11. Revisión con capturas (T-058): ajustes R1 a R20 aprobados por el humano el 2026-10-11; CA-124 aprobado por el humano el 2026-10-12 sobre las capturas
+regeneradas con R1 a R20

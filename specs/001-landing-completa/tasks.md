@@ -46,6 +46,12 @@ ejecutan aunque sigan sin marcar.
 | C-12 | **Subir el repositorio a GitHub, crear el proyecto en Vercel (Node.js 24) y definir `SITE_URL`** | humano | T-039, T-139 |
 | C-13 | Fusionar en la rama principal y comprobar el primer despliegue | asistente principal, `qa-engineer` | T-116, T-140 |
 
+**Avance del plan corto**
+
+- Hechos: C-1 (2026-10-12), C-3 (2026-10-12), C-4 (2026-10-12) y **C-5: el humano aprobó las
+  capturas del perfil y las láminas el 2026-10-12 (CA-124)**.
+- En curso: C-2 y la base de C-7 (`qa-engineer`); C-6 (`astro-developer`).
+
 **Retiradas sin sustituto:** T-038 (no aplica en modo académico), T-061 y T-077 (cierres de hito,
 absorbidos por C-5 y C-9), T-075 (prueba de tokens), T-109 (contraste de rutas sobre teselas),
 T-129 (coherencia de `vercel.json`, cubierta por C-13) y T-136 (modo de operador real).
@@ -457,7 +463,7 @@ avisos de contenido.
   - Archivos: `src/lib/altitude/profile.ts`, `src/lib/altitude/contours.ts`, capturas.
   - CA: CA-124. Depende de: T-058.
   - Hecho cuando: `ui-designer` da por buenas las capturas nuevas.
-- [ ] **T-060** · humano — **Punto de control CA-124 (bloqueante).** Revisar las capturas a 320,
+- [x] **T-060** · humano — **Punto de control CA-124 (bloqueante).** Revisar las capturas a 320,
   360, 768 y 1280 px y las cuatro láminas; aprobar por escrito o pedir ajustes; decidir si aplica el
   respaldo de S3.10.
   - Archivos: `specs/001-landing-completa/revision-capturas.md`.
