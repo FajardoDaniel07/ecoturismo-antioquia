@@ -7,25 +7,27 @@ import { contentRootOf, outDirOf, scenarios, urlOf, type Scenario } from './scen
 const astroBin = path.join(process.cwd(), 'node_modules', 'astro', 'bin', 'astro.mjs');
 
 /**
- * El almacén de contenido de Astro persiste entre construcciones en `node_modules/.astro/` (la caché de
- * `astro build`) y `glob()` no retira las entradas de una raíz anterior: tras cambiar `CONTENT_ROOT`
- * aparecen entradas duplicadas y rutas de otro escenario. Se borra antes de cada construcción y al
- * terminar, para que el siguiente `npm run build` normal tampoco herede contenido de pruebas.
+ * Cada build usa su propio almacén de contenido (`CACHE_DIR`, dentro de `.tmp/`): así no mezcla entradas
+ * de otra raíz de contenido ni toca el de `node_modules/.astro/`, que usan los demás agentes.
+ * Astro escribe además `.astro/content-assets.mjs` en el proyecto y eso no se puede aislar sin tocar la
+ * configuración: los builds de pruebas van de uno en uno y, si otro build del proyecto los pisa
+ * (`LocalImageUsedWrongly`), se repiten.
  */
-export function clearContentStore(): void {
-  for (const target of ['node_modules/.astro/data-store.json', 'node_modules/.astro/data-store']) {
-    rmSync(path.join(process.cwd(), target), { recursive: true, force: true });
-  }
+const COLLISION = /LocalImageUsedWrongly|UnknownFilesystemError|EBUSY|EPERM/;
+const MAX_ATTEMPTS = 3;
+
+function cacheDirOf(scenario: Scenario): string {
+  return path.join(process.cwd(), '.tmp', 'build-cache', `${scenario.name}-${scenario.port}`);
 }
 
 function envFor(scenario: Scenario): NodeJS.ProcessEnv {
-  const env: NodeJS.ProcessEnv = {
+  return {
     ...process.env,
     OUT_DIR: outDirOf(scenario),
+    CACHE_DIR: cacheDirOf(scenario),
     SITE_URL: urlOf(scenario),
+    CONTENT_ROOT: contentRootOf(scenario),
   };
-  env.CONTENT_ROOT = contentRootOf(scenario);
-  return env;
 }
 
 const MIME: Record<string, string> = {
@@ -88,6 +90,18 @@ async function waitFor(url: string, timeoutMs = 30_000): Promise<void> {
   }
 }
 
+function buildOnce(args: string[], scenario: Scenario) {
+  rmSync(cacheDirOf(scenario), { recursive: true, force: true });
+  return spawnSync(process.execPath, args, {
+    env: envFor(scenario),
+    encoding: 'utf8',
+    maxBuffer: 64 * 1024 * 1024,
+  });
+}
+
+const isCollision = (r: { status: number | null; stdout: string; stderr: string }) =>
+  r.status !== 0 && COLLISION.test(`${r.stdout}${r.stderr}`);
+
 export interface ServeOptions {
   /** Si devuelve una carpeta, guarda ahí el registro del build de ese escenario (`build.log`). */
   logDirOf?: (scenario: Scenario) => string | undefined;
@@ -116,15 +130,12 @@ export async function serveScenarios(
   };
 
   for (const scenario of list) {
-    clearContentStore();
     const args = [astroBin, 'build'];
     if (scenario.mode === 'preview') args.push('--mode', 'preview');
-    const result = spawnSync(process.execPath, args, {
-      env: envFor(scenario),
-      encoding: 'utf8',
-      maxBuffer: 64 * 1024 * 1024,
-    });
-    clearContentStore();
+    let result = buildOnce(args, scenario);
+    for (let attempt = 1; attempt < MAX_ATTEMPTS && isCollision(result); attempt++) {
+      result = buildOnce(args, scenario);
+    }
     const output = `${result.stdout}${result.stderr}`;
     process.stdout.write(output);
     const logDir = options.logDirOf?.(scenario);

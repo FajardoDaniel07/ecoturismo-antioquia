@@ -19,7 +19,7 @@ const ACADEMIC_NOTICE = 'Proyecto académico';
 
 function builds(result: BuildResult): void {
   expect(result.status, result.output.slice(-1500)).toBe(0);
-  expect(result.html).toContain('<h1');
+  expect(result.read('index.html')).toContain('<h1');
 }
 
 function fails(result: BuildResult, criterion: string | null, fragment: string): void {
@@ -33,15 +33,15 @@ function fails(result: BuildResult, criterion: string | null, fragment: string):
 // 1. Los cuatro cruces
 // ---------------------------------------------------------------------------
 
-describe.concurrent('cuatro cruces: tipo de sitio por compilación', () => {
+describe('cuatro cruces: tipo de sitio por compilación', () => {
   test(
     'CA-125, CA-126, CA-133: académico en vista previa construye, con aviso y sin indexar',
     async () => {
       const r = await build('academico', 'preview');
       builds(r);
-      expect(r.html).toContain(ACADEMIC_NOTICE);
-      expect(r.html).toMatch(NOT_INDEXABLE);
-      expect(r.html).not.toContain('99871');
+      expect(r.read('index.html')).toContain(ACADEMIC_NOTICE);
+      expect(r.read('index.html')).toMatch(NOT_INDEXABLE);
+      expect(r.read('index.html')).not.toContain('99871');
     },
     TIMEOUT,
   );
@@ -51,9 +51,9 @@ describe.concurrent('cuatro cruces: tipo de sitio por compilación', () => {
     async () => {
       const r = await build('academico', 'release');
       builds(r);
-      expect(r.html).toContain(ACADEMIC_NOTICE);
-      expect(r.html).toMatch(NOT_INDEXABLE);
-      expect(r.html).not.toContain('99871');
+      expect(r.read('index.html')).toContain(ACADEMIC_NOTICE);
+      expect(r.read('index.html')).toMatch(NOT_INDEXABLE);
+      expect(r.read('index.html')).not.toContain('99871');
     },
     TIMEOUT,
   );
@@ -67,8 +67,8 @@ describe.concurrent('cuatro cruces: tipo de sitio por compilación', () => {
       ]);
       builds(preview);
       builds(release);
-      expect(release.html).toContain(ACADEMIC_NOTICE);
-      expect(release.html).toMatch(NOT_INDEXABLE);
+      expect(release.read('index.html')).toContain(ACADEMIC_NOTICE);
+      expect(release.read('index.html')).toMatch(NOT_INDEXABLE);
     },
     TIMEOUT,
   );
@@ -78,8 +78,8 @@ describe.concurrent('cuatro cruces: tipo de sitio por compilación', () => {
     async () => {
       const r = await build('completo', 'preview');
       builds(r);
-      expect(r.html).not.toContain(ACADEMIC_NOTICE);
-      expect(r.html).toMatch(NOT_INDEXABLE);
+      expect(r.read('index.html')).not.toContain(ACADEMIC_NOTICE);
+      expect(r.read('index.html')).toMatch(NOT_INDEXABLE);
     },
     TIMEOUT,
   );
@@ -89,9 +89,9 @@ describe.concurrent('cuatro cruces: tipo de sitio por compilación', () => {
     async () => {
       const r = await build('completo', 'release');
       builds(r);
-      expect(r.html).not.toContain(ACADEMIC_NOTICE);
-      expect(r.html).not.toMatch(NOT_INDEXABLE);
-      expect(r.html).toContain('99871');
+      expect(r.read('index.html')).not.toContain(ACADEMIC_NOTICE);
+      expect(r.read('index.html')).not.toMatch(NOT_INDEXABLE);
+      expect(r.read('index.html')).toContain('99871');
     },
     TIMEOUT,
   );
@@ -101,8 +101,8 @@ describe.concurrent('cuatro cruces: tipo de sitio por compilación', () => {
     async () => {
       const r = await build('minimo', 'preview');
       builds(r);
-      expect(r.html).not.toContain(ACADEMIC_NOTICE);
-      expect(r.html).not.toContain('99871');
+      expect(r.read('index.html')).not.toContain(ACADEMIC_NOTICE);
+      expect(r.read('index.html')).not.toContain('99871');
       for (const file of [
         'politica-de-datos',
         'terminos-y-condiciones',
@@ -186,7 +186,7 @@ const ALWAYS_FAIL: [string, string | null, string][] = [
   ['invalido-umbrales-desordenados', 'CA-122', 'ascendente'],
 ];
 
-describe.concurrent('CA-99: los errores detienen la vista previa y la publicación', () => {
+describe('CA-99: los errores detienen la vista previa y la publicación', () => {
   for (const [scenario, criterion, fragment] of ALWAYS_FAIL) {
     for (const mode of ['preview', 'release'] as const) {
       test(
@@ -218,7 +218,7 @@ const RELEASE_ONLY: [string, string, string][] = [
   ['invalido-identificador-ficticio', 'CA-120', 'identifiers.rnt'],
 ];
 
-describe.concurrent('CA-139: lo que solo detiene la publicación', () => {
+describe('CA-139: lo que solo detiene la publicación', () => {
   for (const [scenario, criterion, field] of RELEASE_ONLY) {
     test(
       `${criterion}: ${scenario} construye en vista previa con aviso y falla en publicación`,
@@ -257,7 +257,7 @@ describe.concurrent('CA-139: lo que solo detiene la publicación', () => {
     TIMEOUT,
   );
 
-  describe.concurrent('SITE_URL (CA-139)', () => {
+  describe('SITE_URL (CA-139)', () => {
     for (const scenario of ['academico', 'completo']) {
       test(
         `${scenario}: sin SITE_URL construye en vista previa y falla en publicación`,
@@ -276,21 +276,23 @@ describe.concurrent('CA-139: lo que solo detiene la publicación', () => {
         TIMEOUT,
       );
 
-      for (const [label, value] of [
-        ['ruta relativa', '/mi-sitio'],
-        ['sin protocolo', 'localhost:4321'],
-        ['solo texto', 'mi sitio'],
+      // Una dirección que Astro o la puerta rechazan: siempre falla, pero no siempre con el mismo mensaje.
+      for (const [label, value, fragment] of [
+        ['ruta relativa', '/mi-sitio', 'CA-139'],
+        ['protocolo distinto de http(s)', 'ftp://x.test', 'CA-139'],
+        // Hallazgo: `new URL` revienta en la página antes de que la puerta nombre SITE_URL.
+        ['sin protocolo', 'localhost:4321', 'Invalid URL'],
+        // Astro rechaza `site` al leer la configuración, antes de la puerta de contenido.
+        ['con espacios', 'mi sitio', 'Invalid URL'],
       ] as const) {
         test(
           `${scenario}: SITE_URL ${label} falla en publicación`,
           async () => {
-            const r = await build(
-              scenario,
-              'release',
-              { siteUrl: value },
-              label.replace(/\s/g, '-'),
-            );
-            fails(r, 'CA-139', 'SITE_URL debe ser una dirección absoluta');
+            const r = await build(scenario, 'release', {
+              siteUrl: value,
+              variant: label.replace(/[^a-z]+/g, '-'),
+            });
+            fails(r, null, fragment);
           },
           TIMEOUT,
         );
@@ -300,18 +302,137 @@ describe.concurrent('CA-139: lo que solo detiene la publicación', () => {
 });
 
 // ---------------------------------------------------------------------------
-// Pendiente: dependen de páginas que aún no existen (hoy solo hay `index.html`)
+// Páginas del sitio construido (H5): robots.txt, mapa del sitio, legales, pie y créditos
 // ---------------------------------------------------------------------------
 
-describe('pendiente de H5', () => {
-  test.todo(
-    'CA-97, CA-133 (T-074): `completo` publica sitemap.xml y robots.txt con `Sitemap`; `academico` no tiene sitemap.xml',
+describe('páginas del sitio según el tipo y la compilación', () => {
+  test(
+    'CA-97, CA-133, CA-126: académico en publicación: noindex y aviso en cada página, sin mapa del sitio y robots.txt abierto',
+    async () => {
+      const r = await build('academico', 'release');
+      builds(r);
+      const pages = r.htmlFiles();
+      // inicio, 404, créditos, 3 legales y 7 destinos
+      expect(pages.length).toBeGreaterThanOrEqual(13);
+      for (const page of pages) {
+        expect(r.read(page), `${page} sin metaetiqueta de no indexar`).toMatch(NOT_INDEXABLE);
+        expect(r.read(page), `${page} sin aviso académico`).toContain(
+          'aria-label="Aviso del sitio"',
+        );
+      }
+      expect(r.exists('sitemap.xml')).toBe(false);
+      const robots = r.read('robots.txt');
+      expect(robots).toMatch(/User-agent: \*\s+Disallow:\s*$/m);
+      expect(robots).not.toContain('Sitemap');
+      expect(robots).not.toMatch(/Disallow: \/\S*/);
+    },
+    TIMEOUT,
   );
-  test.todo(
-    'CA-133: la metaetiqueta de no indexar está en todos los HTML de `academico`, no solo en el inicio',
+
+  test(
+    'CA-134, CA-121 (b), CA-119 (b): académico: los tres legales llevan el rótulo de muestra, sin fecha ni identificador',
+    async () => {
+      const r = await build('academico', 'release');
+      builds(r);
+      for (const slug of [
+        'politica-de-datos',
+        'terminos-y-condiciones',
+        'politica-de-cancelacion',
+      ]) {
+        const page = r.read(`legal/${slug}/index.html`);
+        expect(page, slug).toContain('Texto de muestra');
+        expect(page, slug).not.toContain('Última revisión');
+        expect(page, slug).not.toContain('99871');
+        expect(page, slug).not.toContain('Registro Nacional de Turismo');
+      }
+    },
+    TIMEOUT,
   );
-  test.todo(
-    'CA-121, CA-134: páginas legales: `completo` con fecha e identificador; `academico` con rótulo de muestra',
+
+  test(
+    'CA-138, CA-97: operador real en publicación: sin noindex ni aviso, con mapa del sitio y robots.txt que lo referencia',
+    async () => {
+      const r = await build('completo', 'release', { siteUrl: 'https://fixtures.example' });
+      builds(r);
+      for (const page of r.htmlFiles()) {
+        expect(r.read(page), page).not.toMatch(NOT_INDEXABLE);
+        expect(r.read(page), page).not.toContain('aria-label="Aviso del sitio"');
+      }
+      const sitemap = r.read('sitemap.xml');
+      expect(sitemap).toContain('<loc>https://fixtures.example/</loc>');
+      expect(
+        sitemap.match(/<loc>https:\/\/fixtures\.example\/destinos\/[a-z0-9-]+\/<\/loc>/g),
+      ).toHaveLength(7);
+      expect(r.read('robots.txt')).toContain('Sitemap: https://fixtures.example/sitemap.xml');
+    },
+    TIMEOUT,
   );
-  test.todo('CA-31: N destinos publicados producen exactamente N páginas /destinos/<slug>/');
+
+  test(
+    'CA-31: N destinos publicados producen exactamente N páginas /destinos/<slug>/',
+    async () => {
+      const r = await build('completo', 'release');
+      builds(r);
+      const details = r.htmlFiles().filter((f) => f.startsWith('destinos/'));
+      expect(details).toHaveLength(7);
+      for (const file of details) {
+        expect(file).toMatch(/^destinos\/[a-z0-9]+(-[a-z0-9]+)*\/index\.html$/);
+      }
+      // Un destino sin altitud verificada no tiene página (vista previa: se excluye con aviso).
+      const excluded = await build('invalido-altitud-sin-verificar', 'preview');
+      builds(excluded);
+      expect(excluded.htmlFiles().filter((f) => f.startsWith('destinos/'))).toHaveLength(3);
+      expect(excluded.exists('destinos/cafetal-de-la-loma-alta/index.html')).toBe(false);
+    },
+    TIMEOUT,
+  );
+
+  test(
+    'CA-121 (a), CA-119 (a): operador real revisado: legales con fecha y los tres identificadores, en el pie y en el legal',
+    async () => {
+      const r = await build('completo', 'release');
+      builds(r);
+      const page = r.read('legal/politica-de-datos/index.html');
+      expect(page).toContain('Última revisión: 10 de octubre de 2026');
+      expect(page).not.toContain('Texto de muestra');
+      expect(page).not.toContain('Borrador pendiente de revisión');
+      for (const value of ['99871', '900.555.321-7', 'Operadora Montes de Niebla S. A. S.']) {
+        expect(r.read('index.html')).toContain(value);
+      }
+    },
+    TIMEOUT,
+  );
+
+  test(
+    'CA-118 (a): operador real con borradores, en vista previa: banda "Borrador pendiente de revisión" y sin mapa del sitio',
+    async () => {
+      const r = await build('minimo', 'preview');
+      builds(r);
+      for (const slug of [
+        'politica-de-datos',
+        'terminos-y-condiciones',
+        'politica-de-cancelacion',
+      ]) {
+        expect(r.read(`legal/${slug}/index.html`), slug).toContain(
+          'Borrador pendiente de revisión',
+        );
+      }
+      expect(r.exists('sitemap.xml')).toBe(false);
+      for (const page of r.htmlFiles()) expect(r.read(page), page).toMatch(NOT_INDEXABLE);
+    },
+    TIMEOUT,
+  );
+
+  test(
+    'CA-50, CA-117: la página de créditos existe en los escenarios con y sin fotos',
+    async () => {
+      const withPhotos = await build('academico', 'preview');
+      builds(withPhotos);
+      expect(withPhotos.read('creditos/index.html')).toContain('Créditos de las fotos');
+      const without = await build('sin-fotos', 'preview');
+      builds(without);
+      expect(without.read('creditos/index.html')).toContain('no tiene fotos publicadas');
+    },
+    TIMEOUT,
+  );
 });
