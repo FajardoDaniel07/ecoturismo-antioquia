@@ -8,34 +8,52 @@ instalación de las cinco dependencias (`leaflet`, `@types/leaflet`, `typescript
 documento sigue el formato pedido en la definición del agente (tarea atómica, verificación "hecho
 cuando…", agente).
 
-## Estado actual (2026-10-11)
+## Plan corto (2026-10-11): lo que manda desde ahora
 
-- **Revisión del plan del 2026-10-11 (modo académico y Vercel): aprobada por el humano el 2026-10-11**
-  (T-117). Añade el hito HA, con las tareas T-117 a T-142, y cambia el texto de varias tareas
-  pendientes. No se renumeró ni se desmarcó ninguna.
-- **Hecho:** H0 y H1 completos; de H2, T-018 a T-026 (solo falta T-027); de H3, T-029 (lista
-  aprobada); de H4, la lógica (T-040 a T-043 y T-045) y la base de interfaz (T-046 a T-051).
-- **En curso:** `astro-developer` cierra T-044 y remata T-046 a T-051; `ui-designer`
-  completa el `design.md` con el modo académico (T-118); `content-curator` ya escribió
-  `territorio.json`, `operador.json` y seis destinos sin fotos (T-030 a T-033, pendientes de
-  marcar cuando el build pase).
-- **Corrección urgente:** T-119. `territorio.json` declara `minM: 0` y el esquema lo rechazaba;
-  `astro sync` falla con el contenido real hasta que se cierre.
-- **Orden real, distinto del escrito:** T-040 a T-045 se adelantaron a T-027, porque T-027
-  necesita una página que llame a `loadSite()` y esa llega en T-051. **T-027 va después de T-051,
-  T-121 y T-125.** T-022 ya está marcada; lo que le faltaba (probar los escenarios con
-  `validateSite()` y los avisos de `minimo`) y los cambios del modo académico van en T-125.
-- **Decisiones del humano del 2026-10-11:** el sitio es un ejercicio académico, sin operador real
-  ni datos legales; se despliega en Vercel; lista de contenido aprobada (PA-15); ADR 0001 y 0002
-  aceptados; "Apta desde 1 año" (CA-28); CA-110 exceptúa las líneas de ruta del mapa. La spec tiene
-  131 criterios activos.
-- **Ya no aplica en modo académico:** T-038 (identificadores y revisión legal). Se conserva por si
-  el sitio pasa a un operador real.
-- **Bloquea la publicación, no el desarrollo:** la dirección pública del sitio (PA-17, T-139).
-- **Contenido real, hoy:** seis destinos sin fotos y sin rutas. La galería y el mapa no se publican
-  hasta que lleguen T-131, T-132 y T-035; es un estado válido (CA-51, CA-67).
-- **Riesgo anotado para T-044:** en la variante compacta del perfil, la separación entre puntos
-  queda justo en 44 px con cinco destinos, sin margen.
+El humano decidió reducir el alcance para terminar antes. **Esta sección manda sobre el resto del
+documento.** Las tareas de más abajo se conservan como registro; las que aquí se retiran no se
+ejecutan aunque sigan sin marcar.
+
+**Decisiones del humano**
+
+- **Mapa simple:** Leaflet con sus controles por defecto, las rutas como líneas del color de su
+  piso y la lista de rutas al lado. Sin patrones de trazo, halo, panel, encuadre, orden de
+  tabulación propio, gesto de dos dedos ni estados de fallo a medida: si el mapa no carga, no se
+  muestra y queda la lista.
+- **Modo de operador real fuera de alcance:** el código se conserva, pero no se prueba ni se
+  mantiene. El sitio es un ejercicio académico.
+- **Suite esencial de pruebas** en lugar de una prueba por criterio.
+- **Cierre directo del perfil:** el humano aprueba las capturas regeneradas, sin otra ronda de
+  `ui-designer`.
+- **Menos consultas:** el asistente principal decide lo menor y lo informa; consulta al humano
+  solo cambios de alcance y decisiones visuales.
+
+**Lo que queda por hacer, en orden**
+
+| Paso | Qué | Quién | Sustituye a |
+|---|---|---|---|
+| C-1 | Aplicar R19 y R20 del perfil hasta cero avisos `[perfil]`; aligerar el build | `astro-developer` | T-044, T-059 |
+| C-2 | Cerrar las pruebas de build, solo modo académico y unos diez casos | `qa-engineer` | T-027 |
+| C-3 | Actualizar la spec con el recorte | `spec-writer` | — |
+| C-4 | Regenerar las capturas del perfil y las láminas | `qa-engineer` | T-057 (repetición) |
+| C-5 | **Aprobar las capturas (CA-124)** | humano | T-060 |
+| C-6 | Mapa simple: instalar Leaflet, isla con carga diferida, rutas como líneas, lista al lado | `astro-developer` | T-084 a T-091 |
+| C-7 | Suite e2e esencial: una prueba por tipo de página con axe; sin JavaScript; 360 px; teclado en el visor; aviso académico y `noindex`; mapa simple con teselas interceptadas; Lighthouse móvil en una pasada | `qa-engineer` | T-092 a T-110, T-133 a T-138 |
+| C-8 | Tabla de cobertura: qué criterios comprueba la suite esencial | `qa-engineer` | T-110 |
+| C-9 | Revisión final del sitio construido con el contenido real | `quality-reviewer` | T-111 |
+| C-10 | Corregir solo los hallazgos bloqueantes y repetir la suite | `astro-developer`, `content-curator`, `qa-engineer` | T-112 a T-114 |
+| C-11 | **Aprobar la revisión** | humano | T-115 |
+| C-12 | **Subir el repositorio a GitHub, crear el proyecto en Vercel (Node.js 24) y definir `SITE_URL`** | humano | T-039, T-139 |
+| C-13 | Fusionar en la rama principal y comprobar el primer despliegue | asistente principal, `qa-engineer` | T-116, T-140 |
+
+**Retiradas sin sustituto:** T-038 (no aplica en modo académico), T-061 y T-077 (cierres de hito,
+absorbidos por C-5 y C-9), T-075 (prueba de tokens), T-109 (contraste de rutas sobre teselas),
+T-129 (coherencia de `vercel.json`, cubierta por C-13) y T-136 (modo de operador real).
+
+**Hecho hasta el 2026-10-11:** H0, H1 y H2 salvo T-027; todo el contenido real (seis destinos, 18
+fotos, tres rutas, tres textos legales de muestra); el hero con el perfil; el listado, la ficha y
+las láminas; las páginas de detalle, legales, créditos y 404; la galería con su visor; el modo
+académico; y la configuración de Vercel.
 
 ## Cómo leerlo
 

@@ -17,7 +17,8 @@ Idioma del contenido: español (es-CO).
   cargador que importa el módulo real (`*.client.ts`) cuando la sección se acerca a la ventana
   (ADR 0004):
   - Galería: visor propio sobre `<dialog>`, sin dependencia (ADR 0005).
-  - Mapa: Leaflet 1.9 + teselas de OpenStreetMap, rutas en GeoJSON (ADR 0006).
+  - Mapa: Leaflet 1.9 + teselas de OpenStreetMap, rutas en GeoJSON (ADR 0006). En la feature 001
+    es una versión simple: controles por defecto y rutas como líneas del color de su piso.
 - **Imágenes**: `astro:assets` (`<Picture>`, AVIF/WebP, tamaños responsivos). Las fotos son
   archivos locales en `src/assets/photos/`; su atribución vive en el frontmatter del destino
   (ADR 0008).
@@ -169,7 +170,10 @@ primero y luego el código (la spec nunca queda desactualizada).
 
 ## Definition of Done
 
-- [ ] Criterios de aceptación de `spec.md` cubiertos por pruebas que pasan.
+- [ ] La suite esencial de pruebas pasa, y la tabla de cobertura dice qué criterios de `spec.md`
+      comprueba y cuáles quedan sin verificar automáticamente. (En la feature 001 el humano redujo
+      el alcance el 2026-10-11: ya no se exige una prueba por criterio; ver "Plan corto" en su
+      `tasks.md`.)
 - [ ] `npm run build`, `npm run lint`, `npm run test` y `npm run test:e2e` en verde.
 - [ ] Lighthouse móvil ≥ 90 en Performance, Accessibility, Best Practices y SEO.
 - [ ] Sin violaciones axe de nivel serious/critical (WCAG 2.2 AA).

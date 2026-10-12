@@ -66,3 +66,18 @@ consultada el 2026-10-10)
   puede cambiar los dos tokens de teselas.
 - (−) 42 KB es el mayor bloque de JavaScript del sitio; por eso no se descarga hasta que la sección
   está cerca de la ventana.
+
+## Revisión del 2026-10-11: mapa simple
+
+Estado de esta revisión: Aceptada (2026-10-11, aprobada por el humano).
+
+Para reducir el alcance de la feature 001, el mapa se construye en una versión simple. Se mantiene
+lo esencial de esta decisión: Leaflet 1.9 sin complementos, cargado solo cuando la sección se
+acerca a la ventana, teselas de OpenStreetMap con su atribución visible y sin precarga, y la lista
+de rutas siempre disponible, con y sin JavaScript.
+
+Se retira de este lanzamiento: los patrones de trazo por piso y sus variantes, el halo, el panel de
+ruta dentro del mapa, el encuadre al seleccionar, los controles y el orden de tabulación propios,
+el gesto de dos dedos y los tres estados de fallo con botón de reintento. Las rutas se dibujan como
+líneas del color de su piso, con los controles por defecto de Leaflet. Si el mapa no puede
+cargarse, no se muestra y queda la lista.
